@@ -24,7 +24,8 @@
 <section>
 <h1>Workflow Use Cases</h1>
 
-<p>Next are some use cases exploring this interaction.</p>
+<p>Below are use cases exploring how a workflow permissioned
+users would interact with the system.</p>
 
 <h2>Use case 1</h2>
 
@@ -36,16 +37,16 @@ in the collection. To do that we can create a group called
 &ldquo;currators&rdquo;.</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Currators&quot;,
-        &quot;group_id&quot;: &quot;currators&quot;
+        &quot;workflow_name&quot;: &quot;Currators&quot;,
+        &quot;workflow_id&quot;: &quot;currators&quot;
         &quot;object_permissions&quot;: [
             &quot;create&quot;,
             &quot;read&quot;,
             &quot;update&quot;,
             &quot;delete&quot;
         ]
-        &quot;change_groups_to&quot;: [ &quot;*&quot; ],
-        &quot;list_objects_in_group&quot;: [ &quot;*&quot; ]
+        &quot;available_workflow&quot;: [ &quot;*&quot; ],
+        &quot;list_workflow_objects&quot;: [ &quot;*&quot; ]
     }
 </code></pre>
 
@@ -85,13 +86,13 @@ objects. It&rsquo;ll be allowed to list objects in the &ldquo;published&rdquo; g
 <p>The group object would look like</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Published&quot;,
-        &quot;group_id&quot;: &quot;published&quot;
+        &quot;workflow_name&quot;: &quot;Published&quot;,
+        &quot;workflow_id&quot;: &quot;published&quot;
         &quot;collection_permissions&quot;: [
             &quot;read&quot;
         ]
-        &quot;change_groups_to&quot;: [],
-        &quot;list_objects_in_group&quot;: [ &quot;published ]
+        &quot;available_workflow&quot;: [],
+        &quot;list_workflow_objects&quot;: [ &quot;published ]
     }
 </code></pre>
 
@@ -124,11 +125,11 @@ If anonymous is a member of &ldquo;published&rdquo; they will be able to still
 read all published records.</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Depositor&quot;,
-        &quot;group_id&quot;: &quot;deposit&quot;,
+        &quot;workflow_name&quot;: &quot;Depositor&quot;,
+        &quot;workflow_id&quot;: &quot;deposit&quot;,
         &quot;object_permissions&quot;: [ &quot;create&quot; ]
-        &quot;change_groups_to&quot;: [],
-        &quot;list_objects_in_group&quot;: []
+        &quot;available_workflow&quot;: [],
+        &quot;list_workflow_objects&quot;: []
     }
 ```.
 
@@ -177,10 +178,10 @@ object to As</p>
 to define a reviewer group. Millie will need to be created and be
 a member of &ldquo;reviewer&rdquo;.</p>
 
-<pre><code class="language-json">        &quot;group_name&quot;: &quot;Reviewer&quot;,
-        &quot;group_id&quot;: &quot;review&quot;,
+<pre><code class="language-json">        &quot;workflow_name&quot;: &quot;Reviewer&quot;,
+        &quot;workflow_id&quot;: &quot;review&quot;,
         &quot;object_permissions&quot;: [ &quot;read&quot; ]
-        &quot;change_groups_to&quot;: [ 
+        &quot;available_workflow&quot;: [ 
             &quot;deposit&quot;, 
             &quot;review&quot;, 
             &quot;published&quot;, 
@@ -188,7 +189,7 @@ a member of &ldquo;reviewer&rdquo;.</p>
             &quot;rejected&quot;,
             &quot;currators&quot;
             ],
-        &quot;list_objects_in_group&quot;: [
+        &quot;list_workflow_objects&quot;: [
             &quot;deposit&quot;,
             &quot;review&quot;,
             &quot;published&quot;,
@@ -238,16 +239,16 @@ which can change permissions to reviewer.</p>
 <p>Here is Olive&rsquo;s group</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Olive&quot;,
-        &quot;group_id&quot;: &quot;olive&quot;,
+        &quot;workflow_name&quot;: &quot;Olive&quot;,
+        &quot;workflow_id&quot;: &quot;olive&quot;,
         &quot;object_permissions&quot;: [ 
             &quot;create&quot;, 
             &quot;read&quot;, 
             &quot;update&quot;, 
             &quot;delete&quot; 
         ],
-        &quot;change_groups_to&quot;: [ ],
-        &quot;list_objects_in_group&quot;: [
+        &quot;available_workflow&quot;: [ ],
+        &quot;list_workflow_objects&quot;: [
             &quot;olive&quot;
         ]
     }
@@ -256,13 +257,13 @@ which can change permissions to reviewer.</p>
 <p>Here is the general writer&rsquo;s group object</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Writer&quot;,
-        &quot;group_id&quot;: &quot;writer&quot;,
+        &quot;workflow_name&quot;: &quot;Writer&quot;,
+        &quot;workflow_id&quot;: &quot;writer&quot;,
         &quot;object_permissions&quot;: [],
-        &quot;change_groups_to&quot;: [ 
+        &quot;available_workflow&quot;: [ 
             &quot;reviewer&quot;
         ],
-        &quot;list_objects_in_group&quot;: []
+        &quot;list_workflow_objects&quot;: []
     }
 </code></pre>
 
@@ -284,15 +285,15 @@ point she will not be able to see or change the object. It is
 now the reviewer&rsquo;s responsibility to do something with that object.</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Reviewer&quot;,
-        &quot;group_id&quot;: &quot;reviewer&quot;,
+        &quot;workflow_name&quot;: &quot;Reviewer&quot;,
+        &quot;workflow_id&quot;: &quot;reviewer&quot;,
         &quot;object_permissions&quot;: [ read ],
-        &quot;change_groups_to&quot;: [ 
+        &quot;available_workflow&quot;: [ 
             &quot;editor&quot;,
             &quot;reviewer&quot;,
             &quot;olive&quot;
         ],
-        &quot;list_objects_in_group&quot;: [
+        &quot;list_workflow_objects&quot;: [
             &quot;reviewer&quot;,
             &quot;olive&quot;
         ]
@@ -308,15 +309,15 @@ is allowed to pass the object back down the workflow. The
 editor group would look like</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Editor&quot;,
-        &quot;group_id&quot;: &quot;editor&quot;,
+        &quot;workflow_name&quot;: &quot;Editor&quot;,
+        &quot;workflow_id&quot;: &quot;editor&quot;,
         &quot;object_permissions&quot;: [ 
             &quot;create&quot;,
             &quot;read&quot;, 
             &quot;update&quot;, 
             &quot;delete&quot; 
         ],
-        &quot;change_groups_to&quot;: [  
+        &quot;available_workflow&quot;: [  
             &quot;editor&quot;,
             &quot;rejected&quot;,
             &quot;burried&quot;,
@@ -325,7 +326,7 @@ editor group would look like</p>
             &quot;writer&quot;, 
             &quot;olive&quot;,
         ],
-        &quot;list_objects_in_group&quot;: [
+        &quot;list_workflow_objects&quot;: [
             &quot;olive&quot;,
             &quot;writer&quot;,
             &quot;reviewer&quot;,
@@ -339,16 +340,16 @@ editor group would look like</p>
 <p>And finally the publisher has permissions on everything.</p>
 
 <pre><code class="language-json">    {
-        &quot;group_name&quot;: &quot;Publisher&quot;,
-        &quot;group_id&quot;: &quot;publisher&quot;,
+        &quot;workflow_name&quot;: &quot;Publisher&quot;,
+        &quot;workflow_id&quot;: &quot;publisher&quot;,
         &quot;object_permissions&quot;: [
             &quot;create&quot;,
             &quot;read&quot;,
             &quot;update&quot;,
             &quot;delete&quot;,
         ],
-        &quot;change_groups_to&quot;: [ &quot;*&quot; ],
-        &quot;list_objects_in_group&quot;: [ &quot;*&quot; ]
+        &quot;available_workflow&quot;: [ &quot;*&quot; ],
+        &quot;list_workflow_objects&quot;: [ &quot;*&quot; ]
     }
 </code></pre>
 

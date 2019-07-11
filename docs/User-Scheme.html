@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr/releases/">Releases</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>User Scheme</h1>
+
+<p>While <strong>AndOr</strong> defers for managin users via a web UI and from
+storing user credentials it does still need to track some based
+user information.</p>
+
+<p>Below is an example JSON document describing the user Jane Doe.</p>
+
+<p>&rdquo;&lsquo;json
+    {
+        &ldquo;user_id&rdquo;: &ldquo;jane.doe@example.edu&rdquo;,
+        &ldquo;display_name&rdquo;: &ldquo;Jane Doe&rdquo;,
+        &ldquo;create_objects_as&rdquo;: &ldquo;writer&rdquo;,
+        &ldquo;member_of&rdquo;: [ &ldquo;publisher&rdquo;, &ldquo;editor&rdquo;, &ldquo;writer&rdquo; ]
+    }
+&ldquo;&rsquo;</p>
+
+<p>The JSON documents hold four pieces of information</p>
+
+<dl>
+<dt>user_id</dt>
+<dd>(string, required) in this case an email address is a unique string used to map a user to their assigned workflows</dd>
+<dt>display_name</dt>
+<dd>(string, optional) a display name, a conveience field for us Humans when IDs like an ORCID are less obvious</dd>
+<dt>create_objects_as</dt>
+<dd>(string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)</dd>
+<dt>member_of</dt>
+<dd>(list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is &ldquo;*&rdquo; it means the user is a member of all workflows, their for has all defined permissions</dd>
+</dl>
+
+<h2>How the user object is used</h2>
+
+<p>When Jane authenticates with the system she goes from being
+&ldquo;anonymous&rdquo; to &ldquo;jane@example.edu&rdquo; user.  This means she now has the
+permissions associated with &ldquo;publisher&rdquo;, &ldquo;editor&rdquo; and &ldquo;writer&rdquo; workflows.
+If Jane creates a new object it will be created in the &ldquo;writer&rdquo; workflow.
+Note if Jane doesn&rsquo;t have an have any workflows defined she would
+have zero permissions to access any objects. Each workflow list in
+&ldquo;member_of&rdquo; establishes the permissions under which she can see objects.</p>
+
+<h2>anonymous, the default user</h2>
+
+<p>There is always a &ldquo;anonymous&rdquo; user defined. It is used for anyone who
+has not authenticated.  While the &ldquo;anonymous&rdquo; user is assumed to always
+exist it is not provided with any workflows. If you want to allow
+anonymous access to a collection (e.g. the general public can see
+&ldquo;published&rdquo; objects) then you should create a JSON record for the
+&ldquo;anonymous&rdquo; user and explicitly put them in a single workflow that
+only has read permissions for &ldquo;published&rdquo; objects. See <a href="Workflow-Use-Cases.html">Workflow Use Cases</a> for example.</p>
+
+<h2>Picking IDs</h2>
+
+<p>You can avoid the toxic storage of secrets by using an external
+authentication mechasism (e.g. OAuth 2) as well as limitting the
+value of your Unique id.  If you create users using an email address
+you do have some value but probably minimal value if that same
+email address is publically known (e.g. published in the
+institute directory).  This would be similar if you were using
+an ORCID as an identifier. ORCID is a nice choice because while
+the number is listable at <a href="https://orcid.org">orcid.org</a> the
+ORCID owner controls directly how much information is exposed.
+<strong>AndOr</strong> only needs to assert a users&rsquo; claim they control
+the ID it doesn&rsquo;t harvest any data from the ID provider.</p>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>

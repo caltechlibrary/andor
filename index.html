@@ -28,8 +28,9 @@
 <p>ANother Digital Object Repository</p>
 </blockquote>
 
-<p>This is a concept document for a very light weight digital object
-repository. It can be built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>
+<p>This is concept documentation for a very light weight digital object
+repository. <strong>Andor</strong> would be built from
+<a href="https://caltechlibrary.github.io/dataset">dataset</a>
 collections, a simple JSON oriented web API and UI created via
 HTML 5 and JavaScript held in a static htdocs directory.  It is
 an exercise in explorating a minimalist useful digital object
@@ -47,16 +48,16 @@ repository.</p>
 <li>Support versionable attached media files</li>
 <li>Support continuous migration</li>
 <li>Use the web browser as a smart client</li>
-<li>Support multiple front ends (e.g. Drupal)</li>
+<li>Support multiple front ends (e.g. static HTML or Drupal)</li>
 </ul>
 
 <h2>Assumptions</h2>
 
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
-<li>small number of curratorial users larger number of readers and potential depositors</li>
+<li>small number of curratorial users, larger number of readers and potential depositors</li>
 <li>configurable workflows are a requirement</li>
-<li>workflows describe capabilities (permissions)</li>
+<li>workflows describe capabilities (permissions) and are queue based</li>
 <li>use existing object scheme (e.g. EPrints Oral Histories)</li>
 <li>authentication is external (e.g. PAM, OAuth2, Secrets store or Basic Author)</li>
 <li>search and discovery are handle independently (e.g. Lunr, Solr, Elastic Search) can be used to query objects</li>
@@ -78,18 +79,17 @@ are also defined in configuration files. Password
 management is deferred to the authenticating service. Managing
 users, workflows and permissions from configuration files
 reduces the end points needed in the API and radically reduces
-the lines of code needed to produce a modern UI.</p>
+the lines of code needed to produce a modern web UI.</p>
 
-<p>This leaves you with two API end points <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
-and <code>/COLLETION_NAME/objects/</code>. All other end points are static
+<p>This leaves you with two API end points for individual objects, <code>/COLLECTION_NAME/objects/OBJECT_ID</code>, and list of objects by id <code>/COLLECTION_NAME/objects/</code>. All other end points are static
 resources (e.g. index.html, CSS, lunr indexes). These
 end points were inspired by EPrints&rsquo; REST API. The API also
-only supports GET, PUT, POST and DELETE of JSON encoded objects. This
+only supports GET and POST of JSON encoded objects. This
 simplifies the translation in the API and fully supports nested fields
-which will help keep the web form construction simpler.</p>
+which will help keep web form construction simpler.</p>
 
-<p>Initially the UI will consist of listing records, viewing record details
-list of queue (workflow states) available and a screen to create/edit
+<p>Initially the UI will consist of listing records, viewing record details,
+list of records in queue (workflow state) and a screen to create/edit
 objects and a link to authenticate a user.</p>
 
 <p>Authenticated users return their authenticated user id, e.g.

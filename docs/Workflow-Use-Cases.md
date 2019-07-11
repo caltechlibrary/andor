@@ -1,7 +1,8 @@
 
 # Workflow Use Cases
 
-Next are some use cases exploring this interaction.
+Below are use cases exploring how a workflow permissioned
+users would interact with the system.
 
 ## Use case 1
 
@@ -14,16 +15,16 @@ in the collection. To do that we can create a group called
 
 ```json
     {
-        "group_name": "Currators",
-        "group_id": "currators"
+        "workflow_name": "Currators",
+        "workflow_id": "currators"
         "object_permissions": [
             "create",
             "read",
             "update",
             "delete"
         ]
-        "change_groups_to": [ "*" ],
-        "list_objects_in_group": [ "*" ]
+        "available_workflow": [ "*" ],
+        "list_workflow_objects": [ "*" ]
     }
 ```
 
@@ -65,13 +66,13 @@ The group object would look like
 
 ```json
     {
-        "group_name": "Published",
-        "group_id": "published"
+        "workflow_name": "Published",
+        "workflow_id": "published"
         "collection_permissions": [
             "read"
         ]
-        "change_groups_to": [],
-        "list_objects_in_group": [ "published ]
+        "available_workflow": [],
+        "list_workflow_objects": [ "published ]
     }
 ```
 
@@ -106,11 +107,11 @@ read all published records.
 
 ```json
     {
-        "group_name": "Depositor",
-        "group_id": "deposit",
+        "workflow_name": "Depositor",
+        "workflow_id": "deposit",
         "object_permissions": [ "create" ]
-        "change_groups_to": [],
-        "list_objects_in_group": []
+        "available_workflow": [],
+        "list_workflow_objects": []
     }
 ```.
 
@@ -158,10 +159,10 @@ to define a reviewer group. Millie will need to be created and be
 a member of "reviewer".
 
 ```json
-        "group_name": "Reviewer",
-        "group_id": "review",
+        "workflow_name": "Reviewer",
+        "workflow_id": "review",
         "object_permissions": [ "read" ]
-        "change_groups_to": [ 
+        "available_workflow": [ 
             "deposit", 
             "review", 
             "published", 
@@ -169,7 +170,7 @@ a member of "reviewer".
             "rejected",
             "currators"
             ],
-        "list_objects_in_group": [
+        "list_workflow_objects": [
             "deposit",
             "review",
             "published",
@@ -221,16 +222,16 @@ Here is Olive's group
 
 ```json
     {
-        "group_name": "Olive",
-        "group_id": "olive",
+        "workflow_name": "Olive",
+        "workflow_id": "olive",
         "object_permissions": [ 
             "create", 
             "read", 
             "update", 
             "delete" 
         ],
-        "change_groups_to": [ ],
-        "list_objects_in_group": [
+        "available_workflow": [ ],
+        "list_workflow_objects": [
             "olive"
         ]
     }
@@ -240,13 +241,13 @@ Here is the general writer's group object
 
 ```json
     {
-        "group_name": "Writer",
-        "group_id": "writer",
+        "workflow_name": "Writer",
+        "workflow_id": "writer",
         "object_permissions": [],
-        "change_groups_to": [ 
+        "available_workflow": [ 
             "reviewer"
         ],
-        "list_objects_in_group": []
+        "list_workflow_objects": []
     }
 ```
 
@@ -270,15 +271,15 @@ now the reviewer's responsibility to do something with that object.
 
 ```json
     {
-        "group_name": "Reviewer",
-        "group_id": "reviewer",
+        "workflow_name": "Reviewer",
+        "workflow_id": "reviewer",
         "object_permissions": [ read ],
-        "change_groups_to": [ 
+        "available_workflow": [ 
             "editor",
             "reviewer",
             "olive"
         ],
-        "list_objects_in_group": [
+        "list_workflow_objects": [
             "reviewer",
             "olive"
         ]
@@ -295,15 +296,15 @@ editor group would look like
 
 ```json
     {
-        "group_name": "Editor",
-        "group_id": "editor",
+        "workflow_name": "Editor",
+        "workflow_id": "editor",
         "object_permissions": [ 
             "create",
             "read", 
             "update", 
             "delete" 
         ],
-        "change_groups_to": [  
+        "available_workflow": [  
             "editor",
             "rejected",
             "burried",
@@ -312,7 +313,7 @@ editor group would look like
             "writer", 
             "olive",
         ],
-        "list_objects_in_group": [
+        "list_workflow_objects": [
             "olive",
             "writer",
             "reviewer",
@@ -327,16 +328,16 @@ And finally the publisher has permissions on everything.
 
 ```json
     {
-        "group_name": "Publisher",
-        "group_id": "publisher",
+        "workflow_name": "Publisher",
+        "workflow_id": "publisher",
         "object_permissions": [
             "create",
             "read",
             "update",
             "delete",
         ],
-        "change_groups_to": [ "*" ],
-        "list_objects_in_group": [ "*" ]
+        "available_workflow": [ "*" ],
+        "list_workflow_objects": [ "*" ]
     }
 ```
 

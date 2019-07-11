@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr/releases/">Releases</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>Workflow Scheme</h1>
+
+<p>Workflows encapsulate the concept of a queue [^1]
+and access crontol.  If a user if a member of a
+workflow they gain the permissions of that workflow for objects
+defined viewable in that workflow.  If a user
+is assigned to a workflow that is not defined they gain no additional
+permissions.  A user who is a member of a workflow acquires the
+permissions of that workflow for objects associated with that workflow(s).</p>
+
+<p>Here&rsquo;s an example of a workflow for someone allowed to currate any object
+in a collection.</p>
+
+<pre><code class="language-json">    {
+        &quot;workflow_name&quot;: &quot;Currator&quot;,
+        &quot;workflow_id&quot;: &quot;currator&quot;
+        &quot;object_permissions&quot;: [
+            &quot;create&quot;,
+            &quot;read&quot;,
+            &quot;update&quot;
+        ]
+        &quot;assign_to&quot;: [ &quot;*&quot; ],
+        &quot;view_objects&quot;: [ &quot;*&quot; ]
+    }
+</code></pre>
+
+<dl>
+<dt>workflow_name</dt>
+<dd>(string, optional) the human readable name for the workflow</dd>
+<dt>workflow_id</dt>
+<dd>(string, required, must be unique) the id for this workflow</dd>
+<dt>object_permissions</dt>
+<dd>(array of string, default is empty list) this is where you give object level permissions for create, read and update. For the object level permissions objects must be viewable in the workflow. See &ldquo;view_objects&rdquo; field.</dd>
+<dt>assign_to</dt>
+<dd>(array of string, default is empty list) this holds the ids of the workflows you are allow to assign an object to, if the &ldquo;*&rdquo; string is included it means this workflow can assign an object to any other workflow</dd>
+<dt>view_objects</dt>
+<dd>(array of string, default is empty list) this holds the workflow ids of the objects you&rsquo;re allow to view, this is how we create a queue of objects. Ifthe workflow is listed as &ldquo;*&rdquo; it means you can see any object in the collection.  Note if you can see the object then the object_permissions apply.</dd>
+</dl>
+
+<p>In our example the workflow name is &ldquo;Currator&rdquo; and the id is &ldquo;currator&rdquo;.
+Because &ldquo;assign_to&rdquo; contains the &ldquo;*&rdquo; string. A user who is associated
+with the workflow &ldquo;currator&rdquo; (you can also think of this as a queue)
+can move objects to any other workflow. A currator can also see all objects
+because &ldquo;view_objects&rdquo; also has the &ldquo;*&rdquo; string.</p>
+
+<p>Normally a workflow is defined more granularly. A typical system
+would have a queue for currator, published and delete. If you
+limit the permissions for each of these you can create an integrated
+workflow.</p>
+
+<p>If you allow deleting objects you can create a workflow that
+has no object permissions in it. A &ldquo;delete&rdquo; workflow could look like</p>
+
+<pre><code class="language-json">    {
+        &quot;workflow_name&quot;: &quot;Deleted objects&quot;,
+        &quot;workflow_id&quot;: &quot;delete&quot;
+        &quot;object_permissions&quot;: []
+        &quot;assign_to&quot;: [],
+        &quot;view_objects&quot;: []
+    }
+</code></pre>
+
+<p>If a user has &ldquo;delete&rdquo; in their &ldquo;member_of&rdquo; OR they have
+&ldquo;delete&rdquo; in the &ldquo;asign_to&rdquo; list of a workflow they are a
+member of they could put the objects into the delete workflow.
+If the a workflow they belong to can see all objects (e.g. our
+currator example) the object would still be viewable but be in the workflow state (queue) of deleted. Otherwise the objects in &ldquo;delete&rdquo; workflow
+state would not be visible.</p>
+
+<p>Another common workflow would be &ldquo;published&rdquo;. The published workflow
+could be defined this way.</p>
+
+<pre><code class="language-json">    {
+        &quot;workflow_name&quot;: &quot;Publishd Objects&quot;,
+        &quot;workflow_id&quot;: &quot;published&quot;
+        &quot;object_permissions&quot;: [ &quot;read&quot; ]
+        &quot;assign_to&quot;: [ ],
+        &quot;view_objects&quot;: [ &quot;published&quot; ]
+    }
+</code></pre>
+
+<p>If a user&rsquo;s &ldquo;member_of&rdquo; field contained &ldquo;published&rdquo; they would
+then be allowed to see all objects held in the &ldquo;published&rdquo; workflow.
+Notice that we also give &ldquo;published&rdquo; the read permission at the
+object level. This is needed to display the objects details
+(e.g. a title field) as well as the id. &ldquo;view_objects&rdquo; only means
+you can view the id, that it the id will be returned in a list of
+ids.</p>
+
+<p>Likewise if you wanted to make your &ldquo;published&rdquo; items viewable by
+the public you create a record for the &ldquo;anonymous&rdquo; user and
+add &ldquo;published&rdquo; to the anonymous users&rsquo; &ldquo;member_of&rdquo; field. That
+would allow unauthenticated users to see published objects.</p>
+
+<p>The &ldquo;assign_to&rdquo; controls where you can move an object to and
+&ldquo;view_objects&rdquo; controls which objects you can see while
+in this workflow. A object&rsquo;s workflow assignment also makes
+a workflow behave as a queue.</p>
+
+<p>Object permissions can be &ldquo;create&rdquo;, &ldquo;update&rdquo; and &ldquo;read&rdquo;.  <strong>AndOr</strong>
+doesn&rsquo;t support delating objects.  You can create the
+illusion of deletion by be clever with your workflow definitions.</p>
+
+<p>[^1]: objects have a field called &ldquo;_Workflow&rdquo; that holds the name of the workflow they are currently associated with.</p>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>

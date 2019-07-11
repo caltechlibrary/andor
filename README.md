@@ -1,7 +1,7 @@
 
 # AndOr
 
-> ANother Digital Object Repository
+> _AN_other _D_igital _O_bject _R_epository
 
 This is concept documentation for a very light weight digital object
 repository. **Andor** would be built from 
