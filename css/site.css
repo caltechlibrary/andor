@@ -263,3 +263,7 @@ footer a, footer a:link, footer a:visited, footer a:active, footer a:focus, foot
      text-decoration: none;
 }
 
+
+.red {
+    color: red;
+}
