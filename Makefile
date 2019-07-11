@@ -90,7 +90,7 @@ save:
 	git push origin $(BRANCH)
 
 publish:
-	bash mk-website.bash
+	./mk_website.py
 	bash publish.bash
 
 FORCE:

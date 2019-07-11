@@ -8,14 +8,14 @@ user information.
 Below is an example JSON document describing the user Jane Doe.
 
 
-'''json
+```json
     {
         "user_id": "jane.doe@example.edu",
         "display_name": "Jane Doe",
         "create_objects_as": "writer",
         "member_of": [ "publisher", "editor", "writer" ]
     }
-'''
+```
 
 The JSON documents hold four pieces of information
 
