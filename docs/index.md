@@ -6,7 +6,9 @@ concepts in our proof of concept **AndOr**.
 
 + [Settting up AndOr](Setting-Up-AndOr.html)
 + [Workflow Use Cases](Workflow-Use-Cases.html)
++ AndOr Scheme
+    + [User Scheme](User-Scheme.html)
     + [Workflow Scheme](Workflow-Scheme.html)
-    + [AndOr User Scheme](User-Scheme.html)
+    + [Object Scheme](Object-Scheme.html)
 
 
