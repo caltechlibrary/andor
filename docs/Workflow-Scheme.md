@@ -4,7 +4,7 @@ markup = "mmark"
 
 # Workflow Scheme
 
-Workflows encapsulate the concept of a queue [^1]
+Workflows encapsulate the concept of a queue [^1][^1]
 and access crontol.  If a user if a member of a
 workflow they gain the permissions of that workflow for objects
 defined viewable in that workflow.  If a user
@@ -25,7 +25,7 @@ in a collection.
             "update"
         ]
         "assign_to": [ "*" ],
-        "view_objects": [ "*" ]
+        "view_object_ids": [ "*" ]
     }
 ```
 
@@ -67,7 +67,7 @@ has no object permissions in it. A "delete" workflow could look like
         "workflow_id": "delete"
         "object_permissions": []
         "assign_to": [],
-        "view_objects": []
+        "view_object_ids": []
     }
 ```
 
@@ -88,7 +88,7 @@ could be defined this way.
         "workflow_id": "published"
         "object_permissions": [ "read" ]
         "assign_to": [ ],
-        "view_objects": [ "published" ]
+        "view_object_ids": [ "published" ]
     }
 ```
 

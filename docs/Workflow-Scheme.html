@@ -24,7 +24,7 @@
 <section>
 <h1>Workflow Scheme</h1>
 
-<p>Workflows encapsulate the concept of a queue [^1]
+<p>Workflows encapsulate the concept of a queue [^1][^1]
 and access crontol.  If a user if a member of a
 workflow they gain the permissions of that workflow for objects
 defined viewable in that workflow.  If a user
@@ -44,7 +44,7 @@ in a collection.</p>
             &quot;update&quot;
         ]
         &quot;assign_to&quot;: [ &quot;*&quot; ],
-        &quot;view_objects&quot;: [ &quot;*&quot; ]
+        &quot;view_object_ids&quot;: [ &quot;*&quot; ]
     }
 </code></pre>
 
@@ -80,7 +80,7 @@ has no object permissions in it. A &ldquo;delete&rdquo; workflow could look like
         &quot;workflow_id&quot;: &quot;delete&quot;
         &quot;object_permissions&quot;: []
         &quot;assign_to&quot;: [],
-        &quot;view_objects&quot;: []
+        &quot;view_object_ids&quot;: []
     }
 </code></pre>
 
@@ -99,7 +99,7 @@ could be defined this way.</p>
         &quot;workflow_id&quot;: &quot;published&quot;
         &quot;object_permissions&quot;: [ &quot;read&quot; ]
         &quot;assign_to&quot;: [ ],
-        &quot;view_objects&quot;: [ &quot;published&quot; ]
+        &quot;view_object_ids&quot;: [ &quot;published&quot; ]
     }
 </code></pre>
 
@@ -137,5 +137,26 @@ illusion of deletion by be clever with your workflow definitions.</p>
 <span><a href="mailto:library@caltech.edu">Email Us</a></span>
 <a class="cl-hide" href="sitemap.xml">Site Map</a>
 </footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
 </body>
 </html>
