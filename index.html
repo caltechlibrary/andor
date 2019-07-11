@@ -28,27 +28,31 @@
 <p><span class="red">An</span>other <span class="red">d</span>igital <span class="red">O</span>bject <span class="red">r</span>epository</p>
 </blockquote>
 
-<p>This is concept document for a very light weight digital object
-repository. It would serve as an interim repository for some of our
-simple EPrints deployments. <strong>Andor</strong> would be built from
-<a href="https://caltechlibrary.github.io/dataset">dataset</a>
-collections, a simple JSON oriented web API and UI created via
-HTML 5 and JavaScript held in a static htdocs directory.  It is
-an exercise in explorating a minimalist useful digital object
-repository.</p>
+<p>This is a concept document for a very light weight digital object
+repository. If prototoyped it could serve as an interim repository
+for some of our simple EPrints deployments. <strong>Andor</strong> would be
+built from <a href="https://caltechlibrary.github.io/dataset">dataset</a>
+collections, configuration files, a simple JSON oriented web API
+and UI created via HTML 5 and JavaScript served from a static
+htdocs directory.  It would consist of to pieces of software,
+a web server (e.g. NginX, Apache) providing integration options
+for authentication as well as search engine support and the
+<strong>AndOr</strong> program which would be use to create a web service
+to respond to the static content and UI.</p>
 
 <h2>Goals</h2>
 
 <ul>
 <li>Provide an <strong>interum option</strong> for simple EPrints repositories</li>
-<li>Simpler than EPrints</li>
-<li>Simpler than Invenio</li>
-<li>Simpler than Drupal</li>
-<li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)</li>
-<li>Agnostic about the shape of objects stored</li>
-<li>Support versionable attached media files</li>
+<li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)
+
+<ul>
+<li>Be simpler than EPrints, Invenio, Drupal/Islandora</li>
+<li>Be easier than migrating our EPrints repositories to the cloud</li>
+</ul></li>
+<li>Support existing schema</li>
+<li>Support versioned attached media files</li>
 <li>Support continuous migration</li>
-<li>Use the web browser as a smart client</li>
 <li>Support multiple front ends (e.g. static HTML or Drupal)</li>
 </ul>
 
@@ -56,63 +60,63 @@ repository.</p>
 
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
-<li>small number of curratorial users, larger number of readers and potential depositors</li>
+<li>small number of curratorial users</li>
+<li>larger number of readers or potential depositors</li>
 <li>configurable workflows are a requirement</li>
-<li>workflows describe capabilities (permissions) and are queue based</li>
+<li>workflows describe capabilities (permissions)</li>
+<li>workflows describe a work queue (object state)</li>
 <li>use existing object scheme (e.g. EPrints Oral Histories)</li>
-<li>authentication is external (e.g. PAM, OAuth2, Secrets store or Basic Author)</li>
-<li>search and discovery are handle independently (e.g. Lunr client or server side) can be used to query objects</li>
-<li>UI can be implemented using HTML 5 elements and minimal JavaScript
-
-<ul>
-<li>This would allow <strong>AndOr</strong> to sit behind Drupal easily</li>
-</ul></li>
+<li>authentication is external (e.g. OAuth or Basic Author)</li>
+<li>search and query are handle independently (e.g. Lunr)</li>
+<li>UI can be implemented using HTML 5 elements and minimal JavaScript</li>
 </ul>
 
 <h2>Limitting features and complexity</h2>
 
 <p>One of the most complicated parts of a digital object repository
-is enforcing and managing users, workflows, permissions and storage
-scheme.  To simplify this <strong>AndOr</strong> is using a workflow oriented
-permission scheme. The permission scheme is configured outside
-the UI of <strong>AndOr</strong>. It is defined in configuration files. Users
-are also defined in configuration files. Password
-management is deferred to the authenticating service. Managing
-users, workflows and permissions from configuration files
-reduces the end points needed in the API and radically reduces
-the lines of code needed to produce a modern web UI.</p>
+is managing customization,  managing users, workflows, permissions
+and enforcing storage scheme.  To simplify this <strong>AndOr</strong> is
+using a workflow/work queue oriented permission scheme. The permission
+scheme is configured/managed outside the web UI of <strong>AndOr</strong>.
+Users are define/managed outside the web UI of <strong>AndOr</strong>.
+Password management is deferred to the authenticating service.
+Managing users, workflows and permissions reduces the end points
+needed in the API and radically reduces the lines of code needed
+to produce a modern web UI.</p>
 
-<p>This leaves you with two API end points for individual objects, <code>/COLLECTION_NAME/objects/OBJECT_ID</code>, and list of objects by id <code>/COLLECTION_NAME/objects/</code>. All other end points are static
-resources (e.g. index.html, CSS, lunr indexes). These
-end points were inspired by EPrints&rsquo; REST API. The API also
-only supports GET and POST of JSON encoded objects. This
-simplifies the translation in the API and fully supports nested fields
-which will help keep web form construction simpler.</p>
+<p>Two API end points would be required <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
+to provide an Object&rsquo;s details and <code>/COLLECTION_NAME/objects/</code>. The
+later may accept a filter by queue/workflow name. All other end
+points are static resources (e.g. index.html, CSS, lunr indexes).
+The two end points reflects our experience with the EPrints REST API.
+The API also only supports GET and POST and always recieves or responds
+with JSON encoded objects.</p>
 
-<p>Initially the UI will consist of listing records, viewing record details,
-list of records in queue (workflow state) and a screen to create/edit
-objects and a link to authenticate a user.</p>
+<p>Initially the UI will consist of listing records, viewing record
+details, list of records by work queue (workflow state),
+a page to create/read/edit individual objects and a login page.</p>
 
 <p>Authenticated users return their authenticated user id, e.g.
 (e.g.  ORCID using OAuth). The user id will be used to map users
 to their workflows.</p>
 
 <p>Unauthenticated users are treated as the &ldquo;anonymous&rdquo; user and
-are restricted by workflows available for that user (only
-list objects in the &ldquo;published&rdquo; queue and only read permission
-on the individual objects).</p>
+are restricted by workflows available for that user. This is how
+you would control having a dark versus publically visible repository.</p>
 
-<p>A user&rsquo;s membership in workflows defines their permissions.</p>
+<p>A user&rsquo;s membership in workflows/queue defines their permissions.</p>
 
 <p><strong>AndOr</strong> is built on dataset so all objects must have unique ids.
 Objects may include attached documents which will be versioned
 automatically (a feature available in an upcoming release of
 dataset).</p>
 
-<p>Objects flagged as deleted in the API will simply be pushed to the
-workflow status of &ldquo;deleted&rdquo;. A separate offline process can be developed
-for garbage collecting those records at a future date (inspired
-by EPrints).</p>
+<p><strong>AndOr</strong> does not directly support deleting objects. You can
+create this ability through creating a &ldquo;delete&rdquo; workflow type.
+Objects flagged as deleted in the API will would be changed to
+the queue status of &ldquo;deleted&rdquo;. A separate offline process could
+be developed for garbage collecting those records at a future
+date (this is how EPrints works).</p>
 
 <h2>Additional ideas</h2>
 

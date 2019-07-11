@@ -1,23 +1,29 @@
 
 # Action items
 
-## Bugs
+## Address Missing features
+
++ [ ] EPrints versions metadata as well as attachments
++ [ ] EPrints has a light weight issues system
 
 ## Next
 
-+ [ ] Figure out a simple auth mechanism to use for the proof of concept
-    + [ ] Evaluate using OAuth 2 with library's Google Apps for Educatin
-    + [ ] Read up on go-cloud package for easy authentication options
-    + [ ] If not assume we're behind a web server that can provide the authenticaition mechanism like Shibboleth (e.g. Apache, NginX)
-+ [ ] Read up on channels so I can create multi-user safe access to our dataset collections
-+ [ ] andor-init intializes the necessarily dataset collections to run andor
-+ [ ] andor-genuser generates a JSON document which can be added to users.andor
-+ [ ] andor-genworkflow generates a JSON document which can be added to workflows.andor
-+ [ ] andor (web service)
-    + [ ] JSON read API calls
-    + [ ] JSON write API calls
-    + [ ] Web UI based on content in htdocs
++ [ ] Write up basic approach
++ [ ] Write up use cases demonstrating how we address minimal requirements
++ [ ] Write up some use cases based on existing EPrints usage
++ [ ] Document proposed schema (e.g. workflow, andor user)
++ [ ] Evaluate using diff to created versioned metadata
+    + https://github.com/sergi/go-diff
+    + https://godoc.org/golang.org/x/perf/internal/diff
++ [ ] Evaluate at options to link out to an issue system (e.g. Jira, GitHub)
++ [ ] Design basic UI in HTML and JavaScript
++ [ ] Pick a simple auth mechanism for use in proof of concept
 
 ## Someday, Maybe
 
 + [ ] Wrap dataset to accept TOML files as import files
++ [ ] Add metadata versioning
++ [ ] Add issue tracker integration
++ [ ] Create a public website view
++ [ ] Integrate with ArchivesSpace
++ [ ] Integrate with external services (e.g. orcid.org, datacite.org)
