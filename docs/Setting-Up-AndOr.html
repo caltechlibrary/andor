@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr/releases/">Releases</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>Setting Up Andor</h1>
+
+<p><strong>AndOr</strong> is experimental, a proof of concept so you&rsquo;re expected
+to clone the git repo and compile it before following the steps
+to setup and run it.</p>
+
+<h1>Setting up Andor</h1>
+
+<ol>
+<li>Clone the AndOr repository</li>
+<li>Make AndOr</li>
+<li>Create a dataset collection to hold our objects and attachments</li>
+<li>Create a dataset collection called <code>workflow.AndOr</code></li>
+<li>Create a dataset collection called <code>users.AndOr</code></li>
+<li>Generate an admin-user.json document</li>
+<li>Generate an admin-workflow.json document</li>
+<li>Add admin-workflow.json to workflow.AndOr</li>
+<li>Add admin-user.json to users.AndOr</li>
+<li>Start up AndOr and view with your web browser</li>
+</ol>
+
+<h2>Example: A simple repository using your ORCID for user id</h2>
+
+<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/AndOr.git
+    cd AndOr
+    make
+    # repository.ds can be named something else if you like
+    # the name/path to look for is set in the configuration.
+    bin/AndOr init repository.ds
+    bin/AndOr init workflow.AndOr
+    bin/AndOr init users.AndOr
+    # We're only creating a local secrets collection for demo purposes
+    # Normally you'd authenticate through another service like OAuth 2.
+    bin/AndOr init secrets.AndOr
+
+    # AndOr create-user will prompt for needed information.
+    bin/AndOr create-user
+    # AndOr create-workflow will prompt for the needed information.
+    bin/AndOr create-workflow
+    # AndOr config-service will prompt for the needed information.
+    bin/AndOr config-service
+
+    # Startup the AndOr web service (we're hosting a single object
+    # collection.
+    bin/AndOr host repository.ds 
+</code></pre>
+
+<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8123">http://localhost:8123</a>. You can use
+additional options to control the port, hostname and protocol.</p>
+
+<p>The is a demo system, a proof of concept. Don&rsquo;t expect this to work!
+It uses a local user id to secret collection. Normally you&rsquo;d use
+an OAuth source to authenticate with though the local secrets is
+convienent for localhost development environment.</p>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>

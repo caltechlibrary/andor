@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="install.html">INSTALL</a></li>
+<li><a href="./docs">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr/releases/">Releases</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>AndOr</h1>
+
+<blockquote>
+<p>ANother Digital Object Repository</p>
+</blockquote>
+
+<p>This is a concept document for a very light weight digital object
+repository. It can be built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>
+collections, a simple JSON oriented web API and UI created via
+HTML 5 and JavaScript held in a static htdocs directory.  It is
+an exercise in explorating a minimalist useful digital object
+repository.</p>
+
+<h2>Goals</h2>
+
+<ul>
+<li>Provide an <strong>interum option</strong> for simpler EPrints repositories</li>
+<li>Simpler than EPrints</li>
+<li>Simpler than Invenio</li>
+<li>Simpler than Drupal</li>
+<li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)</li>
+<li>Agnostic about the shape of objects stored</li>
+<li>Support versionable attached media files</li>
+<li>Support continuous migration</li>
+<li>Use the web browser as a smart client</li>
+<li>Support multiple front ends (e.g. Drupal)</li>
+</ul>
+
+<h2>Assumptions</h2>
+
+<ul>
+<li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
+<li>small number of curratorial users larger number of readers and potential depositors</li>
+<li>configurable workflows are a requirement</li>
+<li>workflows describe capabilities (permissions)</li>
+<li>use existing object scheme (e.g. EPrints Oral Histories)</li>
+<li>authentication is external (e.g. PAM, OAuth2, Secrets store or Basic Author)</li>
+<li>search and discovery are handle independently (e.g. Lunr, Solr, Elastic Search) can be used to query objects</li>
+<li>UI can be solely implemented as a web app using HTML 5 and JavaScript
+
+<ul>
+<li>This means you could also sit Andor behind Drupal easily</li>
+</ul></li>
+</ul>
+
+<h2>Limitting features and complexity</h2>
+
+<p>One of the most complicated parts of a digital object repository
+is enforcing and managing users, workflows, permissions and storage
+scheme.  To simplify this <strong>AndOr</strong> is using a workflow oriented
+permission scheme. The permission scheme is configured outside
+the UI of <strong>AndOr</strong>. It is defined in configuration files. Users
+are also defined in configuration files. Password
+management is deferred to the authenticating service. Managing
+users, workflows and permissions from configuration files
+reduces the end points needed in the API and radically reduces
+the lines of code needed to produce a modern UI.</p>
+
+<p>This leaves you with two API end points <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
+and <code>/COLLETION_NAME/objects/</code>. All other end points are static
+resources (e.g. index.html, CSS, lunr indexes). These
+end points were inspired by EPrints&rsquo; REST API. The API also
+only supports GET, PUT, POST and DELETE of JSON encoded objects. This
+simplifies the translation in the API and fully supports nested fields
+which will help keep the web form construction simpler.</p>
+
+<p>Initially the UI will consist of listing records, viewing record details
+list of queue (workflow states) available and a screen to create/edit
+objects and a link to authenticate a user.</p>
+
+<p>Authenticated users return their authenticated user id, e.g.
+(e.g.  ORCID using OAuth). The user id will be used to map users
+to their workflows.</p>
+
+<p>Unauthenticated users are treated as the &ldquo;anonymous&rdquo; user and
+are restricted by workflows available for that user (only
+list objects in the &ldquo;published&rdquo; queue and only read permission
+on the individual objects).</p>
+
+<p>A user&rsquo;s membership in workflows defines their permissions.</p>
+
+<p><strong>AndOr</strong> is built on dataset so all objects must have unique ids.
+Objects may include attached documents which will be versioned
+automatically (a feature available in an upcoming release of
+dataset).</p>
+
+<p>Objects flagged as deleted in the API will simply be pushed to the
+workflow status of &ldquo;deleted&rdquo;. A separate offline process can be developed
+for garbage collecting those records at a future date (inspired
+by EPrints).</p>
+
+<h2>Additional ideas</h2>
+
+<ul>
+<li><a href="docs/Workflow-Use-Cases.html">Workflow use cases</a>
+
+<ul>
+<li><a href="docs/Workflow-Scheme.html">Workflow Scheme</a></li>
+<li><a href="docs/User-Scheme.html">AndOr User Scheme</a></li>
+</ul></li>
+<li><a href="docs/Setting-up-AndOr.html">Setting Up AndOr</a></li>
+</ul>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html>
