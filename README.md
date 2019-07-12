@@ -116,6 +116,6 @@ objects into a "delete" queue.
     + [AndOr User Scheme](docs/User-Scheme.html)
 + [Setting Up AndOr](docs/Setting-up-AndOr.html)
 + [Oral Histories Use Case](docs/Oral-Histories-Use-Case.html)
-+ [Proposed Schedule for protototype](docs/Schedule.html)
+    + [Proposed Schedule for Proof of Concept](docs/Schedule.html)
 
 

@@ -11,8 +11,8 @@ concepts in our proof of concept **AndOr**.
     + [Workflow Scheme](Workflow-Scheme.html)
     + [Object Scheme](Object-Scheme.html)
 + [Oral Histories Use Case](Oral-Histories-Use-Case.html)
+    + [Proposed Schedule for Proof of Concept](Schedule.html)
 + [Reference Material](Reference.html)
     + NginX auth options
     + NginX reverse proxy to service
-+ [Proposed Schedule for Proof of concept](Schedule.html)
 
