@@ -10,5 +10,8 @@ concepts in our proof of concept **AndOr**.
     + [User Scheme](User-Scheme.html)
     + [Workflow Scheme](Workflow-Scheme.html)
     + [Object Scheme](Object-Scheme.html)
++ [Reference Material](Reference.html)
+    + NginX auth options
+    + NginX reverse proxy to service
 
 
