@@ -23,8 +23,8 @@ hosting and keeping hosting cost to a minimum. It should work
 on small to medium EC2 instances with an S3 bucket for larger
 collections. A more elaborate but possibly more cost effective
 implementation would be replacing the web server with Cloud Front,
-the static file storage with S3 and running the API service in
-in AWS's container service or via their Lambda service.
+the static file storage with S3 and running the API service
+in AWS's container or via their Lambda service.
 
 
 ## Goals
