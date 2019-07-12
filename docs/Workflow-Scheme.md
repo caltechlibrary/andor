@@ -4,7 +4,7 @@ markup = "mmark"
 
 # Workflow Scheme
 
-Workflows encapsulate the concept of a queue [^1]
+Workflows encapsulate the concept of a queue[^1]
 and access crontol.  If a user if a member of a
 workflow they gain the permissions of that workflow for objects
 defined viewable in that workflow.  If a user
