@@ -10,7 +10,7 @@ concepts in our proof of concept **AndOr**.
     + [User Scheme](User-Scheme.html)
     + [Workflow Scheme](Workflow-Scheme.html)
     + [Object Scheme](Object-Scheme.html)
-+ [Oral Histories Use Case](Oral-Histories-Use-Case.html)
++ [Oral Histories as Proof of Concept](Oral-Histories-as-Proof-of-Concept.html)
     + [Proposed Schedule for Proof of Concept](Schedule.html)
 + [Reference Material](Reference.html)
     + NginX auth options
