@@ -2,7 +2,7 @@
 # Installation
 
 This software is a proof of concept. As such you need to have
-go version 1.12 or better to compile it.  Typically the
+Go version 1.12 or better to compile it.  Typically the
 following steps are done to install (example is Posix based).
 
 ```bash
