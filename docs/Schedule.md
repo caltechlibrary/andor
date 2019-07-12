@@ -12,7 +12,7 @@ than 200 EPrint records. It is a good canidate for the proof of
 concept **AndOr**.
 
 | Week No. | Activity |
-|:---------:|:---------|
+|:--------- |:-------- |
 | 1 | Update dataset to have automatic attachment versioning |
 | 1 | Add JSON document diff on update, versioning for metadata |
 | 1 | Harvest Oral Histories to use for test data |
