@@ -13,5 +13,5 @@ concepts in our proof of concept **AndOr**.
 + [Reference Material](Reference.html)
     + NginX auth options
     + NginX reverse proxy to service
-
++ [Proposed Schedule for Proof of concept](Schedule.html)
 
