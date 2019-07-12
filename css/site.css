@@ -271,3 +271,13 @@ pre {
 .red {
     color: red;
 }
+
+/* Mmark css */
+#footnote-section {
+    font-size: 80%;
+    display: none;
+}
+
+.footnotes {
+    font-size: 80%;
+}

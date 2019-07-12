@@ -4,7 +4,7 @@ markup = "mmark"
 
 # Workflow Scheme
 
-Workflows encapsulate the concept of a queue [^1][^1]
+Workflows encapsulate the concept of a queue [^1]
 and access crontol.  If a user if a member of a
 workflow they gain the permissions of that workflow for objects
 defined viewable in that workflow.  If a user
@@ -114,4 +114,4 @@ Object permissions can be "create", "update" and "read".  **AndOr**
 doesn't support delating objects.  You can create the 
 illusion of deletion by be clever with your workflow definitions.
 
-[^1]: objects have a field called "\_Workflow" that holds the name of the workflow they are currently associated with.
+[^1]: objects have a field called "\_WorkQueue" that holds the name of the workflow queue they are currently associated with

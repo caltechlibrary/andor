@@ -31,6 +31,13 @@ object. For a newly created object that assignment comes from the
 <a href="User-Schema.html">AndOr user scheme</a>. It will change as the object
 moves through a workflow.  <strong>dataset</strong> the storage engine of <strong>AndOr</strong> also adds a field to the objects&rsquo; schema. These include &ldquo;_Key&rdquo;. The <strong>AndOr</strong> JSON API can return the object clean using the ?clean=true URL parameter.</p>
 
+<pre><code class="language-json">    {
+        ... /* object's scheme here */
+        &quot;_Key&quot;: &quot;SOME_KEY_VALUE_HERE&quot;,
+        &quot;_WorkQueue&quot;: &quot;published&quot;
+    }       
+</code></pre>
+
 </section>
 
 <footer>
