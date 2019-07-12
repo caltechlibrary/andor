@@ -1,9 +1,8 @@
 
 # User Scheme
 
-While **AndOr** defers for managing users via a web UI and from
-storing user credentials it does still needs to track some basic
-user information.
+While **AndOr** manages users outside the web UI it still 
+needs to keep track os basic information.
 
 Below is an example JSON document describing the user Jane Doe.
 
