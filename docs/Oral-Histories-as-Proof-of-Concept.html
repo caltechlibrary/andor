@@ -32,7 +32,7 @@
 EPrints repository with a little less than 200 EPrint objects in
 it. It currently runs in a multi-host EPrints on some of our oldest
 hardware<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>.  Oral Histories also needs to run with HTTPS support.
-To achieve that in the current deployment would require restructing
+To achieve that in the current deployment would require restructuring
 the SSL certs. One of the deployments on that machine is Thesis
 redoing the certs would mean downtime and I'd like to avoid that for
 Thesis. In addition to needing SSL support, we need to swap out the
@@ -74,43 +74,43 @@ environment so you really want to keep you operating system and any
 dependent software (e.g. Perl, OpenSSL, MySQL) current. Each upgrade
 runs the risk of breaking our EPrints deployment.</p>
 
-<p>There are no addiquate non-EPrints replacements for EPrints today.
-We've been betting a likely canidates would emerge but it might be
+<p>There are no adequate non-EPrints replacements for EPrints today.
+We've been betting a likely candidates would emerge but it might be
 prudent to hedge that bet as they haven't appeared since I was
 hired by Caltech Library.</p>
 
 <p>I believe migrating any EPrints instance is at minimum a 4 to 8 weeks of
-full time continious work for me. I think this estimate will hold for
+full time continuous work for me. I think this estimate will hold for
 the first repository through the last repository migrated. Ideally each
 successive migration would be shorter as we automate the process.</p>
 
 <h2 id="opportunities">Opportunities</h2>
 
 <p>The Oral Histories repository is small, 200 objects. It has a small
-number of users who currate the content (e.g. max number is likely
+number of users who curate the content (e.g. max number is likely
 size of the Archives staff plus two). A few objects are added/updated
 per week depending on funding and interviewable individuals.
-The metadata and media files can be currated sperately from the
+The metadata and media files can be curated separately from the
 public facing website (like we do now with the feeds or the
 archives own website).</p>
 
-<p>The currator needs to have a list of new objects needing work and also
-be able to access published objects and assets should the need arize.
+<p>The curator needs to have a list of new objects needing work and also
+be able to access published objects and assets should the need arise.
 Ideally you wouldn't need to cut and paste the metadata between the
-curration tool and ArchivesSpace. Integrating generally with ArchivesSpace
+curation tool and ArchivesSpace. Integrating generally with ArchivesSpace
 would be desirable.</p>
 
 <p>It would be nice to have a newer designed website. It would be nice to
 have a good full text search available for content on the site
-(both in curration and for the public).</p>
+(both in curation and for the public).</p>
 
 <p>It is a straight forward project to take what we've already implemented
 for feeds.library.caltech.edu and adapt to the needs of a much better
 Oral Histories site for public viewing. This leaves us with allot of
-flexibility in picking the minimum feature set needed to currate the
+flexibility in picking the minimum feature set needed to curate the
 objects and media files.</p>
 
-<h2 id="curration-workflow-based-on-existing-eprints-implementation">Curration workflow based on existing EPrints implementation</h2>
+<h2 id="curation-workflow-based-on-existing-eprints-implementation">Curation workflow based on existing EPrints implementation</h2>
 
 <p>We have most of the software in parts for creating a light weight
 EPrints like system. What is lacking is a web service that functions
@@ -120,11 +120,11 @@ EPrints and already have tooling in place to due so.</p>
 
 <p>If we had a light weight EPrints like system migration would take
 a few days to a week or so depending on the EPrints repository,
-number of objects the customization to the curration form. This is
-considerabilty less than migrating EPrints itself.  The primary
+number of objects the customization to the curation form. This is
+considerably less than migrating EPrints itself.  The primary
 task would be the customization of the object edit and input forms
 to support each specific implementation. Additionally this light
-weight EPrints could be an <strong>interum solution</strong> while we wait for
+weight EPrints could be an <strong>interim solution</strong> while we wait for
 systems like
 <a href="https://zenodo.org/" title="An Object Repository System used in conjunction with CERN">Zenodo</a> or
 <a href="http://archipelago.nyc/" title="Metro's demonstration of their Open Source Digital Object Repository">Achepelligo</a>
@@ -148,7 +148,7 @@ can be modeled as a User Object and Workflow Objects.</p>
 
 <h3 id="decomposing-the-eprints-admin-functionality-for-oral-histories">Decomposing the EPrints Admin functionality for Oral Histories</h3>
 
-<p>If you are the &quot;admin&quot; user Oral Histories' EPrints curratorial
+<p>If you are the &quot;admin&quot; user Oral Histories' EPrints curatorial
 interface breaks down as follows--</p>
 
 <dl>
@@ -236,22 +236,30 @@ to drive feeds.library.caltech.edu. EPrints also shows us the model
 for users and workflows. Users are affiliated with workflows. Workflows
 are a queue of objects (objects hold a single value for workflow state).
 Works define what actions can be performed on an object (e.g. &quot;published&quot;
-is read only, a currator can see an &quot;edit&quot; link which takes them to a
+is read only, a curator can see an &quot;edit&quot; link which takes them to a
 web form).</p>
 
-<h3 id="we-can-avoid-the-things-that-repostory-systems-eprints-complicated">We can avoid the things that repostory systems (EPrints) complicated</h3>
+<h3 id="we-can-avoid-the-things-that-repository-systems-eprints-complicated">We can avoid the things that repository systems (EPrints) complicated</h3>
 
 <ul>
 <li>EPrints is complicated because it allows complete customization. Each
 customization though is technical debt because it complicates upgrades.</li>
 <li>EPrints is complicated because it much define and manage workflows. In
-a large library where administration is destributed across many staff
+a large library where administration is distributed across many staff
 this make sense. We're a small library (a tiny archive) which could
 make dues with a simple configuration file.</li>
-<li>EPrints is complicated because it needs to support hosting MANY collections independently behind the same web service. This is driven by history, this is how we originally built content management systems because campuses had a single web server. Today spinning up a web server is trivial, unless it's an EPrints web server.</li>
+<li>EPrints is complicated because it needs to support hosting MANY collections
+independently behind the same web service. This is driven by history, this is
+how we originally built content management systems because campuses had a
+single web server. Today spinning up a web server is trivial, unless it's an EPrints
+web server.</li>
 </ul>
 
-<p>We can avoid the complexity of EPrints for most of our EPrints deployments. It is likely we can even avoid complexity when supporting are larger repository if we separate the curration/submission process from publicly viewable websites and switch from SQL searches to full text searches based on something like Lunr, Solr or Elastic Search.</p>
+<p>We can avoid the complexity of EPrints for most of our EPrints deployments. It is
+likely we can even avoid complexity when supporting are larger repository if we
+separate the curation/submission process from publicly viewable websites and switch
+from SQL searches to full text searches based on something like Lunr, Solr or
+Elastic Search.</p>
 <h1 id="footnote-section">Footnotes</h1>
 
 <div class="footnotes">

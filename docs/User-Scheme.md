@@ -1,12 +1,11 @@
 
 # User Scheme
 
-While **AndOr** defers for managin users via a web UI and from
-storing user credentials it does still need to track some based
+While **AndOr** defers for managing users via a web UI and from
+storing user credentials it does still needs to track some basic
 user information.
 
 Below is an example JSON document describing the user Jane Doe.
-
 
 ```json
     {
@@ -23,7 +22,7 @@ user_id
 : (string, required) in this case an email address is a unique string used to map a user to their assigned workflows
 
 display_name
-: (string, optional) a display name, a conveience field for us Humans when IDs like an ORCID are less obvious
+: (string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious
 
 create_objects_as
 : (string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)
@@ -34,7 +33,7 @@ member_of
 
 ## How the user object is used
 
-When Jane authenticates with the system she goes from being 
+When Jane authenticates with the system she goes from being
 "anonymous" to "jane@example.edu" user.  This means she now has the
 permissions associated with "publisher", "editor" and "writer" workflows.
 If Jane creates a new object it will be created in the "writer" workflow.
@@ -55,10 +54,10 @@ only has read permissions for "published" objects. See [Workflow Use Cases](Work
 ## Picking IDs
 
 You can avoid the toxic storage of secrets by using an external
-authentication mechasism (e.g. OAuth 2) as well as limitting the
+authentication mechanism (e.g. OAuth 2) as well as limiting the
 value of your Unique id.  If you create users using an email address
 you do have some value but probably minimal value if that same
-email address is publically known (e.g. published in the 
+email address is publicly known (e.g. published in the
 institute directory).  This would be similar if you were using
 an ORCID as an identifier. ORCID is a nice choice because while
 the number is listable at [orcid.org](https://orcid.org) the

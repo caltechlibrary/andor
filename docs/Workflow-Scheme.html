@@ -27,19 +27,19 @@
 <h1 id="workflow-scheme">Workflow Scheme</h1>
 
 <p>Workflows encapsulate the concept of a queue<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>
-and access crontol.  If a user if a member of a
+and access control.  If a user if a member of a
 workflow they gain the permissions of that workflow for objects
 defined viewable in that workflow.  If a user
 is assigned to a workflow that is not defined they gain no additional
 permissions.  A user who is a member of a workflow acquires the
 permissions of that workflow for objects associated with that workflow(s).</p>
 
-<p>Here's an example of a workflow for someone allowed to currate any object
+<p>Here's an example of a workflow for someone allowed to curate any object
 in a collection.</p>
 
 <pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Currator&quot;,
-        &quot;workflow_id&quot;: &quot;currator&quot;
+        &quot;workflow_name&quot;: &quot;Curator&quot;,
+        &quot;workflow_id&quot;: &quot;curator&quot;
         &quot;object_permissions&quot;: [
             &quot;create&quot;,
             &quot;read&quot;,
@@ -60,17 +60,17 @@ in a collection.</p>
 <dt>assign_to</dt>
 <dd>(array of string, default is empty list) this holds the ids of the workflows you are allow to assign an object to, if the &quot;*&quot; string is included it means this workflow can assign an object to any other workflow</dd>
 <dt>view_objects</dt>
-<dd>(array of string, default is empty list) this holds the workflow ids of the objects you're allow to view, this is how we create a queue of objects. Ifthe workflow is listed as &quot;*&quot; it means you can see any object in the collection.  Note if you can see the object then the object_permissions apply.</dd>
+<dd>(array of string, default is empty list) this holds the workflow ids of the objects you're allow to view, this is how we create a queue of objects. If the workflow is listed as &quot;*&quot; it means you can see any object in the collection.  Note if you can see the object then the object_permissions apply.</dd>
 </dl>
 
-<p>In our example the workflow name is &quot;Currator&quot; and the id is &quot;currator&quot;.
+<p>In our example the workflow name is &quot;Curator&quot; and the id is &quot;curator&quot;.
 Because &quot;assign_to&quot; contains the &quot;*&quot; string. A user who is associated
-with the workflow &quot;currator&quot; (you can also think of this as a queue)
-can move objects to any other workflow. A currator can also see all objects
+with the workflow &quot;curator&quot; (you can also think of this as a queue)
+can move objects to any other workflow. A curator can also see all objects
 because &quot;view_objects&quot; also has the &quot;*&quot; string.</p>
 
 <p>Normally a workflow is defined more granularly. A typical system
-would have a queue for currator, published and delete. If you
+would have a queue for curator, published and delete. If you
 limit the permissions for each of these you can create an integrated
 workflow.</p>
 
@@ -79,27 +79,28 @@ has no object permissions in it. A &quot;delete&quot; workflow could look like</
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Deleted objects&quot;,
-        &quot;workflow_id&quot;: &quot;delete&quot;
-        &quot;object_permissions&quot;: []
-        &quot;assign_to&quot;: [],
-        &quot;view_object_ids&quot;: []
+        &quot;workflow_id&quot;: &quot;delete&quot;,
+        &quot;object_permissions&quot;: [ ],
+        &quot;assign_to&quot;: [ ],
+        &quot;view_object_ids&quot;: [ ]
     }
 </code></pre>
 
 <p>If a user has &quot;delete&quot; in their &quot;member_of&quot; OR they have
-&quot;delete&quot; in the &quot;asign_to&quot; list of a workflow they are a
+&quot;delete&quot; in the &quot;assign_to&quot; list of a workflow they are a
 member of they could put the objects into the delete workflow.
 If the a workflow they belong to can see all objects (e.g. our
-currator example) the object would still be viewable but be in the workflow state (queue) of deleted. Otherwise the objects in &quot;delete&quot; workflow
-state would not be visible.</p>
+curator example) the object would still be viewable but be in the
+workflow state (queue) of deleted. Otherwise the objects in &quot;delete&quot;
+workflow state would not be visible.</p>
 
 <p>Another common workflow would be &quot;published&quot;. The published workflow
 could be defined this way.</p>
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Publishd Objects&quot;,
-        &quot;workflow_id&quot;: &quot;published&quot;
-        &quot;object_permissions&quot;: [ &quot;read&quot; ]
+        &quot;workflow_id&quot;: &quot;published&quot;,
+        &quot;object_permissions&quot;: [ &quot;read&quot; ],
         &quot;assign_to&quot;: [ ],
         &quot;view_object_ids&quot;: [ &quot;published&quot; ]
     }
@@ -123,9 +124,9 @@ would allow unauthenticated users to see published objects.</p>
 in this workflow. A object's workflow assignment also makes
 a workflow behave as a queue.</p>
 
-<p>Object permissions can be &quot;create&quot;, &quot;update&quot; and &quot;read&quot;.  <strong>AndOr</strong>
-doesn't support delating objects.  You can create the
-illusion of deletion by be clever with your workflow definitions.</p>
+<p>Object permissions can be &quot;create&quot;, &quot;update&quot; and &quot;read&quot;.<br>
+<strong>AndOr</strong> doesn't support delating objects.  You can create the
+illusion of deletion by cleverly defining a &quot;delete&quot; workflow.</p>
 <h1 id="footnote-section">Footnotes</h1>
 
 <div class="footnotes">

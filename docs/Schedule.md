@@ -4,11 +4,11 @@ markup = "mmark"
 
 # Oral Histories as Proof of concept
 
-[Oral Histories](http://oralhistories.caltech.edu) is one of our 
-smaller EPrints installations. It will need migrating soon 
+[Oral Histories](http://oralhistories.caltech.edu) is one of our
+smaller EPrints installations. It will need migrating soon
 because it is running on one of our older blades, lacks https
-support and should be run on a more recent OS.  It has less 
-than 200 EPrint records. It is a good canidate for the proof of 
+support and should be run on a more recent OS.  It has less
+than 200 EPrint records. It is a good candidate for the proof of
 concept **AndOr**.
 
 | Week No. | Activity |
@@ -21,8 +21,11 @@ concept **AndOr**.
 | 3 | Harvest Oral Histories for demo deployment |
 | 3 | Lunr integration and NginX configuration for Authentication |
 | 4 | Deploy a demo of a migrated Oral Histories on EC2 |
-Table: Proposed schedule assume full time focus
+Table: Proposed schedule assumes full time effort
 
-Pad this schedule by 1-3 weeks wise given the usually level of 
-interruptions.
+Migrating other EPrint repositories will involve validating
+harvested content and updating the HTML/JavaScript to meet
+the repositories' needs. This means the migration process
+after the first one will likely decrease with each move instead
+of remaining constant.
 

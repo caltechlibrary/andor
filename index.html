@@ -31,11 +31,11 @@
 </blockquote>
 
 <p>This is a concept document for a very light weight digital object
-repository. If prototoyped successfully it could serve as an
+repository. If prototyped successfully it could serve as an
 interim repository for some of our EPrints repositories.</p>
 
 <p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a> collections, simple  configuration files, a minimal JSON
-semi-RESTful web API plus staticly hosted HTML and Javascript.
+semi-RESTful web API plus statically hosted HTML and Javascript.
 A running system would probably consist of only a few pieces of
 software. The software stack could be as light as a web server
 (e.g. NginX, Apache) providing integration options for authentication
@@ -43,7 +43,7 @@ software. The software stack could be as light as a web server
 written in Go. If the collection was larger we could create
 a search interface via Python and Lunr, otherwise search could be
 implemented browser side with Lunr.  This arrangement has the
-advantage of limitting the code to be written to the
+advantage of limiting the code to be written to the
 web service, some HTML pages and a bit of JavaScript.  This
 particular architecture is much more aligned with cloud
 hosting and keeping hosting cost to a minimum. It should work
@@ -56,7 +56,7 @@ in AWS&rsquo;s container service or via their Lambda service.</p>
 <h2>Goals</h2>
 
 <ul>
-<li>Provide an <strong>interum option</strong> for EPrints repositories</li>
+<li>Provide an <strong>interim option</strong> for EPrints repositories</li>
 <li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)
 
 <ul>
@@ -68,7 +68,7 @@ in AWS&rsquo;s container service or via their Lambda service.</p>
 <li>Support diffs for JSON metadata changes</li>
 <li>Support continuous migration</li>
 <li>Support alternative front ends (e.g. Drupal)</li>
-<li>Be extremely easy to migrate out of it (e.g. to Zenodo or Archipellego)</li>
+<li>Be extremely easy to migrate out of it (e.g. to Zenodo or Archipelago)</li>
 <li>Be faster than EPrints particularly when under load</li>
 </ul>
 
@@ -76,7 +76,7 @@ in AWS&rsquo;s container service or via their Lambda service.</p>
 
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
-<li>a small number of curratorial users</li>
+<li>a small number of curatorial users</li>
 <li>a larger number of readers or potential depositors</li>
 <li>configurable workflows are a requirement</li>
 <li>workflows describe capabilities (permissions)</li>
@@ -91,7 +91,7 @@ in AWS&rsquo;s container service or via their Lambda service.</p>
 <li>UI can be implemented using HTML 5 elements and minimal JavaScript</li>
 </ul>
 
-<h2>Limitting features and complexity</h2>
+<h2>Limiting features and complexity</h2>
 
 <p>Some of the most complicated parts of a digital object repositories
 are code managing customization, managing users, workflows,
@@ -108,8 +108,8 @@ reduces the lines of code needed to produce a modern web UI.</p>
 <p>Two API end points would be required <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
 to provide an Object&rsquo;s details and <code>/COLLECTION_NAME/objects/</code>. The
 later may accept a filter by queue/workflow name. All other end
-points are static resources (e.g. index.html, CSS, lunr indexes).
-Recuding service to two end points reflects our experience with
+points are static resources (e.g. index.html, CSS, Lunr indexes).
+Reducing service to two end points reflects our experience with
 the EPrints REST API.  The API end points only need to support GET
 and POST operations and can be restricted to expecting JSON
 object responses which should simplify writing the web forms for
@@ -125,13 +125,13 @@ JavaScript.</p>
 <li>Login and landing page</li>
 </ol>
 
-<p>Authenticated users return their authenticated user id, e.g.
-(e.g.  ORCID if authenticating via orcid.org). The user id
+<p>Authenticated users return their authenticated user id
+(e.g. ORCID if authenticating via orcid.org). The user id
 will be used to map users to their workflows.</p>
 
 <p>Unauthenticated users are treated as the &ldquo;anonymous&rdquo; user and
 are restricted by workflows available for that user. This is how
-you would control having a dark versus publically visible repository.</p>
+you would control having a dark versus publicly visible repository.</p>
 
 <p>A user&rsquo;s membership in workflows/queue defines their permissions.</p>
 

@@ -26,8 +26,8 @@
 <section>
 <h1>User Scheme</h1>
 
-<p>While <strong>AndOr</strong> defers for managin users via a web UI and from
-storing user credentials it does still need to track some based
+<p>While <strong>AndOr</strong> defers for managing users via a web UI and from
+storing user credentials it does still needs to track some basic
 user information.</p>
 
 <p>Below is an example JSON document describing the user Jane Doe.</p>
@@ -46,7 +46,7 @@ user information.</p>
 <dt>user_id</dt>
 <dd>(string, required) in this case an email address is a unique string used to map a user to their assigned workflows</dd>
 <dt>display_name</dt>
-<dd>(string, optional) a display name, a conveience field for us Humans when IDs like an ORCID are less obvious</dd>
+<dd>(string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious</dd>
 <dt>create_objects_as</dt>
 <dd>(string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)</dd>
 <dt>member_of</dt>
@@ -76,10 +76,10 @@ only has read permissions for &ldquo;published&rdquo; objects. See <a href="Work
 <h2>Picking IDs</h2>
 
 <p>You can avoid the toxic storage of secrets by using an external
-authentication mechasism (e.g. OAuth 2) as well as limitting the
+authentication mechanism (e.g. OAuth 2) as well as limiting the
 value of your Unique id.  If you create users using an email address
 you do have some value but probably minimal value if that same
-email address is publically known (e.g. published in the
+email address is publicly known (e.g. published in the
 institute directory).  This would be similar if you were using
 an ORCID as an identifier. ORCID is a nice choice because while
 the number is listable at <a href="https://orcid.org">orcid.org</a> the

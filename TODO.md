@@ -11,7 +11,7 @@
 + [ ] Write up basic approach
 + [ ] Write up use cases demonstrating how we address minimal requirements
 + [ ] Write up some use cases based on existing EPrints usage
-+ [ ] Document proposed schema (e.g. workflow, andor user)
++ [ ] Document proposed schema (e.g. workflow, AndOr user)
 + [ ] Evaluate using diff to created versioned metadata
     + https://github.com/sergi/go-diff
     + https://godoc.org/golang.org/x/perf/internal/diff
