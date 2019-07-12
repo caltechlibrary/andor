@@ -16,15 +16,15 @@ software. The software stack could be as light as a web server
 written in Go. If the collection was larger we could create
 a search interface via Python and Lunr, otherwise search could be
 implemented browser side with Lunr.  This arrangement has the 
-advantage of limitting the code that has to be written to the 
-web service plus some HTML pages and a bit of JavaScript.  This 
-particular architecture that is much more aligned with cloud 
-hosting and keeping hosting cost to a minimum. You probably
-only need a small EC2 instance and maybe an S3 bucket for the
-proof of concept. A more elaborate but possibly more cost effective
+advantage of limitting the code to be written to the 
+web service, some HTML pages and a bit of JavaScript.  This 
+particular architecture is much more aligned with cloud 
+hosting and keeping hosting cost to a minimum. It should work
+on small to medium EC2 instances with an S3 bucket for larger
+collections. A more elaborate but possibly more cost effective
 implementation would be replacing the web server with Cloud Front,
 the static file storage with S3 and running the API service in
-one of AWS's container services or on Lambda.
+in AWS's container service or via their Lambda service.
 
 
 ## Goals
@@ -81,7 +81,8 @@ and POST operations and can be restricted to expecting JSON
 object responses which should simplify writing the web forms for
 creating and updating objects.
 
-Four pages would need to be designed 
+Four pages would need to be designed and implemented in HTML, CSS and
+JavaScript.
 
 1. Display List records
 2. Display Object details
@@ -114,6 +115,7 @@ objects into a "delete" queue.
     + [Workflow Scheme](docs/Workflow-Scheme.html)
     + [AndOr User Scheme](docs/User-Scheme.html)
 + [Setting Up AndOr](docs/Setting-up-AndOr.html)
-
++ [Oral Histories Use Case](docs/Oral-Histories-Use-Case.html)
++ [Proposed Schedule for protototype](docs/Schedule.html)
 
 
