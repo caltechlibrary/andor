@@ -129,16 +129,16 @@ a workflow queue called "deposit".
 ```
 
 Because the object created will have the workflow queue "deposit" and
-our "curators" workflow queue has permissions to list all objects workflow queues
-we can treat the "deposit" workflow queue a an inbox to be processed.
-If the curators approved the deposit they can change the objects'
-workflow queue to "published".
+our "curators" workflow queue has permissions to list all objects workflow 
+queues we can treat the "deposit" workflow queue as an inbox to be 
+processed.  If the curators approved the deposit they can change the 
+objects' workflow queue to "published".
 
 ## Use case 4
 
-Creating workflows with workflow queues. We would like our objects to travel
+Creating workflows with queues. We would like our objects to travel
 through the following states - deposit, review, then either be
-flagged with publish, embargo, and needs curation.
+flagged published, embargo, or needs curation.
 
 Here are some of our policies we want to enforce.
 
@@ -214,10 +214,10 @@ objects. Publishers can do anything.
 
 In this use case Olive needs to be able to edit her
 deposits but not someone else's. We can do this by
-create an "olive" workflow queue which and having that as
+create an "olive" workflow queue which and having that be 
 the default workflow queue when she creates a new object.
 We can also associate olive with the writer workflow queue
-which can change permissions to reviewer.
+which is allowed to change the queue to reviewer.
 
 Here is Olive's workflow queue
 
@@ -262,12 +262,12 @@ Here is Olive's user object
     }
 ```
 
-Olive's workflow is then to create, edit update or delete
+Olive's workflow is then to create, update or delete
 any object with a workflow queue of "olive" (her objects) and because
 she is a member of the writer's workflow queue she has permission to
-change the ownership of her object to "reviewer". At this
+change the ownership of her objects to "reviewer". At this
 point she will not be able to see or change the object. It is
-now the reviewer's responsibility to do something with that object.
+the reviewer's responsibility to do something with that object.
 
 ```json
     {
@@ -338,3 +338,4 @@ And finally the publisher has permissions on everything.
         "view_object_ids": [ "*" ]
     }
 ```
+

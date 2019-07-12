@@ -147,16 +147,16 @@ a workflow queue called &ldquo;deposit&rdquo;.</p>
 </code></pre>
 
 <p>Because the object created will have the workflow queue &ldquo;deposit&rdquo; and
-our &ldquo;curators&rdquo; workflow queue has permissions to list all objects workflow queues
-we can treat the &ldquo;deposit&rdquo; workflow queue a an inbox to be processed.
-If the curators approved the deposit they can change the objects&rsquo;
-workflow queue to &ldquo;published&rdquo;.</p>
+our &ldquo;curators&rdquo; workflow queue has permissions to list all objects workflow
+queues we can treat the &ldquo;deposit&rdquo; workflow queue as an inbox to be
+processed.  If the curators approved the deposit they can change the
+objects&rsquo; workflow queue to &ldquo;published&rdquo;.</p>
 
 <h2>Use case 4</h2>
 
-<p>Creating workflows with workflow queues. We would like our objects to travel
+<p>Creating workflows with queues. We would like our objects to travel
 through the following states - deposit, review, then either be
-flagged with publish, embargo, and needs curation.</p>
+flagged published, embargo, or needs curation.</p>
 
 <p>Here are some of our policies we want to enforce.</p>
 
@@ -233,10 +233,10 @@ objects. Publishers can do anything.</p>
 
 <p>In this use case Olive needs to be able to edit her
 deposits but not someone else&rsquo;s. We can do this by
-create an &ldquo;olive&rdquo; workflow queue which and having that as
+create an &ldquo;olive&rdquo; workflow queue which and having that be
 the default workflow queue when she creates a new object.
 We can also associate olive with the writer workflow queue
-which can change permissions to reviewer.</p>
+which is allowed to change the queue to reviewer.</p>
 
 <p>Here is Olive&rsquo;s workflow queue</p>
 
@@ -278,12 +278,12 @@ which can change permissions to reviewer.</p>
     }
 </code></pre>
 
-<p>Olive&rsquo;s workflow is then to create, edit update or delete
+<p>Olive&rsquo;s workflow is then to create, update or delete
 any object with a workflow queue of &ldquo;olive&rdquo; (her objects) and because
 she is a member of the writer&rsquo;s workflow queue she has permission to
-change the ownership of her object to &ldquo;reviewer&rdquo;. At this
+change the ownership of her objects to &ldquo;reviewer&rdquo;. At this
 point she will not be able to see or change the object. It is
-now the reviewer&rsquo;s responsibility to do something with that object.</p>
+the reviewer&rsquo;s responsibility to do something with that object.</p>
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Reviewer&quot;,
