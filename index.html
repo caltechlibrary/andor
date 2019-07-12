@@ -29,31 +29,44 @@
 </blockquote>
 
 <p>This is a concept document for a very light weight digital object
-repository. If prototoyped it could serve as an interim repository
-for some of our simple EPrints deployments. <strong>Andor</strong> would be
-built from <a href="https://caltechlibrary.github.io/dataset">dataset</a>
-collections, configuration files, a simple JSON oriented web API
-and UI created via HTML 5 and JavaScript served from a static
-htdocs directory.  It would consist of to pieces of software,
-a web server (e.g. NginX, Apache) providing integration options
-for authentication as well as search engine support and the
-<strong>AndOr</strong> program which would be use to create a web service
-to respond to the static content and UI.</p>
+repository. If prototoyped successfully it could serve as an
+interim repository for some of our simple EPrints deployments.</p>
+
+<p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a> collections, simple  configuration files, a minimal JSON
+semi-RESTful web API plus staticly hosted HTML and Javascript.
+A running system would probably consist of only a few pieces of
+software. The software stack could be as light as a web server
+(e.g. NginX, Apache) providing integration options for authentication
+(e.g. BasicAUTH, Shibboleth) plus the <strong>AndOr</strong> web service
+written in Go. If the collection was larger we could create
+a search interface via Python and Lunr, otherwise search could be
+implemented browser side with Lunr.  This arrange has the advantage
+of limitting the code that has to be written to the web service
+plus some HTML pages and a bit of JavaScript.  This particular
+architecture that is much more aligned with cloud hosting and
+keeping hosting cost to a minimum a small EC2 instance and an S3 bucket
+is probably all you need.  With some planning you could probably get
+costs down further by replacing the web server with Cloud Front,
+moving all storage to S3 and using Amazon&rsquo;s Lambda or container
+service to host <strong>AndOr</strong> web service.</p>
 
 <h2>Goals</h2>
 
 <ul>
-<li>Provide an <strong>interum option</strong> for simple EPrints repositories</li>
+<li>Provide an <strong>interum option</strong> for EPrints repositories</li>
 <li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)
 
 <ul>
 <li>Be simpler than EPrints, Invenio, Drupal/Islandora</li>
 <li>Be easier than migrating our EPrints repositories to the cloud</li>
 </ul></li>
-<li>Support existing schema</li>
+<li>Use existing schema</li>
 <li>Support versioned attached media files</li>
+<li>Support diffs for JSON metadata changes</li>
 <li>Support continuous migration</li>
 <li>Support multiple front ends (e.g. static HTML or Drupal)</li>
+<li>Be extremely easy to migrate out of it (e.g. to a future Zenodo or Archipelego)</li>
+<li>Be faster than EPrints especially EPrints when under a load</li>
 </ul>
 
 <h2>Assumptions</h2>
@@ -66,8 +79,8 @@ to respond to the static content and UI.</p>
 <li>workflows describe capabilities (permissions)</li>
 <li>workflows describe a work queue (object state)</li>
 <li>use existing object scheme (e.g. EPrints Oral Histories)</li>
-<li>authentication is external (e.g. OAuth or Basic Author)</li>
-<li>search and query are handle independently (e.g. Lunr)</li>
+<li>authentication is external (e.g. OAuth or Basic Author using the front end web server)</li>
+<li>search and query are handle independently (e.g. Lunr either browser or server side)</li>
 <li>UI can be implemented using HTML 5 elements and minimal JavaScript</li>
 </ul>
 
@@ -77,28 +90,33 @@ to respond to the static content and UI.</p>
 is managing customization,  managing users, workflows, permissions
 and enforcing storage scheme.  To simplify this <strong>AndOr</strong> is
 using a workflow/work queue oriented permission scheme. The permission
-scheme is configured/managed outside the web UI of <strong>AndOr</strong>.
-Users are define/managed outside the web UI of <strong>AndOr</strong>.
-Password management is deferred to the authenticating service.
-Managing users, workflows and permissions reduces the end points
-needed in the API and radically reduces the lines of code needed
-to produce a modern web UI.</p>
+scheme is configured/managed outside the web UI of <strong>AndOr</strong>. It&rsquo;s
+just a mater of creating some JSON objects and storing them in a
+dataset collection that <strong>AndOr</strong> reads.  Users are define/managed
+outside the web UI of <strong>AndOr</strong>.  Password management is deferred
+to the authenticating service.  Managing users, workflows and
+permissions reduces the end points needed in the API and radically
+reduces the lines of code needed to produce a modern web UI.</p>
 
 <p>Two API end points would be required <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
 to provide an Object&rsquo;s details and <code>/COLLECTION_NAME/objects/</code>. The
 later may accept a filter by queue/workflow name. All other end
 points are static resources (e.g. index.html, CSS, lunr indexes).
-The two end points reflects our experience with the EPrints REST API.
-The API also only supports GET and POST and always recieves or responds
-with JSON encoded objects.</p>
+Recuding service to two end points reflects our experience with
+the EPrints REST API.  The API end points only need to support GET
+and POST operations and can be restricted to expecting JSON
+object responses which should simplify writing the update code
+for data coming from the browser.</p>
 
 <p>Initially the UI will consist of listing records, viewing record
 details, list of records by work queue (workflow state),
-a page to create/read/edit individual objects and a login page.</p>
+a page to create/read/edit individual objects and a login page.
+Once that is working we can generate Lunr indexes and additionally
+provide that as a means of record discover and retrieval.</p>
 
 <p>Authenticated users return their authenticated user id, e.g.
-(e.g.  ORCID using OAuth). The user id will be used to map users
-to their workflows.</p>
+(e.g.  ORCID if authenticating via orcid.org). The user id
+will be used to map users to their workflows.</p>
 
 <p>Unauthenticated users are treated as the &ldquo;anonymous&rdquo; user and
 are restricted by workflows available for that user. This is how
@@ -109,7 +127,8 @@ you would control having a dark versus publically visible repository.</p>
 <p><strong>AndOr</strong> is built on dataset so all objects must have unique ids.
 Objects may include attached documents which will be versioned
 automatically (a feature available in an upcoming release of
-dataset).</p>
+dataset).  We can also store diffs of the JSON documents for
+metadata versioning.</p>
 
 <p><strong>AndOr</strong> does not directly support deleting objects. You can
 create this ability through creating a &ldquo;delete&rdquo; workflow type.

@@ -263,6 +263,10 @@ footer a, footer a:link, footer a:visited, footer a:active, footer a:focus, foot
      text-decoration: none;
 }
 
+/* Stuff to improve prettyprint in code blocks */
+pre {
+    width: 90%;
+}
 
 .red {
     color: red;

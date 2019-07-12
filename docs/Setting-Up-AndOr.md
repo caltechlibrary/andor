@@ -1,18 +1,17 @@
 
-# Setting Up Andor
+# Setting Up AndOr
 
 **AndOr** is experimental, a proof of concept so you're expected
 to clone the git repo and compile it before following the steps
 to setup and run it.
 
-# Setting up Andor
+# Steps
 
 1. Clone the AndOr repository
 2. Make AndOr
-3. Initialize a collections for user, workflows, and repository
-4. Add workflow(s)
-5. Add user(s)
-6. Start up AndOr and view with your web browser
+3. Initialize dataset collections for user, workflows and repository
+4. Add workflow(s) and user(s)
+5. Start up AndOr and view with your web browser
 
 ## Example: A simple repository using your ORCID for user id
 
@@ -33,7 +32,7 @@ to setup and run it.
 
     # Startup the AndOr web service (we're hosting a single object
     # collection.
-    bin/AndOr run-service repository.ds 
+    bin/AndOr start
 ```
 
 **AndOr** by default runs at http://localhost:8123. You can use

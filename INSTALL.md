@@ -9,14 +9,13 @@ following steps are done to install (example is Posix based).
     git clone https://github.com/caltechlibrary/AndOr
     cd AndOr
     go build -o bin/AndOr cmd/AndOr/AndOr.go
-    PATH="./bin:${PATH}"
-    export PATH
 ```
 
 You can then run the following to see if the tool works.
 
 ```bash
-    AndOr version
-    AndOr help
+    bin/AndOr -help
 ```
+
+See [Setting Up AndOr](docs/Setting-Up-AndOr.html) for details.
 
