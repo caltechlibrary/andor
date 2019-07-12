@@ -12,6 +12,6 @@ import (
 	"testing"
 )
 
-func Tests(t *testing.T) {
-	t.Errorf("Tests Not implemented")
+func TestAndOr(t *testing.T) {
+	t.Errorf("andor_test.go, Tests Not implemented")
 }
