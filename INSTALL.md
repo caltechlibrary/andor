@@ -2,8 +2,9 @@
 # Installation
 
 This software is a proof of concept. As such you need to have
-Go version 1.12 or better to compile it.  Typically the
-following steps are done to install (example is Posix based).
+Go version 1.12 or better to compile it and then to manually
+install it.  Typically the following steps are done to install 
+(example is Posix based).
 
 ```bash
     git clone https://github.com/caltechlibrary/AndOr

@@ -12,15 +12,15 @@
 <li><a href="./">README</a></li>
 <li><a href="license.html">LICENSE</a></li>
 <li><a href="install.html">INSTALL</a></li>
-<li><a href="./docs">Documentation</a>
-<!-- + [Github](https://github.com/caltechlibrary/AndOr) -->
+<li><a href="./docs">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a>
 <!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
 </ul>
 
 </nav>
 
 <section>
-<h1>AndOr</h1>
+<h1 id="andor">AndOr</h1>
 
 <blockquote>
 <p><span class="red">An</span>other <span class="red">d</span>igital <span class="red">O</span>bject <span class="red">r</span>epository</p>
@@ -28,120 +28,154 @@
 
 <p>This is a concept document for a very light weight digital object
 repository. If prototyped successfully it could serve as an
-interim repository for some of our EPrints repositories.</p>
+interim repository for the EPrints repositories we plan to migrate.</p>
 
-<p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a> collections, simple  configuration files, a minimal JSON
-semi-RESTful web API plus statically hosted HTML and Javascript.
-A running system would probably consist of only a few pieces of
-software. The software stack could be as light as a web server
-(e.g. NginX, Apache) providing integration options for authentication
-(e.g. BasicAUTH, Shibboleth) plus the <strong>AndOr</strong> web service
-written in Go. If the collection was larger we could create
-a search interface via Python and Lunr, otherwise search could be
-implemented browser side with Lunr.  This arrangement has the
-advantage of limiting the code to be written to the
-web service, some HTML pages and a bit of JavaScript.  This
-particular architecture is much more aligned with cloud
-hosting and keeping hosting cost to a minimum. It should work
+<p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a> collections, a semi-RESTful web API, and HTML with JavaScript.
+A running system would probably consist of only a two or three
+pieces of software. The minimum would be a web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>
+plus the <strong>AndOr</strong> service supporting interaction with the
+dataset collection.  If the collection was larger you could create
+a micro service providing search via Python and Lunr<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.
+This arrangement has the advantage of limiting the code to be written
+to the <strong>AndOr</strong> web service plus the HTML and JavaScript
+needed to create an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
+
+<p>This particular architecture is much more aligned with
+cloud hosting and keeping hosting cost to a minimum. It should work
 on small to medium EC2 instances with an S3 bucket for larger
 collections. A more elaborate but possibly more cost effective
 implementation would be replacing the web server with Cloud Front,
 the static file storage with S3 and running the API service
-in AWS&rsquo;s container or via their Lambda service.</p>
+in AWS's container or via their Lambda service.</p>
 
-<h2>Goals</h2>
-
-<ul>
-<li>Provide an <strong>interim option</strong> for EPrints repositories</li>
-<li>Thin stack (e.g. No RDMS requirement, only AndOr and a web server)
+<h2 id="goals">Goals</h2>
 
 <ul>
+<li>Provide an <strong>interim option</strong> for EPrints repositories requiring migration</li>
+<li>Thin stack
+
+<ul>
+<li>No RDMS requirement (only AndOr and a web server)</li>
+<li>Be easier than migrating our EPrints</li>
+<li>Be faster than EPrints under load</li>
 <li>Be simpler than EPrints, Invenio, Drupal/Islandora</li>
-<li>Be easier than migrating our EPrints repositories to the cloud</li>
 </ul></li>
 <li>Use existing schema</li>
 <li>Support versioned attached media files</li>
-<li>Support diffs for JSON metadata changes</li>
 <li>Support continuous migration</li>
 <li>Support alternative front ends (e.g. Drupal)</li>
-<li>Be extremely easy to migrate out of it (e.g. to Zenodo or Archipelago)</li>
-<li>Be faster than EPrints particularly when under load</li>
 </ul>
 
-<h2>Project Assumptions</h2>
+<h2 id="project-assumptions">Project Assumptions</h2>
 
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
-<li>a small number of curatorial users</li>
-<li>a larger number of readers or potential depositors</li>
-<li>configurable workflows are a requirement</li>
+<li>UI can be implemented using HTML 5 elements and minimal JavaScript</li>
+<li>Small number of curatorial users, larger number of readers</li>
+<li>Configurable workflows are a requirement
+
+<ul>
 <li>workflows describe capabilities (permissions)</li>
 <li>workflows describe a work queue (object state)</li>
-<li>use existing object scheme (e.g. EPrints Oral Histories)</li>
-<li>authentication is external (e.g. Basic AUTH via web server)</li>
-<li>search and query are handle independently of API
+</ul></li>
+<li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
+<li>Authentication is external (e.g. Basic AUTH via web server)</li>
+<li>Search and query are handle independently of API
 
 <ul>
 <li>e.g. Lunr either browser or server side</li>
 </ul></li>
-<li>UI can be implemented using HTML 5 elements and minimal JavaScript</li>
 </ul>
 
-<h2>Limiting features and complexity</h2>
+<h2 id="limiting-features-and-complexity">Limiting features and complexity</h2>
 
-<p>Some of the most complicated parts of a digital object repositories
-are code managing customization, managing users, workflows,
-permissions and enforcing storage scheme.  To simplify this <strong>AndOr</strong> is
-using a workflow/work queue oriented permission scheme. The permission
-scheme is configured/managed outside the web UI of <strong>AndOr</strong>. It&rsquo;s
-just a mater of creating some JSON objects and storing them in a
-dataset collection that <strong>AndOr</strong> reads.  Users are also define/managed
-outside the web UI of <strong>AndOr</strong>.  User password management is deferred
-to the authenticating service.  Managing users, workflows and
-permissions reduces the end points needed in the API and radically
-reduces the lines of code needed to produce a modern web UI.</p>
+<p>Some of the most complicated parts of digital object repositories
+are managing customization, managing users, manage workflows,
+manage permissions and enforcing storage scheme.  <strong>AndOr</strong>'s
+simplication involves either avoiding the requirements or relocating
+them external to the system.</p>
 
-<p>Two API end points would be required <code>/COLLECTION_NAME/objects/OBJECT_ID</code>
-to provide an Object&rsquo;s details and <code>/COLLECTION_NAME/objects/</code>. The
-later may accept a filter by queue/workflow name. All other end
-points are static resources (e.g. index.html, CSS, Lunr indexes).
-Reducing service to two end points reflects our experience with
-the EPrints REST API.  The API end points only need to support GET
-and POST operations and can be restricted to expecting JSON
-object responses which should simplify writing the web forms for
-creating and updating objects.</p>
+<p>Examples--</p>
 
-<p>Four pages would need to be designed and implemented in HTML, CSS and
-JavaScript.</p>
+<ul>
+<li>Authentication is handle externally. That means we don't need to worry about managing passwords, the volitile and sensitive data is outside of our system</li>
+<li><strong>AndOr</strong> itself is a simple web API that accepts URL requests
+and hands back JSON. The shape of the JSON is determined at time of
+migrating into <strong>AndOr</strong>. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.</li>
+<li>If you need additional end points beyond what <strong>AndOr</strong> provides (e.g. a search engine service) you supply those as micro services</li>
+</ul>
+
+<p>The web browser itself creates the illusion of a unified software system
+or single process. A single appliction is not required to support desire
+functionality.</p>
+
+<p>Some features are unavoidable. The repository problem requires managing
+users and workflows. It doesn't require users and workflows
+be manage through the web. Setting up users and workflows can be
+managed through simplier command line tools in large part because
+you've off loaded identify management already.</p>
+
+<p>By focusing on a minimal feature set and leveraging technical
+operatunities that already exist we can radically
+reduces the lines of code that has be written or maintained.</p>
+
+<h3 id="two-end-points-for-our-api">Two end points for our API</h3>
+
+<p>Two web API end points would be required
+<code>/COLLECTION_NAME/objects/OBJECT_ID</code> to provide an Object's details
+and <code>/COLLECTION_NAME/objects/</code> to list objects. The later may
+accept a filter by queue/workflow name. All other end points are
+static resources (e.g. HTML files, CSS, JavaScript and
+Lunrjs indexes).  We can reducing our requirements to two end
+points because we've already discovered it was all we needed
+to integrate with the EPrints REST API.  Everything else can
+be synthesized from them.</p>
+
+<h3 id="building-a-ui">Building a UI</h3>
+
+<p>Five pages would need to be designed and implemented in HTML, CSS and
+JavaScript for our proof of concept.</p>
 
 <ol>
-<li>Display List records</li>
-<li>Display Object details</li>
-<li>Search UI</li>
 <li>Login and landing page</li>
+<li>Display List records (filterable by work queue)</li>
+<li>Display Object details</li>
+<li>Create/edit Object details</li>
+<li>Search UI</li>
 </ol>
 
-<p>Authenticated users return their authenticated user id
-(e.g. ORCID if authenticating via orcid.org). The user id
-will be used to map users to their workflows.</p>
+<p>For public facing content (e.g. the things you want
+Google, Bing, et el. to find) can be deployed by a simple batch
+process that updates a public website. It can be external to the
+curratorial aspects of a digital object repository.</p>
 
-<p>Unauthenticated users are treated as the &ldquo;anonymous&rdquo; user and
-are restricted by workflows available for that user. This is how
-you would control having a dark versus publicly visible repository.</p>
+<h3 id="user-plus-workflow-a-simple-model">user plus workflow, a simple model</h3>
 
-<p>A user&rsquo;s membership in workflows/queue defines their permissions.</p>
+<p>An authenticated user exposes their user id. A user's id
+maps to membership in workflows. The workflow defines access.</p>
 
-<p><strong>AndOr</strong> is built on dataset so all objects must have unique ids.
-Objects may include attached documents which will be versioned
-automatically (a planned feature available in an upcoming
-release of dataset).  We can also store diffs of the JSON
-documents for metadata versioning.</p>
+<p>Unauthenticated users are treated as the &quot;anonymous&quot; user and
+are restricted by workflows available for the &quot;anonymous&quot; user.
+This is how you would control having a dark versus publicly
+visible repository.</p>
+
+<p>Complicated use cases integrations like community deposit could
+then be deferred to a micro service(s) created for that purpose.
+The micro services become simpler because of their narrow focus
+and limitted abilities.</p>
+
+<h3 id="under-the-hood">Under the hood</h3>
+
+<p><strong>AndOr</strong> is built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
+Objects may include attached documents which can be versioned
+automatically. If metadata versioning becomes required dataset
+can be extended to store diffs as well as the JSON documents.</p>
 
 <p>Like EPrints <strong>AndOr</strong> does not directly support deleting objects.
-Instead we can create the illusion of deleting objects by putting
-objects into a &ldquo;delete&rdquo; queue.</p>
+Instead it can create the illusion of deleting objects by putting
+objects into a &quot;delete&quot; queue which is not visible to users.</p>
 
-<h2>Additional ideas</h2>
+<h2 id="additional-ideas">Additional ideas</h2>
 
 <ul>
 <li><a href="docs/Workflow-Use-Cases.html">Workflow use cases</a>
@@ -151,12 +185,28 @@ objects into a &ldquo;delete&rdquo; queue.</p>
 <li><a href="docs/User-Scheme.html">AndOr User Scheme</a></li>
 </ul></li>
 <li><a href="docs/Setting-up-AndOr.html">Setting Up AndOr</a></li>
+<li><a href="docs/migrating-eprints.html">Migrating an EPrints repository</a></li>
 <li><a href="docs/Oral-Histories-Use-Case.html">Oral Histories Use Case</a>
 
 <ul>
 <li><a href="docs/Schedule.html">Proposed Schedule for Proof of Concept</a></li>
 </ul></li>
 </ul>
+<h1 id="footnote-section">Footnotes</h1>
+
+<div class="footnotes">
+
+<hr>
+
+<ol>
+<li id="fn:1">NginX and Apache provide authentication mechanisms such as Basic AUTH, Shibboleth and OAuth 2.</li>
+
+<li id="fn:2"><a href="https://lunrjs.com">Lunr</a> is a browser friendly indexing and search library that can now be supported server side too via Python.</li>
+
+<li id="fn:3">UI, user interface, the normal way a user interacts with a website</li>
+</ol>
+
+</div>
 
 </section>
 

@@ -2,7 +2,7 @@
 # User Scheme
 
 While **AndOr** manages users outside the web UI it still 
-needs to keep track os basic information.
+needs to keep track of basic user information.
 
 Below is an example JSON document describing the user Jane Doe.
 
@@ -17,16 +17,16 @@ Below is an example JSON document describing the user Jane Doe.
 
 The JSON documents hold four pieces of information
 
-user_id
+user\_id
 : (string, required) in this case an email address is a unique string used to map a user to their assigned workflows
 
-display_name
+display\_name
 : (string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious
 
-create_objects_as
+create\_objects\_as
 : (string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)
 
-member_of
+member\_of
 : (list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is "\*" it means the user is a member of all workflows, their for has all defined permissions
 
 
@@ -53,15 +53,16 @@ only has read permissions for "published" objects. See [Workflow Use Cases](Work
 ## Picking IDs
 
 You can avoid the toxic storage of secrets by using an external
-authentication mechanism (e.g. OAuth 2) as well as limiting the
-value of your Unique id.  If you create users using an email address
-you do have some value but probably minimal value if that same
-email address is publicly known (e.g. published in the
-institute directory).  This would be similar if you were using
+authentication mechanism (e.g. OAuth 2, Shibboleth) as well as 
+limiting the value of your Unique id.  If you create users using 
+an email address you do have some value but probably minimal value 
+if that same email address is publicly known (e.g. published in 
+the institute directory).  This would be similar if you were using
 an ORCID as an identifier. ORCID is a nice choice because while
 the number is listable at [orcid.org](https://orcid.org) the
 ORCID owner controls directly how much information is exposed.
 **AndOr** only needs to assert a users' claim they control
-the ID it doesn't harvest any data from the ID provider.
+the ID it doesn't harvest any data from the ID provider aside
+from the ID verified.
 
 

@@ -12,8 +12,8 @@
 <li><a href="../">README</a></li>
 <li><a href="../license.html">LICENSE</a></li>
 <li><a href="../install.html">INSTALL</a></li>
-<li><a href="./">Documentation</a>
-<!-- + [Github](https://github.com/caltechlibrary/AndOr) -->
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a>
 <!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
 </ul>
 
@@ -22,7 +22,7 @@
 <section>
 <h1>Setting Up AndOr</h1>
 
-<p><strong>AndOr</strong> is experimental, a proof of concept so you&rsquo;re expected
+<p><strong>AndOr</strong> is a proof of concept so you&rsquo;re expected
 to clone the git repo and compile it before following the steps
 to setup and run it.</p>
 
@@ -30,13 +30,15 @@ to setup and run it.</p>
 
 <ol>
 <li>Clone the AndOr repository</li>
-<li>Make AndOr</li>
+<li>Run Make to compile it</li>
 <li>Initialize dataset collections for user, workflows and repository</li>
-<li>Add workflow(s) and user(s)</li>
+<li>Harvest content from EPrint repository being migrated</li>
+<li>Add workflow(s)</li>
+<li>Add user(s)</li>
 <li>Start up AndOr and view with your web browser</li>
 </ol>
 
-<h2>Example: A simple repository using your ORCID for user id</h2>
+<h2>Example: A simple empty repository</h2>
 
 <pre><code class="language-bash">    git clone https://github.com/caltechlibrary/AndOr.git
     cd AndOr
@@ -57,7 +59,7 @@ to setup and run it.</p>
     bin/AndOr start
 </code></pre>
 
-<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8123">http://localhost:8123</a>. You can use
+<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can use
 additional options to control the port, hostname and protocol.</p>
 
 <p>This is describing a proof of concept system. Don&rsquo;t expect

@@ -12,8 +12,8 @@
 <li><a href="../">README</a></li>
 <li><a href="../license.html">LICENSE</a></li>
 <li><a href="../install.html">INSTALL</a></li>
-<li><a href="./">Documentation</a>
-<!-- + [Github](https://github.com/caltechlibrary/AndOr) -->
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a>
 <!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
 </ul>
 
@@ -23,7 +23,7 @@
 <h1>User Scheme</h1>
 
 <p>While <strong>AndOr</strong> manages users outside the web UI it still
-needs to keep track os basic information.</p>
+needs to keep track of basic user information.</p>
 
 <p>Below is an example JSON document describing the user Jane Doe.</p>
 
@@ -71,16 +71,17 @@ only has read permissions for &ldquo;published&rdquo; objects. See <a href="Work
 <h2>Picking IDs</h2>
 
 <p>You can avoid the toxic storage of secrets by using an external
-authentication mechanism (e.g. OAuth 2) as well as limiting the
-value of your Unique id.  If you create users using an email address
-you do have some value but probably minimal value if that same
-email address is publicly known (e.g. published in the
-institute directory).  This would be similar if you were using
+authentication mechanism (e.g. OAuth 2, Shibboleth) as well as
+limiting the value of your Unique id.  If you create users using
+an email address you do have some value but probably minimal value
+if that same email address is publicly known (e.g. published in
+the institute directory).  This would be similar if you were using
 an ORCID as an identifier. ORCID is a nice choice because while
 the number is listable at <a href="https://orcid.org">orcid.org</a> the
 ORCID owner controls directly how much information is exposed.
 <strong>AndOr</strong> only needs to assert a users&rsquo; claim they control
-the ID it doesn&rsquo;t harvest any data from the ID provider.</p>
+the ID it doesn&rsquo;t harvest any data from the ID provider aside
+from the ID verified.</p>
 
 </section>
 

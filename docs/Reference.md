@@ -9,4 +9,7 @@
     + would be used for **AndOr** API service
     + could be used for server side Lunr support
 + [NginX and Let's Encrypt](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-18-04)
++ Harvesting and Migration 
+    + [eprinttools](https://github.com/caltechlibrary/eprinttools)
+    + [dataset](https://github.com/caltechlibrary/dataset)
 

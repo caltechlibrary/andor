@@ -12,23 +12,23 @@
 <li><a href="../">README</a></li>
 <li><a href="../license.html">LICENSE</a></li>
 <li><a href="../install.html">INSTALL</a></li>
-<li><a href="./">Documentation</a>
-<!-- + [Github](https://github.com/caltechlibrary/AndOr) -->
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a>
 <!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
 </ul>
 
 </nav>
 
 <section>
-<h1>Oral Histories as Proof of concept</h1>
+<h1 id="oral-histories-as-proof-of-concept">Oral Histories as Proof of concept</h1>
 
 <p><a href="http://oralhistories.caltech.edu">Oral Histories</a> is one of our
 smaller EPrints installations. It will need migrating soon
-because it is running on one of our older blades, lacks https
-support and should be run on a more recent OS.  It has less
-than 200 EPrint records. It is a good candidate for the proof of
-concept <strong>AndOr</strong>.</p>
-
+because it is running on one of our older blades that lacks https
+support. Additionally we should be run on a more recent OS.<br>
+Oral Histories as less than 200 EPrint records. It is a good candidate
+for the proof of concept <strong>AndOr</strong>.</p>
+<figure>
 <table>
 <thead>
 <tr>
@@ -40,17 +40,12 @@ concept <strong>AndOr</strong>.</p>
 <tbody>
 <tr>
 <td align="left">1</td>
+<td align="left">Write script to remap EPrint XML based document paths</td>
+</tr>
+
+<tr>
+<td align="left">1</td>
 <td align="left">Update dataset to have automatic attachment versioning</td>
-</tr>
-
-<tr>
-<td align="left">1</td>
-<td align="left">Add JSON document diff on update, versioning for metadata</td>
-</tr>
-
-<tr>
-<td align="left">1</td>
-<td align="left">Harvest Oral Histories to use for test data</td>
 </tr>
 
 <tr>
@@ -65,12 +60,12 @@ concept <strong>AndOr</strong>.</p>
 
 <tr>
 <td align="left">3</td>
-<td align="left">Harvest Oral Histories for demo deployment</td>
+<td align="left">Lunr integration and NginX configuration for Authentication</td>
 </tr>
 
 <tr>
-<td align="left">3</td>
-<td align="left">Lunr integration and NginX configuration for Authentication</td>
+<td align="left">4</td>
+<td align="left">Harvest Oral Histories for demo deployment</td>
 </tr>
 
 <tr>
@@ -79,13 +74,17 @@ concept <strong>AndOr</strong>.</p>
 </tr>
 </tbody>
 </table>
-<p>Table: Proposed schedule assumes full time effort</p>
+<figcaption>Proposed schedule assumes full time effort
+</figcaption>
+</figure>
 
 <p>Migrating other EPrint repositories will involve validating
 harvested content and updating the HTML/JavaScript to meet
-the repositories&rsquo; needs. This means the migration process
-after the first one will likely decrease with each move instead
-of remaining constant.</p>
+the repositories' needs. It also should involve an accessment
+of if we want any additional microservices to improce workflow
+(e.g. integrate our DOI harvesting, external workflows like ETD).
+After our first migration the time to migrate should decrease
+with each move instead of remaining constant.</p>
 
 </section>
 

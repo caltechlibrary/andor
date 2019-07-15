@@ -4,6 +4,7 @@
 Below are development documents outlining some of the
 concepts and rationale in our proof of concept **AndOr**.
 
++ [Migrating an EPrints Repository](migrating-eprints.html)
 + [Oral Histories as Proof of Concept](Oral-Histories-as-Proof-of-Concept.html)
     + [Schedule](Schedule.html)
 + [Settting up AndOr](Setting-Up-AndOr.html)
