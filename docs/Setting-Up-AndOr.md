@@ -10,7 +10,7 @@ to setup and run it.
 1. Clone the AndOr repository
 2. Run Make to compile it
 3. Initialize dataset collections for user, workflows and repository
-4. Harvest content from EPrint repository being migrated
+4. Harvest content from EPrints repository being migrated
 5. Add workflow(s) 
 6. Add user(s)
 7. Start up AndOr and view with your web browser

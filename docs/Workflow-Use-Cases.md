@@ -169,7 +169,7 @@ a member of "reviewer".
             "published",
             "embargo",  
             "rejected",
-            "currators"
+            "curators"
             ],
         "view_object_ids": [
             "deposit",
@@ -306,7 +306,7 @@ editor workflow queue would look like
         "assign_to": [  
             "editor",
             "rejected",
-            "burried",
+            "buried",
             "publisher",
             "reviewer",
             "writer",

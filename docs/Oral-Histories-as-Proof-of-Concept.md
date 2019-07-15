@@ -57,7 +57,7 @@ our EPrints deployment.
 
 There are no adequate non-EPrints replacements for EPrints today.
 We've been betting a likely candidates would emerge but it might be
-prudent to hedge that bet. I haven't seen a good canidate since 
+prudent to hedge that bet. I haven't seen a good candidate since 
 coming to Caltech Library several years back.
 
 I believe migrating any EPrints instance is at minimum a 4 to 8 weeks of
@@ -109,10 +109,10 @@ number of objects the customization to the curation form. This is
 considerably less than migrating EPrints itself.  The primary
 task would be the customization of the object edit and input forms
 to support each specific implementation. A secondary task would
-be to identify and implement if necessary any microservices need to 
+be to identify and implement if necessary any micro services need to 
 replicate specific repositories' specialized features (e.g. 
 workflow processes outside the repository like ETD).  In this way 
-**AndOrr** could serve as an __interim solution__ while we wait for 
+**AndOr** could serve as an __interim solution__ while we wait for 
 systems like
 [Zenodo](https://zenodo.org/ "An Object Repository System used in conjunction with CERN") or
 [Achepelligo](http://archipelago.nyc/ "Metro's demonstration of their Open Source Digital Object Repository")
@@ -246,7 +246,7 @@ make due with workflows defined in a simple configuration file.
 We can avoid the complexity of EPrints for most of our EPrints 
 deployments. It is likely we can even avoid complexity when supporting 
 are larger repository if we separate the curation/submission process 
-from publicly viewable websites and switch to a more microservice 
+from publicly viewable websites and switch to a more micro service 
 friendly architecture.  E.g we can easily drop database SQL searches 
 for full text searches based on something like Lunr, Solr or 
 Elastic Search.
@@ -261,7 +261,7 @@ Elastic Search.
 
 [^4]: EPrints is a highly customizable system. That customization can happen at any of three levels, you change the vanilla EPrints, you change an EPrints instance, you overwrite module behavior with a customized replacement.
 
-[^5]: The disk0 folder is where both the EPrint XML is stored as well as any media (e.g. pdf, image file, audio file).
+[^5]: The disk0 folder is where both the EPrints XML is stored as well as any media (e.g. pdf, image file, audio file).
 
 [^6]: AWS has a hosted RDBMS (relational database manage system) that appears to your application as if it is MySQL (what EPrints uses). There are edge cases particularly when your record data has problematic character encodings (i.e. not UTF-8) that make this swap a project in itself. The actual migration would be existing MySQL/MariaDB to a clean copy with all encodings fixed MariaDB then dump and restore into AWS's RDBMS. Starting from a clean slate with RDBMS on the other hand is most trivial (basic sort out the connection string and permissions).
 
@@ -269,5 +269,5 @@ Elastic Search.
 
 [^8]: Lunr is a full text index specification implemented in Python and in JavaScript. For small indexes they can be completely run browser side, larger ones can be implemented server side with a simple Python web service. Stephen showed us this approach using feeds data.
 
-[^9]: An earily version of dataset actually had a web service, we depreciated it because at the time we had no need of it.
+[^9]: An early version of dataset actually had a web service, we depreciated it because at the time we had no need of it.
 

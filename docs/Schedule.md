@@ -8,7 +8,7 @@ markup = "mmark"
 smaller EPrints installations. It will need migrating soon
 because it is running on one of our older blades that lacks https
 support. Additionally we should be run on a more recent OS.  
-Oral Histories as less than 200 EPrint records. It is a good candidate 
+Oral Histories as less than 200 EPrints records. It is a good candidate 
 for the proof of concept **AndOr**.
 
 | Week No. | Activity |
@@ -21,10 +21,10 @@ for the proof of concept **AndOr**.
 | 4 | Deploy a demo of a migrated Oral Histories on EC2 |
 Table: Proposed schedule assumes full time effort
 
-Migrating other EPrint repositories will involve validating
+Migrating other EPrints repositories will involve validating
 harvested content and updating the HTML/JavaScript to meet
-the repositories' needs. It also should involve an accessment
-of if we want any additional microservices to improce workflow
+the repositories' needs. It also should involve an assessment
+of if we want any additional micro services to improve workflow
 (e.g. integrate our DOI harvesting, external workflows like ETD).
 After our first migration the time to migrate should decrease 
 with each move instead of remaining constant.
