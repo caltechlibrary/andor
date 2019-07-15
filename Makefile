@@ -31,7 +31,7 @@ install:
 	env GOBIN=$(GOPATH)/bin go install cmd/AndOr/AndOr.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
-	./mk_website.py
+	./mk_website.py $(baseurl)
 
 test: clean bin/AndOr$(EXT)
 	go test
