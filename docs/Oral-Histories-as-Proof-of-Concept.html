@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Caltech Library's Digital Library Development Sandbox</title>
-    <link rel="stylesheet" href="/AndOr/css/site.css">
-    <!-- <link rel="stylesheet" href="/css/site.css"> -->
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-<header>
-<a href="https://library.caltech.edu"><img src="/AndOr/assets/liblogo.gif" alt="Caltech Library logo"></a>
-<!-- <a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a> -->
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
 </header>
 <nav>
 <ul>
@@ -24,26 +20,26 @@
 </nav>
 
 <section>
-<h1 id="oral-histories-as-proof-of-concept">Oral Histories As Proof of Concept</h1>
+<h1>Oral Histories As Proof of Concept</h1>
 
-<h2 id="problem">Problem</h2>
+<h2>Problem</h2>
 
 <p><a href="http://oralhistories.library.caltech.edu">Oral Histories</a> is an
 EPrints repository with a little less than 200 EPrint objects in
 it. It currently runs in a multi-host EPrints on some of our oldest
-hardware<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>.  Oral Histories also needs to run with HTTPS support.
+hardware[^1].  Oral Histories also needs to run with HTTPS support.
 To achieve that in the current deployment would require restructuring
 the SSL certs. One of the deployments on that machine is Thesis
-redoing the certs would mean downtime and I'd like to avoid that for
+redoing the certs would mean downtime and I&rsquo;d like to avoid that for
 Thesis. In addition to needing SSL support, we need to swap out the
-operating system<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> and upgrade EPrints<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
+operating system[^2] and upgrade EPrints[^3].</p>
 
-<p>I've started to migrate Oral Histories three times. Each time
+<p>I&rsquo;ve started to migrate Oral Histories three times. Each time
 something important has come up and stopped my progress. Because of
 operating system and dependent software version drift returning to the
 project is essentially starting over.</p>
 
-<h2 id="challenges">Challenges</h2>
+<h2>Challenges</h2>
 
 <p>Lacking HTTPS support means our this means our Oral History Project
 will increasingly become invisible to the rest of the web as the
@@ -53,30 +49,30 @@ sites. Users will get disturbing warnings when they visit our site
 only access SSL protected sites.</p>
 
 <p>Setting up a working vanilla EPrints is non-trivial. Migrating
-our customizations is complex and error prone<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>.  Each operating
+our customizations is complex and error prone[^4].  Each operating
 system, software upgrade and EPrints upgrades risks breaking EPrints
-particularly when we've customized the code.</p>
+particularly when we&rsquo;ve customized the code.</p>
 
 <p>Our initial goal has been to run Oral Histories on AWS EC2 instance
 as if it was hosted locally. This is only a first step. It leaves
 running EPrints the most expensive way you can in the cloud.
-The next step would be to migrate EPrint's disk0<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup> tree to S3.
+The next step would be to migrate EPrint&rsquo;s disk0[^5] tree to S3.
 This is a non-trivial implementation change too. The final step
 towards a cloud friendly EPrints deployment would be to migrate
-from MySQL/MariaDB to AWS's RDMS<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup>. Each change is essentially its
+from MySQL/MariaDB to AWS&rsquo;s RDMS[^6]. Each change is essentially its
 own project. Testing means it each step can wind up as a multi-week
 project.</p>
 
 <p>We need to migrate to a current Ubuntu LTS release from a very old
-RedHat/CentOS release. Our version of RedHat (Cent OS) isn't getting the
+RedHat/CentOS release. Our version of RedHat (Cent OS) isn&rsquo;t getting the
 same level of security patches we need. The Internet is a hostile
 environment so you really want to keep you operating system and any
 dependent software (e.g. Perl, OpenSSL, MySQL) current. Each upgrade
 runs the risk of breaking our EPrints deployment.</p>
 
 <p>There are no adequate non-EPrints replacements for EPrints today.
-We've been betting a likely candidates would emerge but it might be
-prudent to hedge that bet as they haven't appeared since I was
+We&rsquo;ve been betting a likely candidates would emerge but it might be
+prudent to hedge that bet as they haven&rsquo;t appeared since I was
 hired by Caltech Library.</p>
 
 <p>I believe migrating any EPrints instance is at minimum a 4 to 8 weeks of
@@ -84,7 +80,7 @@ full time continuous work for me. I think this estimate will hold for
 the first repository through the last repository migrated. Ideally each
 successive migration would be shorter as we automate the process.</p>
 
-<h2 id="opportunities">Opportunities</h2>
+<h2>Opportunities</h2>
 
 <p>The Oral Histories repository is small, 200 objects. It has a small
 number of users who curate the content (e.g. max number is likely
@@ -96,7 +92,7 @@ archives own website).</p>
 
 <p>The curator needs to have a list of new objects needing work and also
 be able to access published objects and assets should the need arise.
-Ideally you wouldn't need to cut and paste the metadata between the
+Ideally you wouldn&rsquo;t need to cut and paste the metadata between the
 curation tool and ArchivesSpace. Integrating generally with ArchivesSpace
 would be desirable.</p>
 
@@ -104,17 +100,17 @@ would be desirable.</p>
 have a good full text search available for content on the site
 (both in curation and for the public).</p>
 
-<p>It is a straight forward project to take what we've already implemented
+<p>It is a straight forward project to take what we&rsquo;ve already implemented
 for feeds.library.caltech.edu and adapt to the needs of a much better
 Oral Histories site for public viewing. This leaves us with allot of
 flexibility in picking the minimum feature set needed to curate the
 objects and media files.</p>
 
-<h2 id="curation-workflow-based-on-existing-eprints-implementation">Curation workflow based on existing EPrints implementation</h2>
+<h2>Curation workflow based on existing EPrints implementation</h2>
 
 <p>We have most of the software in parts for creating a light weight
 EPrints like system. What is lacking is a web service that functions
-like EPrint's REST API. We can use EPrint's existing Schema even if
+like EPrint&rsquo;s REST API. We can use EPrint&rsquo;s existing Schema even if
 we skip the RDMS backend.  We know how to harvest all the data in
 EPrints and already have tooling in place to due so.</p>
 
@@ -130,7 +126,7 @@ systems like
 <a href="http://archipelago.nyc/" title="Metro's demonstration of their Open Source Digital Object Repository">Achepelligo</a>
 to mature.</p>
 
-<h2 id="what-would-a-light-weight-eprints-look-like">What would a light weight EPrints look like?</h2>
+<h2>What would a light weight EPrints look like?</h2>
 
 <p>An ability for staff to login and have access to a workflow
 queues of objects. This includes the ability to create an object
@@ -138,18 +134,18 @@ and add any related media files (e.g. audio, video, pdfs).</p>
 
 <p>Creating an EPrint object follows the following pattern, pick
 a type, add general metadata (e.g. description/abstract, title).
-Upload media files. Add any more internal data and then &quot;deposit&quot;.
+Upload media files. Add any more internal data and then &ldquo;deposit&rdquo;.
 Once deposited the object is available for processing in EPrints.</p>
 
-<p>EPrints uses a queue system for implementing a workflow. A user's
+<p>EPrints uses a queue system for implementing a workflow. A user&rsquo;s
 abilities are matched to the workflows they have access to. In effect
 their set of workflows defines their permissions. This relationship
 can be modeled as a User Object and Workflow Objects.</p>
 
-<h3 id="decomposing-the-eprints-admin-functionality-for-oral-histories">Decomposing the EPrints Admin functionality for Oral Histories</h3>
+<h3>Decomposing the EPrints Admin functionality for Oral Histories</h3>
 
-<p>If you are the &quot;admin&quot; user Oral Histories' EPrints curatorial
-interface breaks down as follows--</p>
+<p>If you are the &ldquo;admin&rdquo; user Oral Histories&rsquo; EPrints curatorial
+interface breaks down as follows&ndash;</p>
 
 <dl>
 <dt>Manage Deposits</dt>
@@ -157,9 +153,9 @@ interface breaks down as follows--</p>
 <dt>Manage Records</dt>
 <dd>A page with links to manage EPrints and the EPrints record</dd>
 <dt>Manage Shelves</dt>
-<dd>Doesn't work, this EPrints feature isn't used in Oral Histories</dd>
+<dd>Doesn&rsquo;t work, this EPrints feature isn&rsquo;t used in Oral Histories</dd>
 <dt>Profile</dt>
-<dd>This isn't used much and could be skipped, it shows how the &quot;admin&quot; user is setup</dd>
+<dd>This isn&rsquo;t used much and could be skipped, it shows how the &ldquo;admin&rdquo; user is setup</dd>
 <dt>Saved Searches</dt>
 <dd>Not used</dd>
 <dt>Review</dt>
@@ -168,23 +164,23 @@ interface breaks down as follows--</p>
 <dd>This is the admin page for managing EPrints from the web browser</dd>
 </dl>
 
-<p>The &quot;admin&quot; user has the most capability. If you can capture the needed
-functionality of the &quot;admin&quot; user you can capture all the functionality
+<p>The &ldquo;admin&rdquo; user has the most capability. If you can capture the needed
+functionality of the &ldquo;admin&rdquo; user you can capture all the functionality
 available to all staff who use EPrints for Oral Histories.  Most of
 the functionality above could be trimmed and still provide a workable
-system. What you really need is &quot;Manage Deposits&quot;, &quot;Review&quot; and the
-&quot;EPrints&quot; record link for all objects from &quot;Manage Records&quot; page view.</p>
+system. What you really need is &ldquo;Manage Deposits&rdquo;, &ldquo;Review&rdquo; and the
+&ldquo;EPrints&rdquo; record link for all objects from &ldquo;Manage Records&rdquo; page view.</p>
 
 <p>This can be boiled down to the following functions</p>
 
 <ol>
-<li>(Create) A screen to create an object, attach it's media files and put it into the &quot;deposit&quot; queue</li>
-<li>(Read/Update) Move to &quot;Review&quot; queue from &quot;deposit&quot;, update as needed</li>
-<li>(Update) Move to &quot;Published&quot; queue so the object and media files are available to the public.</li>
+<li>(Create) A screen to create an object, attach it&rsquo;s media files and put it into the &ldquo;deposit&rdquo; queue</li>
+<li>(Read/Update) Move to &ldquo;Review&rdquo; queue from &ldquo;deposit&rdquo;, update as needed</li>
+<li>(Update) Move to &ldquo;Published&rdquo; queue so the object and media files are available to the public.</li>
 <li>List objects by queue (sortable by date deposited, item type, last modified, Item Status, Title)</li>
 <li>List All objects (with previous sorting options)</li>
 <li>Search for objects</li>
-<li>Support &quot;deleting&quot; objects, EPrints never deletes, it just hides the object in a &quot;delete&quot; queue.</li>
+<li>Support &ldquo;deleting&rdquo; objects, EPrints never deletes, it just hides the object in a &ldquo;delete&rdquo; queue.</li>
 </ol>
 
 <p>The above suggests we need to know who are user is and what workflows
@@ -192,9 +188,9 @@ they are allowed to access. A workflow identifies a queue of objects, the
 permissions to act on those objects (e.g. create, read, update) and the
 next queue they will be passed to.</p>
 
-<p>The workflow is &quot;deposit&quot;, &quot;review&quot;, &quot;publish&quot; or &quot;delete&quot;. The user info
+<p>The workflow is &ldquo;deposit&rdquo;, &ldquo;review&rdquo;, &ldquo;publish&rdquo; or &ldquo;delete&rdquo;. The user info
 is a display name, a user id, what queue they create objects in
-(e.g. &quot;deposit&quot;) and what workflows they have access to (what queues they
+(e.g. &ldquo;deposit&rdquo;) and what workflows they have access to (what queues they
 can review and what queues they can place objects into).</p>
 
 <p>The same form used to create an object can serve as the form to update an
@@ -203,55 +199,55 @@ than EPrints while still capturing the same information. The form itself
 could be implemented as a combination of static HTML and JavaScript where
 the JavaScript talks to a web API to fill in the details.</p>
 
-<p>An Empty &quot;Oral Histories&quot; deployment could be a few web pages that talk to
+<p>An Empty &ldquo;Oral Histories&rdquo; deployment could be a few web pages that talk to
 a web service in the same way that the Builder Widget can talk to feeds
 and resent results.</p>
 
-<h3 id="harvesting-is-already-in-the-works">Harvesting is already in the works</h3>
+<h3>Harvesting is already in the works</h3>
 
-<p>Harvesting Oral Histories' metadata for feeds is already in development.
+<p>Harvesting Oral Histories&rsquo; metadata for feeds is already in development.
 It use the EPrinttools suite to store the harvested content in a
 dataset collection. The metadata harvested is stored in a
-<a href="https://github.com/caltechlibrary/dataset">dataset</a> collection.<br>
+<a href="https://github.com/caltechlibrary/dataset">dataset</a> collection.<br />
 The harvester could easily include harvesting the underling
 media files as well as the metadata.  <strong>dataset</strong> could replace the
 storage framework currently implemented in EPrints.</p>
 
-<h3 id="a-repository-engine-already-is-implemented">A Repository Engine already is implemented</h3>
+<h3>A Repository Engine already is implemented</h3>
 
-<p><strong>dataset</strong> plus Lunr<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup> already provides the functionality
+<p><strong>dataset</strong> plus Lunr[^7] already provides the functionality
 of a EPrints or Fedora based repository system. It only lacks a web
 service interface. This is straight forward to implement in Go especially
 if you limit the service to a few end points (e.g. list objects, list an
-object's details, create/update an object). EPrints show us the
+object&rsquo;s details, create/update an object). EPrints show us the
 way in its REST API already. Implementing a web service like this
 based on dataset is a straight forward process because we know how it
-should work and have implemented things like this in the past<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup>.</p>
+should work and have implemented things like this in the past[^8].</p>
 
-<h3 id="eprints-shows-us-the-way-we-can-continue-to-work-the-eprints-way">EPrints shows us the way, we can continue to work the EPrints way</h3>
+<h3>EPrints shows us the way, we can continue to work the EPrints way</h3>
 
-<p>We don't need to develop scheme, we can use what EPrints XML provides.
+<p>We don&rsquo;t need to develop scheme, we can use what EPrints XML provides.
 EPrints shows the API we need because we already use EPrints REST API
 to drive feeds.library.caltech.edu. EPrints also shows us the model
 for users and workflows. Users are affiliated with workflows. Workflows
 are a queue of objects (objects hold a single value for workflow state).
-Works define what actions can be performed on an object (e.g. &quot;published&quot;
-is read only, a curator can see an &quot;edit&quot; link which takes them to a
+Works define what actions can be performed on an object (e.g. &ldquo;published&rdquo;
+is read only, a curator can see an &ldquo;edit&rdquo; link which takes them to a
 web form).</p>
 
-<h3 id="we-can-avoid-the-things-that-repository-systems-eprints-complicated">We can avoid the things that repository systems (EPrints) complicated</h3>
+<h3>We can avoid the things that repository systems (EPrints) complicated</h3>
 
 <ul>
 <li>EPrints is complicated because it allows complete customization. Each
 customization though is technical debt because it complicates upgrades.</li>
 <li>EPrints is complicated because it much define and manage workflows. In
 a large library where administration is distributed across many staff
-this make sense. We're a small library (a tiny archive) which could
+this make sense. We&rsquo;re a small library (a tiny archive) which could
 make dues with a simple configuration file.</li>
 <li>EPrints is complicated because it needs to support hosting MANY collections
 independently behind the same web service. This is driven by history, this is
 how we originally built content management systems because campuses had a
-single web server. Today spinning up a web server is trivial, unless it's an EPrints
+single web server. Today spinning up a web server is trivial, unless it&rsquo;s an EPrints
 web server.</li>
 </ul>
 
@@ -260,31 +256,22 @@ likely we can even avoid complexity when supporting are larger repository if we
 separate the curation/submission process from publicly viewable websites and switch
 from SQL searches to full text searches based on something like Lunr, Solr or
 Elastic Search.</p>
-<h1 id="footnote-section">Footnotes</h1>
 
-<div class="footnotes">
+<p>[^1]: All the EPrints instances on the hardware are due to be migrated.</p>
 
-<hr>
+<p>[^2]: Our EPrints deployments currently run on an old version of RedHat (Cent OS). Ubuntu 18.04 LTS is our current standard distribution.  Ubuntu LTS releases get regular security updates keep pace with the demands of a hostile internet. Our version of RedHat does not.</p>
 
-<ol>
-<li id="fn:1">All the EPrints instances on the hardware are due to be migrated.</li>
+<p>[^3]: Our EPrints deployment on coda2.cls.caltech.edu is version EPrints 3.3, EPrints us up to version 3.4. The newest version supports Ubuntu 18.04 LTS.</p>
 
-<li id="fn:2">Our EPrints deployments currently run on an old version of RedHat (Cent OS). Ubuntu 18.04 LTS is our current standard distribution.  Ubuntu LTS releases get regular security updates keep pace with the demands of a hostile internet. Our version of RedHat does not.</li>
+<p>[^4]: EPrints is a highly customizable system. That customization can happen at any of three levels, you change the vanilla EPrints, you change an EPrints instance, you overwrite module behavior with a customized replacement.</p>
 
-<li id="fn:3">Our EPrints deployment on coda2.cls.caltech.edu is version EPrints 3.3, EPrints us up to version 3.4. The newest version supports Ubuntu 18.04 LTS.</li>
+<p>[^5]: The disk0 folder is where both the EPrint XML is stored as well as any media (e.g. pdf, image file, audio file).</p>
 
-<li id="fn:4">EPrints is a highly customizable system. That customization can happen at any of three levels, you change the vanilla EPrints, you change an EPrints instance, you overwrite module behavior with a customized replacement.</li>
+<p>[^6]: AWS has a hosted RDBMS (relational database manage system) that appears to your application as if it is MySQL (what EPrints uses). There are edge cases particularly when your record data has problematic character encodings (i.e. not UTF-8) that make this swap a project in itself. The actual migration would be existing MySQL/MariaDB to a clean copy with all encodings fixed MariaDB then dump and restore into AWS&rsquo;s RDBMS. Starting from a clean slate with RDBMS on the other hand is most trivial (basic sort out the connection string and permissions).</p>
 
-<li id="fn:5">The disk0 folder is where both the EPrint XML is stored as well as any media (e.g. pdf, image file, audio file).</li>
+<p>[^7]: Lunr is a full text index specification implemented in Python and in JavaScript. For small indexes they can be completely run browser side, larger ones can be implemented server side with a simple Python web service. Stephen showed us this approach using feeds data.</p>
 
-<li id="fn:6">AWS has a hosted RDBMS (relational database manage system) that appears to your application as if it is MySQL (what EPrints uses). There are edge cases particularly when your record data has problematic character encodings (i.e. not UTF-8) that make this swap a project in itself. The actual migration would be existing MySQL/MariaDB to a clean copy with all encodings fixed MariaDB then dump and restore into AWS's RDBMS. Starting from a clean slate with RDBMS on the other hand is most trivial (basic sort out the connection string and permissions).</li>
-
-<li id="fn:7">Lunr is a full text index specification implemented in Python and in JavaScript. For small indexes they can be completely run browser side, larger ones can be implemented server side with a simple Python web service. Stephen showed us this approach using feeds data.</li>
-
-<li id="fn:8">An earily version of dataset actually had a web service, we depreciated it because at the time we had no need of it.</li>
-</ol>
-
-</div>
+<p>[^8]: An earily version of dataset actually had a web service, we depreciated it because at the time we had no need of it.</p>
 
 </section>
 

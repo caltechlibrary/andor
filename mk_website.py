@@ -89,6 +89,11 @@ def mkpage_version_no(cli_name):
 # @params args is the command line arguments, currently not used.
 #
 def main(args):
+    app_name = args[0]
+    args = args[1:]
+    base_url = ""
+    if len(args) > 0:
+        base_url = args[0]
     # Make sure we have a page.tmpl, if not generate one
     if not os.path.exists("page.tmpl"):
         page = '''{{- define "page.tmpl" -}}
@@ -152,6 +157,8 @@ def main(args):
                 metadata = json.dumps(frontmatter(in_name))
                 #NOTE: Processing metadata should happen here.
                 page_data = []
+                if base_url != "":
+                    page_data.append(f"baseURL=text:{base_url}")
                 if len(metadata):
                     page_data.append(f"front_matter=json:{metadata}")
                 if os.path.exists(nav_name):
