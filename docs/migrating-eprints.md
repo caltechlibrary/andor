@@ -3,10 +3,10 @@
 
 Migration of any repository can be terribly challenging often with the
 risk of lost metadata or nuanced metadata evolution. **AndOr** side
-steps this issue by using EPrint's existing metadata scheme which
+steps this issue by using EPrints's existing metadata scheme which
 has proven itself for more than a decade. Caltech Library has an
 existing set of tools for migrating content, as is, out of EPrints.
-We use this [toolset](https://caltechlibrary.github.io/eprinttools)
+We use this [tool set](https://caltechlibrary.github.io/eprinttools)
 regularly and it includes the ability to migrate not just the metadata
 but also the attach documents.
 
@@ -30,8 +30,8 @@ EPrints repository into a dataset collection.
 
 That's it, you run those commands and wait. If you want to incrementally
 update you collection you would swap out the `-export all` for an
-approapriate export strategy.
+appropriate export strategy.
 
 **AndOr** is built on dataset collections so once the harvest is completed
-you can fireup **AndOr** and test.
+you can fire up **AndOr** and test.
 
