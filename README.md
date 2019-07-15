@@ -12,7 +12,7 @@ repository. If prototyped successfully it could serve as an
 interim repository for the EPrints repositories we plan to migrate.
 
 **AndOr** would be built from [dataset](https://caltechlibrary.github.io/dataset) collections, a semi-RESTful web API, and HTML with JavaScript.
-A running system would probably consist of only a two or three
+A running system would probably consist of only two or three
 pieces of software. The minimum would be a web server[^1] 
 plus the **AndOr** service supporting interaction with the
 dataset collection.  If the collection was larger you could create
@@ -27,7 +27,7 @@ on small to medium EC2 instances with an S3 bucket for larger
 collections. A more elaborate but possibly more cost effective
 implementation would be replacing the web server with Cloud Front,
 the static file storage with S3 and running the API service
-in AWS's container or via their Lambda service.
+in an AWS container or via the AWS Lambda service.
 
 
 ## Goals
