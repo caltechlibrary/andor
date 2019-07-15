@@ -11,7 +11,8 @@ This is a concept document for a very light weight digital object
 repository. If prototyped successfully it could serve as an
 interim repository for the EPrints repositories we plan to migrate.
 
-**AndOr** would be built from [dataset](https://caltechlibrary.github.io/dataset) collections, a semi-RESTful web API, and HTML with JavaScript.
+**AndOr** would be built from [dataset](https://caltechlibrary.github.io/dataset)
+collections, a semi-RESTful web API, and HTML with JavaScript.
 A running system would probably consist of only two or three
 pieces of software. The minimum would be a web server[^1] 
 plus the **AndOr** service supporting interaction with the
@@ -63,30 +64,30 @@ in an AWS container or via the AWS Lambda service.
 Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage workflows,
 manage permissions and enforcing storage scheme.  **AndOr**'s 
-simplication involves either avoiding the requirements or relocating
+simplification involves either avoiding the requirements or relocating
 them external to the system.  
 
 Examples--
 
-+ Authentication is handle externally. That means we don't need to worry about managing passwords, the volitile and sensitive data is outside of our system
++ Authentication is handle externally. That means we don't need to worry about managing passwords, the volatile and sensitive data is outside of our system
 + **AndOr** itself is a simple web API that accepts URL requests 
 and hands back JSON. The shape of the JSON is determined at time of
 migrating into **AndOr**. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.
 + If you need additional end points beyond what **AndOr** provides (e.g. a search engine service) you supply those as micro services 
 
 The web browser itself creates the illusion of a unified software system
-or single process. A single appliction is not required to support desire
+or single process. A single application is not required to support desire
 functionality.
 
 Some features are unavoidable. The repository problem requires managing
 users and workflows. It doesn't require users and workflows
 be manage through the web. Setting up users and workflows can be 
-managed through simplier command line tools in large part because 
+managed through simpler command line tools in large part because 
 you've off loaded identify management already. 
 
 By focusing on a minimal feature set and leveraging technical
-operatunities that already exist we can radically
-reduces the lines of code that has be written or maintained.
+opportunities that already exist we can radically
+reduces the lines of code to written and maintained.
 
 ### Two end points for our API
 
@@ -95,10 +96,10 @@ Two web API end points would be required
 and `/COLLECTION_NAME/objects/` to list objects. The later may 
 accept a filter by queue/workflow name. All other end points are 
 static resources (e.g. HTML files, CSS, JavaScript and 
-Lunrjs indexes).  We can reducing our requirements to two end 
-points because we've already discovered it was all we needed
-to integrate with the EPrints REST API.  Everything else can
-be synthesized from them.
+Lunrjs indexes, a public faces website).  We can reducing our
+requirements to two end  points because we've already discovered 
+it was all we needed to integrate with the EPrints REST API.
+Everything else can be synthesized from them.
 
 
 ### Building a UI
@@ -115,7 +116,7 @@ JavaScript for our proof of concept.
 For public facing content (e.g. the things you want 
 Google, Bing, et el. to find) can be deployed by a simple batch
 process that updates a public website. It can be external to the
-curratorial aspects of a digital object repository.
+curatorial aspects of a digital object repository.
 
 ### user plus workflow, a simple model
 
@@ -130,7 +131,7 @@ visible repository.
 Complicated use cases integrations like community deposit could 
 then be deferred to a micro service(s) created for that purpose.
 The micro services become simpler because of their narrow focus
-and limitted abilities.
+and limited abilities.
 
 ### Under the hood
 

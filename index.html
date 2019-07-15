@@ -30,7 +30,8 @@
 repository. If prototyped successfully it could serve as an
 interim repository for the EPrints repositories we plan to migrate.</p>
 
-<p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a> collections, a semi-RESTful web API, and HTML with JavaScript.
+<p><strong>AndOr</strong> would be built from <a href="https://caltechlibrary.github.io/dataset">dataset</a>
+collections, a semi-RESTful web API, and HTML with JavaScript.
 A running system would probably consist of only two or three
 pieces of software. The minimum would be a web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>
 plus the <strong>AndOr</strong> service supporting interaction with the
@@ -46,7 +47,7 @@ on small to medium EC2 instances with an S3 bucket for larger
 collections. A more elaborate but possibly more cost effective
 implementation would be replacing the web server with Cloud Front,
 the static file storage with S3 and running the API service
-in AWS's container or via their Lambda service.</p>
+in an AWS container or via the AWS Lambda service.</p>
 
 <h2 id="goals">Goals</h2>
 
@@ -92,13 +93,13 @@ in AWS's container or via their Lambda service.</p>
 <p>Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage workflows,
 manage permissions and enforcing storage scheme.  <strong>AndOr</strong>'s
-simplication involves either avoiding the requirements or relocating
+simplification involves either avoiding the requirements or relocating
 them external to the system.</p>
 
 <p>Examples--</p>
 
 <ul>
-<li>Authentication is handle externally. That means we don't need to worry about managing passwords, the volitile and sensitive data is outside of our system</li>
+<li>Authentication is handle externally. That means we don't need to worry about managing passwords, the volatile and sensitive data is outside of our system</li>
 <li><strong>AndOr</strong> itself is a simple web API that accepts URL requests
 and hands back JSON. The shape of the JSON is determined at time of
 migrating into <strong>AndOr</strong>. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.</li>
@@ -106,18 +107,18 @@ migrating into <strong>AndOr</strong>. There is no customization.  If you want t
 </ul>
 
 <p>The web browser itself creates the illusion of a unified software system
-or single process. A single appliction is not required to support desire
+or single process. A single application is not required to support desire
 functionality.</p>
 
 <p>Some features are unavoidable. The repository problem requires managing
 users and workflows. It doesn't require users and workflows
 be manage through the web. Setting up users and workflows can be
-managed through simplier command line tools in large part because
+managed through simpler command line tools in large part because
 you've off loaded identify management already.</p>
 
 <p>By focusing on a minimal feature set and leveraging technical
-operatunities that already exist we can radically
-reduces the lines of code that has be written or maintained.</p>
+opportunities that already exist we can radically
+reduces the lines of code to written and maintained.</p>
 
 <h3 id="two-end-points-for-our-api">Two end points for our API</h3>
 
@@ -126,10 +127,10 @@ reduces the lines of code that has be written or maintained.</p>
 and <code>/COLLECTION_NAME/objects/</code> to list objects. The later may
 accept a filter by queue/workflow name. All other end points are
 static resources (e.g. HTML files, CSS, JavaScript and
-Lunrjs indexes).  We can reducing our requirements to two end
-points because we've already discovered it was all we needed
-to integrate with the EPrints REST API.  Everything else can
-be synthesized from them.</p>
+Lunrjs indexes, a public faces website).  We can reducing our
+requirements to two end  points because we've already discovered
+it was all we needed to integrate with the EPrints REST API.
+Everything else can be synthesized from them.</p>
 
 <h3 id="building-a-ui">Building a UI</h3>
 
@@ -147,7 +148,7 @@ JavaScript for our proof of concept.</p>
 <p>For public facing content (e.g. the things you want
 Google, Bing, et el. to find) can be deployed by a simple batch
 process that updates a public website. It can be external to the
-curratorial aspects of a digital object repository.</p>
+curatorial aspects of a digital object repository.</p>
 
 <h3 id="user-plus-workflow-a-simple-model">user plus workflow, a simple model</h3>
 
@@ -162,7 +163,7 @@ visible repository.</p>
 <p>Complicated use cases integrations like community deposit could
 then be deferred to a micro service(s) created for that purpose.
 The micro services become simpler because of their narrow focus
-and limitted abilities.</p>
+and limited abilities.</p>
 
 <h3 id="under-the-hood">Under the hood</h3>
 
