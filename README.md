@@ -87,7 +87,7 @@ you've off loaded identify management already.
 
 By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
-reduces the lines of code to written and maintained.
+reduce the lines of code written and maintained.
 
 ### Two end points for our API
 
