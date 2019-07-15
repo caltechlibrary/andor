@@ -14,7 +14,6 @@ for the proof of concept **AndOr**.
 | Week No. | Activity |
 |:--------- |:-------- |
 | 1 | Write script to remap EPrint XML based document paths |
-| 1 | Update dataset to have automatic attachment versioning |
 | 1 - 2 | Write **AndOr** web service and testing |
 | 2 - 3 | Write UI in HTML and JavaScript plus more testing |
 | 3 | Lunr integration and NginX configuration for Authentication |
