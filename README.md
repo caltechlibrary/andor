@@ -146,13 +146,15 @@ objects into a "delete" queue which is not visible to users.
 
 ## Additional ideas
 
-+ [Setting Up AndOr](docs/Setting-up-AndOr.html)
 + [Migrating an EPrints repository](docs/migrating-eprints.html)
-+ [Workflow use cases](docs/Workflow-Use-Cases.html)
-    + [Workflow Scheme](docs/Workflow-Scheme.html)
-    + [AndOr User Scheme](docs/User-Scheme.html)
 + [Oral Histories Use Case](docs/Oral-Histories-Use-Case.html)
     + [Proposed Schedule for Proof of Concept](docs/Schedule.html)
++ [Workflow use cases](docs/Workflow-Use-Cases.html)
++ AndOr Scheme
+    + [User Scheme](docs/User-Scheme.html)
+    + [Workflow Scheme](docs/Workflow-Scheme.html)
+    + [Object Scheme](docs/Object-Scheme.html)
++ [Setting Up AndOr](docs/Setting-up-AndOr.html)
 
 
 
