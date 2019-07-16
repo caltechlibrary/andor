@@ -4,5 +4,7 @@
 *.bak
 *.exe
 *.ds
-*.andor
 *.AndOr
+bin/*
+testdata/*
+dist/*

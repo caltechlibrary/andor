@@ -14,7 +14,7 @@ import (
 	"path"
 
 	// AndOr package
-	"github.com/caltechlibrary/andor"
+	"github.com/caltechlibrary/AndOr"
 )
 
 var (
@@ -76,7 +76,7 @@ func main() {
 	appName := path.Base(os.Args[0])
 	args := flag.Args()
 
-	if showVerion {
+	if showVersion {
 		fmt.Fprintf(os.Stdout, "%s %s", appName, andor.Version)
 		os.Exit(0)
 	}
