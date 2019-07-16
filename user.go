@@ -14,6 +14,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"sort"
+	"strings"
+
+	// Caltech Library packages
+	"github.com/caltechlibrary/dataset"
 
 	// Toml package
 	"github.com/BurntSushi/toml"
@@ -31,8 +36,8 @@ type User struct {
 	// CreateObjectIn holds the default queue name used
 	// when creating objects.
 	CreateObjectsIn string `json:"create_object_as"`
-	// Workflows holds a list of workflow names the user is a member of.
-	Workflows string `json:"workflows"`
+	// MemberOf holds a list of workflow names the user is a member of.
+	MemberOf []string `json:"member_of"`
 }
 
 // ReadUserFile takes a filename, reads the file
@@ -44,13 +49,13 @@ func ReadUserFile(fName string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-	switch path.Exit(fName) {
+	switch path.Ext(fName) {
 	case ".json":
 		if err := json.Unmarshal(src, &user); err != nil {
 			return user, err
 		}
 	case ".toml":
-		if _, err := toml.Decode(src, &user); err != nil {
+		if _, err := toml.Decode(string(src), &user); err != nil {
 			return user, err
 		}
 	default:
@@ -63,14 +68,20 @@ func ReadUserFile(fName string) (*User, error) {
 func (user *User) Bytes() []byte {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(user); err != nil {
-		return fmt.Sprintf("%+v", user)
+		src, _ := json.Marshal(user)
+		return src
 	}
-	return buf
+	return buf.Bytes()
 }
 
 // String() outputs a user to a string TOML.
 func (user *User) String() string {
-	return user.Bytes().String()
+	buf := new(bytes.Buffer)
+	if err := toml.NewEncoder(buf).Encode(user); err != nil {
+		src, _ := json.Marshal(user)
+		return string(src)
+	}
+	return buf.String()
 }
 
 // AddUser adds a user to the "users.AndOr"
@@ -81,7 +92,7 @@ func AddUser(userName string, user *User) error {
 		return err
 	}
 	defer c.Close()
-	src, err := json.MarshalIndent(user)
+	src, err := json.MarshalIndent(user, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -110,7 +121,11 @@ func AddMemberOf(userName, workflowName string) error {
 		}
 	}
 	user.MemberOf = append(user.MemberOf, workflowName)
-	return c.Update(userName, user)
+	src, err = json.MarshalIndent(user, "", "    ")
+	if err != nil {
+		return err
+	}
+	return c.UpdateJSON(userName, src)
 }
 
 // RemoveMemberOf removes a workflow for a user object
@@ -136,74 +151,32 @@ func RemoveMemberOf(userName, workflowName string) error {
 		}
 	}
 	user.MemberOf = memberOf
-	return c.Update(userName, user)
-}
-
-// AddUserAssignTo adds a workflow assignment to a user object
-func AddUserAssignTo(userName, workflowName string) error {
-	c, err := dataset.Open("users.AndOr")
+	src, err = json.MarshalIndent(user, "", "    ")
 	if err != nil {
 		return err
 	}
-	defer c.Close()
-	src, err := c.ReadJSON(userName)
-	if err != nil {
-		return err
-	}
-	user := new(User)
-	if err = json.Unmarshal(src, &user); err != nil {
-		return err
-	}
-	// Make sure we're not adding duplicates
-	for _, key := range user.AssignTo {
-		if strings.Compare(workflowName, key) != 0 {
-			return fmt.Errorf("already a member of %q", workflowName)
-		}
-	}
-	user.MemberOf = append(user.AssignTo, workflowName)
-	return c.Update(userName, user)
-}
-
-// RemoveUserAssignTo removes a workflow assignment for a user object
-func RemoveAssignTo(userName, workflowName string) error {
-	c, err := dataset.Open("users.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(userName)
-	if err != nil {
-		return err
-	}
-	user := new(User)
-	if err = json.Unmarshal(src, &user); err != nil {
-		return err
-	}
-	// Make remove any occurrences of the same workgroup name.
-	assignTo := []string{}
-	for _, key := range user.AssignTo {
-		if strings.Compare(workflowName, key) != 0 {
-			memberOf = append(user.AssignTo, key)
-		}
-	}
-	user.AssignTo = assignTo
-	return c.Update(userName, user)
+	return c.UpdateJSON(userName, src)
 }
 
 // ListUsers returns a list of user objects
 func ListUsers() ([]*User, error) {
 	c, err := dataset.Open("users.AndOr")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer c.Close()
 	keys := c.Keys()
 	sort.Strings(keys)
 	objects := []*User{}
 	for _, key := range keys {
-		obj, err := c.Read(key)
+		src, err := c.ReadJSON(key)
 		if err != nil {
-			return err
+			return nil, err
+		}
+		obj := new(User)
+		err = json.Unmarshal(src, &obj)
+		if err != nil {
+			return nil, err
 		}
 		objects = append(objects, obj)
 	}

@@ -11,7 +11,7 @@ Below is an example JSON document describing the user Jane Doe.
         "user_id": "jane.doe@example.edu",
         "display_name": "Jane Doe",
         "create_object_in": "writer",
-        "workflows": [ "publisher", "editor", "writer" ]
+        "member_of": [ "publisher", "editor", "writer" ]
     }
 ```
 
@@ -26,7 +26,7 @@ display\_name
 create\_objects\_in
 : (string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)
 
-workflows
+member\_of
 : (list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is "\*" it means the user is a member of all workflows, their for has all defined permissions
 
 

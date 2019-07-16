@@ -1,10 +1,8 @@
 package andor
 
 import (
-	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	// Caltech Library packages
 	"github.com/caltechlibrary/dataset"
@@ -40,17 +38,16 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 		}
 		//FIXME: Need to handle case where we have JSON or TOML document
 		workflowName := args[1]
-		src, err := ioutil.ReadFile(args[2])
+		workflow, err := ReadWorkflowFile(args[2])
 		if err != nil {
 			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
 			return 1
 		}
-		workflow, err := readWorkflow(args[2])
-		if err != nil {
-			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
+		if err = AddWorkflow(workflowName, workflow); err != nil {
+			fmt.Fprintf(eOut, "%s", err)
 			return 1
 		}
-		return AddWorkflow(workflowName, workflow)
+		return 0
 	case "list-workflows":
 		objects, err := ListWorkflows()
 		if err != nil {
@@ -59,9 +56,9 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 		}
 		for _, obj := range objects {
 			fmt.Fprintln(out, "#")
-			fmt.Fprint(out, "# Workflow: %s\n", obj.Name)
+			fmt.Fprintf(out, "# Workflow: %s\n", obj.Name)
 			fmt.Fprintln(out, "#")
-			fmt.Fprint(out, "%s\n\n", obj.String())
+			fmt.Fprintf(out, "%s\n\n", obj.String())
 		}
 		return 0
 	case "remove-workflows":

@@ -14,6 +14,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"sort"
+	"strings"
+
+	// Caltech Library Packages
+	"github.com/caltechlibrary/dataset"
 
 	// Toml package
 	"github.com/BurntSushi/toml"
@@ -33,12 +38,12 @@ type Workflow struct {
 	ObjectPermissions []string `json:"object_permissions"`
 	// AssignTo defines a list of workflows that this workflow
 	// can send objects to.
-	AssignTo string `json:"assign_to"`
+	AssignTo []string `json:"assign_to"`
 	// Queues holds an list of queue names of this workflow
 	// can view objects in. The queue name is the same as a
 	// defined workflow name. E.g. objects is the review queue
 	// would be in the review workflow state with those rights.
-	Queues string `json:"queues"`
+	Queues []string `json:"queues"`
 }
 
 // ReadWorkflowFile takes a filename, reads the file
@@ -50,13 +55,13 @@ func ReadWorkflowFile(fName string) (*Workflow, error) {
 	if err != nil {
 		return nil, err
 	}
-	switch path.Exit(fName) {
+	switch path.Ext(fName) {
 	case ".json":
 		if err := json.Unmarshal(src, &workflow); err != nil {
 			return workflow, err
 		}
 	case ".toml":
-		if _, err := toml.Decode(src, &workflow); err != nil {
+		if _, err := toml.Decode(string(src), &workflow); err != nil {
 			return workflow, err
 		}
 	default:
@@ -69,25 +74,31 @@ func ReadWorkflowFile(fName string) (*Workflow, error) {
 func (workflow *Workflow) Bytes() []byte {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(workflow); err != nil {
-		return fmt.Sprintf("%+v", workflow)
+		src, _ := json.MarshalIndent(workflow, "", "    ")
+		return src
 	}
-	return buf
+	return buf.Bytes()
 }
 
 // String() outputs a workflow to a string TOML.
 func (workflow *Workflow) String() string {
-	return workflow.Bytes().String()
+	buf := new(bytes.Buffer)
+	if err := toml.NewEncoder(buf).Encode(workflow); err != nil {
+		src, _ := json.MarshalIndent(workflow, "", "    ")
+		return string(src)
+	}
+	return buf.String()
 }
 
 // AddWorkflow adds a workflow to the "workflows.AndOr"
 // dataset collection.
-func AddWorkflow(worflowName string, workflow *Workflow) error {
+func AddWorkflow(workflowName string, workflow *Workflow) error {
 	c, err := dataset.Open("workflows.AndOr")
 	if err != nil {
 		return err
 	}
 	defer c.Close()
-	src, err := json.MarshalIndent(workflow)
+	src, err := json.MarshalIndent(workflow, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -116,7 +127,11 @@ func AddQueue(workflowName, queueName string) error {
 		}
 	}
 	workflow.Queues = append(workflow.Queues, queueName)
-	return c.Update(workflowName, workflow)
+	src, err = json.MarshalIndent(workflow, "", "    ")
+	if err != nil {
+		return err
+	}
+	return c.UpdateJSON(workflowName, src)
 }
 
 // RemoveQueue adds a workflow name to Queues attribute.
@@ -141,7 +156,11 @@ func RemoveQueue(workflowName, queueName string) error {
 		}
 	}
 	workflow.Queues = queues
-	return c.Update(workflowName, workflow)
+	src, err = json.MarshalIndent(workflow, "", "    ")
+	if err != nil {
+		return err
+	}
+	return c.UpdateJSON(workflowName, src)
 }
 
 // AddAssignTo adds a workflow to AssignTo attribute.
@@ -166,7 +185,11 @@ func AddAssignTo(workflowName, queueName string) error {
 		}
 	}
 	workflow.Queues = append(workflow.AssignTo, queueName)
-	return c.Update(workflowName, workflow)
+	src, err = json.MarshalIndent(workflow, "", "    ")
+	if err != nil {
+		return err
+	}
+	return c.UpdateJSON(workflowName, src)
 }
 
 // RemoveAssignTo adds a workflow to AssignTo attribute.
@@ -191,23 +214,32 @@ func RemoveAssignTo(workflowName, queueName string) error {
 		}
 	}
 	workflow.AssignTo = queues
-	return c.Update(workflowName, workflow)
+	src, err = json.MarshalIndent(workflow, "", "    ")
+	if err != nil {
+		return err
+	}
+	return c.UpdateJSON(workflowName, src)
 }
 
 // ListWorkflows returns a list of workflow objects
 func ListWorkflows() ([]*Workflow, error) {
 	c, err := dataset.Open("workflows.AndOr")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer c.Close()
 	keys := c.Keys()
 	sort.Strings(keys)
 	objects := []*Workflow{}
 	for _, key := range keys {
-		obj, err := c.Read(key)
+		src, err := c.ReadJSON(key)
 		if err != nil {
-			return err
+			return nil, err
+		}
+		obj := new(Workflow)
+		err = json.Unmarshal(src, &obj)
+		if err != nil {
+			return nil, err
 		}
 		objects = append(objects, obj)
 	}
@@ -227,8 +259,8 @@ func RemoveWorkflow(workflowName string) error {
 // UserInWorkflow takes user and workflow and sees if
 // the user is indeed in the workflow or not.
 func UserInWorkflow(user *User, workflow *Workflow) bool {
-	for _, queue := range user.Workflows {
-		if strings.Compare(queue, workflow.WorkflowID) == 0 {
+	for _, queue := range user.MemberOf {
+		if strings.Compare(queue, workflow.Key) == 0 {
 			return true
 		}
 	}
@@ -254,7 +286,7 @@ func ObjectInWorkflow(object map[string]interface{}, workflow *Workflow) bool {
 
 // HasAccess takes a user, workflow, permission, and object
 // it returns true if permission is affirmed false otherwise.
-func HasAccess(user *User, workflow *Workflow, permission string, object map[string]*interface{}) bool {
+func HasAccess(user *User, workflow *Workflow, permission string, object map[string]interface{}) bool {
 	// Check if user is in workflow
 	// Check if object is in workflow's queues
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
@@ -273,7 +305,7 @@ func HasAccess(user *User, workflow *Workflow, permission string, object map[str
 
 // CanAssign takes a user, workflow, queue name and object
 // it returns true if assignment is allowed, false otherwise
-func CanAssign(user *User, workflow *Workflow, queueName string, object map[string]*interface{}) bool {
+func CanAssign(user *User, workflow *Workflow, queueName string, object map[string]interface{}) bool {
 	// Check if user is in workflow
 	// Check if object is in workflow's queues
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
