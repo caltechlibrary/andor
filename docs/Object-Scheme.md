@@ -12,7 +12,7 @@ moves through a workflow.  **dataset** the storage engine of **AndOr** also adds
     {
         ... /* object's scheme here */
         "_Key": "SOME_KEY_VALUE_HERE",
-        "_WorkQueue": "published"
+        "_Queue": "published"
     }       
 ```
 

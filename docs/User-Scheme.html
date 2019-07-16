@@ -30,8 +30,8 @@ needs to keep track of basic user information.</p>
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;jane.doe@example.edu&quot;,
         &quot;display_name&quot;: &quot;Jane Doe&quot;,
-        &quot;create_objects_as&quot;: &quot;writer&quot;,
-        &quot;member_of&quot;: [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+        &quot;create_object_in&quot;: &quot;writer&quot;,
+        &quot;workflows&quot;: [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
     }
 </code></pre>
 
@@ -42,9 +42,9 @@ needs to keep track of basic user information.</p>
 <dd>(string, required) in this case an email address is a unique string used to map a user to their assigned workflows</dd>
 <dt>display_name</dt>
 <dd>(string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious</dd>
-<dt>create_objects_as</dt>
+<dt>create_objects_in</dt>
 <dd>(string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)</dd>
-<dt>member_of</dt>
+<dt>workflows</dt>
 <dd>(list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is &ldquo;*&rdquo; it means the user is a member of all workflows, their for has all defined permissions</dd>
 </dl>
 

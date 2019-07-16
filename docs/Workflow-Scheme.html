@@ -42,7 +42,7 @@ in a collection.</p>
             &quot;update&quot;
         ]
         &quot;assign_to&quot;: [ &quot;*&quot; ],
-        &quot;view_object_ids&quot;: [ &quot;*&quot; ]
+        &quot;queues&quot;: [ &quot;*&quot; ]
     }
 </code></pre>
 
@@ -52,10 +52,10 @@ in a collection.</p>
 <dt>workflow_id</dt>
 <dd>(string, required, must be unique) the id for this workflow</dd>
 <dt>object_permissions</dt>
-<dd>(array of string, default is empty list) this is where you give object level permissions for create, read and update. For the object level permissions objects must be viewable in the workflow. See &quot;view_objects&quot; field.</dd>
+<dd>(array of string, default is empty list) this is where you give object level permissions for create, read and update. For the object level permissions objects must be viewable in the workflow. See &quot;queues&quot; field.</dd>
 <dt>assign_to</dt>
 <dd>(array of string, default is empty list) this holds the ids of the workflows you are allow to assign an object to, if the &quot;*&quot; string is included it means this workflow can assign an object to any other workflow</dd>
-<dt>view_objects</dt>
+<dt>queues</dt>
 <dd>(array of string, default is empty list) this holds the workflow ids of the objects you're allow to view, this is how we create a queue of objects. If the workflow is listed as &quot;*&quot; it means you can see any object in the collection.  Note if you can see the object then the object_permissions apply.</dd>
 </dl>
 
@@ -63,7 +63,7 @@ in a collection.</p>
 Because &quot;assign_to&quot; contains the &quot;*&quot; string. A user who is associated
 with the workflow &quot;curator&quot; (you can also think of this as a queue)
 can move objects to any other workflow. A curator can also see all objects
-because &quot;view_objects&quot; also has the &quot;*&quot; string.</p>
+because &quot;queues&quot; also has the &quot;*&quot; string.</p>
 
 <p>Normally a workflow is defined more granularly. A typical system
 would have a queue for curator, published and delete. If you
@@ -78,7 +78,7 @@ has no object permissions in it. A &quot;delete&quot; workflow could look like</
         &quot;workflow_id&quot;: &quot;delete&quot;,
         &quot;object_permissions&quot;: [ ],
         &quot;assign_to&quot;: [ ],
-        &quot;view_object_ids&quot;: [ ]
+        &quot;queues&quot;: [ ]
     }
 </code></pre>
 
@@ -98,7 +98,7 @@ could be defined this way.</p>
         &quot;workflow_id&quot;: &quot;published&quot;,
         &quot;object_permissions&quot;: [ &quot;read&quot; ],
         &quot;assign_to&quot;: [ ],
-        &quot;view_object_ids&quot;: [ &quot;published&quot; ]
+        &quot;queues&quot;: [ &quot;published&quot; ]
     }
 </code></pre>
 
@@ -106,7 +106,7 @@ could be defined this way.</p>
 then be allowed to see all objects held in the &quot;published&quot; workflow.
 Notice that we also give &quot;published&quot; the read permission at the
 object level. This is needed to display the objects details
-(e.g. a title field) as well as the id. &quot;view_objects&quot; only means
+(e.g. a title field) as well as the id. &quot;queues&quot; only means
 you can view the id, that it the id will be returned in a list of
 ids.</p>
 
@@ -116,7 +116,7 @@ add &quot;published&quot; to the anonymous users' &quot;member_of&quot; field. T
 would allow unauthenticated users to see published objects.</p>
 
 <p>The &quot;assign_to&quot; controls where you can move an object to and
-&quot;view_objects&quot; controls which objects you can see while
+&quot;queues&quot; controls which objects you can see while
 in this workflow. A object's workflow assignment also makes
 a workflow behave as a queue.</p>
 
@@ -130,7 +130,7 @@ illusion of deletion by cleverly defining a &quot;delete&quot; workflow.</p>
 <hr>
 
 <ol>
-<li id="fn:1">objects have a field called &quot;_WorkQueue&quot; that holds the name of the workflow queue they are currently associated with</li>
+<li id="fn:1">objects have a field called &quot;_Queue&quot; that holds the name of the workflow queue they are currently associated with</li>
 </ol>
 
 </div>

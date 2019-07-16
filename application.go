@@ -1,8 +1,10 @@
 package andor
 
 import (
+	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 
 	// Caltech Library packages
 	"github.com/caltechlibrary/dataset"
@@ -31,14 +33,48 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 			}
 		}
 	case "add-workflow":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
+		//FIXME: We want to also provide an interactive version.
+		if len(args) < 3 {
+			fmt.Fprintf(eOut, "Missing workflow name and JSON/TOML document")
+			return 1
+		}
+		//FIXME: Need to handle case where we have JSON or TOML document
+		workflowName := args[1]
+		src, err := ioutil.ReadFile(args[2])
+		if err != nil {
+			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
+			return 1
+		}
+		workflow, err := readWorkflow(args[2])
+		if err != nil {
+			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
+			return 1
+		}
+		return AddWorkflow(workflowName, workflow)
 	case "list-workflows":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
+		objects, err := ListWorkflows()
+		if err != nil {
+			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
+			return 1
+		}
+		for _, obj := range objects {
+			fmt.Fprintln(out, "#")
+			fmt.Fprint(out, "# Workflow: %s\n", obj.Name)
+			fmt.Fprintln(out, "#")
+			fmt.Fprint(out, "%s\n\n", obj.String())
+		}
+		return 0
 	case "remove-workflows":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
+		if len(args) < 2 {
+			fmt.Fprintf(eOut, "Missing workflow name to remove")
+			return 1
+		}
+		err := RemoveWorkflow(args[1])
+		if err != nil {
+			fmt.Fprintf(eOut, "%s\n", err)
+			return 1
+		}
+		return 0
 	case "add-user":
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
