@@ -260,7 +260,8 @@ func HasAccess(user *User, workflow *Workflow, permission string, object map[str
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
 		// Check if work flow has rights on object
 		for _, objectPermission := range workflow.ObjectPermissions {
-			if strings.Compare(permission, objectPermission) == 0 {
+			if strings.Compare(objectPermission, "*") == 0 ||
+				strings.Compare(permission, objectPermission) == 0 {
 				return true
 			}
 		}
@@ -278,7 +279,8 @@ func CanAssign(user *User, workflow *Workflow, queueName string, object map[stri
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
 		// Check if work flow has rights to assign to new queue
 		for _, assignTo := range workflow.AssignTo {
-			if strings.Compare(queueName, assignTo) == 0 {
+			if strings.Compare(assignTo, "*") == 0 ||
+				strings.Compare(queueName, assignTo) == 0 {
 				return true
 			}
 		}
