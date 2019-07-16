@@ -10,7 +10,7 @@
 + [ ] EPrints has a issues system
     + Probably link out Jira or GitHub if we're going to support issues
     + Worst case add another collection called "issues" and just store stuff there with the same ID as the Object record.
-
++ [ ] If an object is being "edited" (read before an update) indicate that in the UI of someone else logged in an editing objects - Stephen's suggestion
 
 ## Next
 
