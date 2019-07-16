@@ -37,6 +37,4 @@ line program.
 + [remove-user](remove-user.html) - remove a user 
 + [config](config.html) - configure **AndOr** web service
 + [start](start.html) - start **AndOr** web service
-+ [restart](restart.html) - restart **AndOr** web service
-+ [stop](stop.html) - stop **AndOr** web service
 
