@@ -59,9 +59,9 @@ func ObjectInWorkflow(object map[string]interface{}, workflow *Workflow) bool {
 	return false
 }
 
-// CanAccess takes a user, workflow, permission, and object
+// IsAllowed takes a user, workflow, permission, and object
 // it returns true if permission is affirmed false otherwise.
-func CanAccess(user *User, workflow *Workflow, permission string, object map[string]interface{}) bool {
+func IsAllowed(user *User, workflow *Workflow, object map[string]interface{}, permission string) bool {
 	// Check if user is in workflow
 	// Check if object is in workflow's queues
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
@@ -80,7 +80,7 @@ func CanAccess(user *User, workflow *Workflow, permission string, object map[str
 
 // CanAssign takes a user, workflow, queue name and object
 // it returns true if assignment is allowed, false otherwise
-func CanAssign(user *User, workflow *Workflow, queueName string, object map[string]interface{}) bool {
+func CanAssign(user *User, workflow *Workflow, object map[string]interface{}, queueName string) bool {
 	// Check if user is in workflow
 	// Check if object is in workflow's queues
 	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {

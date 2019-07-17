@@ -15,7 +15,7 @@ import (
 // Test data for workflows
 var (
 	// Three basic workflows
-	deposit = &Workflow{
+	depositQueue = &Workflow{
 		Key:               "deposit",
 		Name:              "Deposit",
 		ObjectPermissions: []string{"create", "read", "update"},
@@ -23,7 +23,7 @@ var (
 		Queues:            []string{"deposit"},
 	}
 
-	review = &Workflow{
+	reviewQueue = &Workflow{
 		Key:               "review",
 		Name:              "Review",
 		ObjectPermissions: []string{"read", "update"},
@@ -31,7 +31,7 @@ var (
 		Queues:            []string{"review", "published"},
 	}
 
-	published = &Workflow{
+	publishedQueue = &Workflow{
 		Key:               "published",
 		Name:              "Published",
 		ObjectPermissions: []string{"read"},
@@ -69,67 +69,147 @@ var (
 
 // TestUserInWorkflow tests user in workflow
 func TestUserInWorkflow(t *testing.T) {
-	if expected, got := true, UserInWorkflow(depositor, deposit); expected != got {
+	if expected, got := true, UserInWorkflow(depositor, depositQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 
 	}
-	if expected, got := false, UserInWorkflow(depositor, review); expected != got {
+	if expected, got := false, UserInWorkflow(depositor, reviewQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, UserInWorkflow(depositor, published); expected != got {
+	if expected, got := false, UserInWorkflow(depositor, publishedQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
 
-	if expected, got := false, UserInWorkflow(reviewer, deposit); expected != got {
+	if expected, got := false, UserInWorkflow(reviewer, depositQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, UserInWorkflow(reviewer, review); expected != got {
+	if expected, got := true, UserInWorkflow(reviewer, reviewQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, UserInWorkflow(reviewer, published); expected != got {
+	if expected, got := true, UserInWorkflow(reviewer, publishedQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
 }
 
 // TestObjectInWorkflow test object and workflow
 func TestObjectInWorkflow(t *testing.T) {
-	if expected, got := true, ObjectInWorkflow(depositedObject, deposit); expected != got {
+	if expected, got := true, ObjectInWorkflow(depositedObject, depositQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, ObjectInWorkflow(depositedObject, review); expected != got {
+	if expected, got := false, ObjectInWorkflow(depositedObject, reviewQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, ObjectInWorkflow(depositedObject, published); expected != got {
+	if expected, got := false, ObjectInWorkflow(depositedObject, publishedQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, ObjectInWorkflow(reviewedObject, deposit); expected != got {
+	if expected, got := false, ObjectInWorkflow(reviewedObject, depositQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, ObjectInWorkflow(reviewedObject, review); expected != got {
+	if expected, got := true, ObjectInWorkflow(reviewedObject, reviewQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, ObjectInWorkflow(reviewedObject, published); expected != got {
+	if expected, got := false, ObjectInWorkflow(reviewedObject, publishedQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, ObjectInWorkflow(publishedObject, deposit); expected != got {
+	if expected, got := false, ObjectInWorkflow(publishedObject, depositQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, ObjectInWorkflow(publishedObject, review); expected != got {
+	if expected, got := true, ObjectInWorkflow(publishedObject, reviewQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, ObjectInWorkflow(publishedObject, published); expected != got {
+	if expected, got := true, ObjectInWorkflow(publishedObject, publishedQueue); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
 }
 
-// TestCanAccess tests if user, workflow, permission, and object
+// TestIsAllowed tests if user, workflow, permission, and object
 // are accessible
-func TestCanAccess(t *testing.T) {
-	t.Errorf("TestCanAccess() not implemented.")
+func TestIsAllowed(t *testing.T) {
+	if expected, got := true, IsAllowed(depositor, depositQueue, depositedObject, "create"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, IsAllowed(depositor, depositQueue, depositedObject, "read"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, IsAllowed(depositor, depositQueue, depositedObject, "update"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, reviewQueue, depositedObject, "create"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, reviewQueue, depositedObject, "read"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, reviewQueue, depositedObject, "update"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, publishedQueue, depositedObject, "create"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, publishedQueue, depositedObject, "read"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, IsAllowed(depositor, publishedQueue, depositedObject, "update"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
 }
 
 // TestCanAssign tests a user, workflow, queue name and object
 // is assignable.
 func TestCanAssign(t *testing.T) {
-	t.Errorf("TestCanAssign() not implemented.")
+	if expected, got := true, CanAssign(depositor, depositQueue, depositedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, depositQueue, depositedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, depositQueue, depositedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, reviewQueue, depositedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, reviewQueue, depositedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, reviewQueue, depositedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, publishedQueue, depositedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, publishedQueue, depositedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(depositor, publishedQueue, depositedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+
+	if expected, got := false, CanAssign(reviewer, depositQueue, reviewedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, depositQueue, reviewedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, depositQueue, reviewedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, CanAssign(reviewer, reviewQueue, reviewedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, reviewQueue, reviewedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, CanAssign(reviewer, reviewQueue, reviewedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, publishedQueue, reviewedObject, "deposit"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, publishedQueue, reviewedObject, "review"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, CanAssign(reviewer, publishedQueue, reviewedObject, "published"); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
 }
