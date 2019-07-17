@@ -15,22 +15,23 @@ import (
 // Test data for workflows
 var (
 	// Three basic workflows
-	deposit = Workflow{
+	deposit = &Workflow{
 		Key:               "deposit",
 		Name:              "Deposit",
-		ObjectPermissions: []string{"create", "update"},
+		ObjectPermissions: []string{"create", "read", "update"},
 		AssignTo:          []string{"review"},
 		Queues:            []string{"deposit"},
 	}
 
-	review = Workflow{
+	review = &Workflow{
 		Key:               "review",
 		Name:              "Review",
 		ObjectPermissions: []string{"read", "update"},
 		AssignTo:          []string{"deposit", "published"},
-		Queues:            []string{"deposit", "review", "published"},
+		Queues:            []string{"review", "published"},
 	}
-	published = Workflow{
+
+	published = &Workflow{
 		Key:               "published",
 		Name:              "Published",
 		ObjectPermissions: []string{"read"},
@@ -38,48 +39,87 @@ var (
 		Queues:            []string{"published"},
 	}
 
-	user1 = User{
+	depositor = &User{
 		Key:         "UserOne",
 		DisplayName: "User One",
 		CreateQueue: "deposit",
-		MemberOf:    []string{"deposit", "review", "published"},
+		MemberOf:    []string{"deposit"},
 	}
 
-	user2 = User{
+	reviewer = &User{
 		Key:         "UserTwo",
 		DisplayName: "User Tow",
 		CreateQueue: "",
-		MemberOf:    []string{"published"},
+		MemberOf:    []string{"review", "published"},
+	}
+
+	depositedObject = map[string]interface{}{
+		"_Key":   "1",
+		"_Queue": "deposit",
+	}
+	reviewedObject = map[string]interface{}{
+		"_Key":   "2",
+		"_Queue": "review",
+	}
+	publishedObject = map[string]interface{}{
+		"_Key":   "3",
+		"_Queue": "published",
 	}
 )
 
 // TestUserInWorkflow tests user in workflow
 func TestUserInWorkflow(t *testing.T) {
-	if expected, got := true, UserInWorkflow(user1, deposit); expected != got {
+	if expected, got := true, UserInWorkflow(depositor, deposit); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 
 	}
-	if expected, got := true, UserInWorkflow(user1, review); expected != got {
+	if expected, got := false, UserInWorkflow(depositor, review); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, UserInWorkflow(user1, published); expected != got {
+	if expected, got := false, UserInWorkflow(depositor, published); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
 
-	if expected, got := false, UserInWorkflow(user2, deposit); expected != got {
+	if expected, got := false, UserInWorkflow(reviewer, deposit); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := false, UserInWorkflow(user2, review); expected != got {
+	if expected, got := true, UserInWorkflow(reviewer, review); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
-	if expected, got := true, UserInWorkflow(user2, published); expected != got {
+	if expected, got := true, UserInWorkflow(reviewer, published); expected != got {
 		t.Errorf("expected %t, got %t", expected, got)
 	}
 }
 
 // TestObjectInWorkflow test object and workflow
 func TestObjectInWorkflow(t *testing.T) {
-	t.Errorf("TestObjectInWorkflow() not implemented.")
+	if expected, got := true, ObjectInWorkflow(depositedObject, deposit); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, ObjectInWorkflow(depositedObject, review); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, ObjectInWorkflow(depositedObject, published); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, ObjectInWorkflow(reviewedObject, deposit); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, ObjectInWorkflow(reviewedObject, review); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, ObjectInWorkflow(reviewedObject, published); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := false, ObjectInWorkflow(publishedObject, deposit); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, ObjectInWorkflow(publishedObject, review); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
+	if expected, got := true, ObjectInWorkflow(publishedObject, published); expected != got {
+		t.Errorf("expected %t, got %t", expected, got)
+	}
 }
 
 // TestCanAccess tests if user, workflow, permission, and object
