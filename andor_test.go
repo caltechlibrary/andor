@@ -13,10 +13,10 @@ import (
 )
 
 func TestAndOr(t *testing.T) {
-	if andOrUsers == "" {
-		t.Errorf("expected andOrUsers to non-empty")
+	if AndOrUsers == "" {
+		t.Errorf("expected AndOrUsers to non-empty")
 	}
-	if andOrWorkflows == "" {
-		t.Errorf("expected andOrWorkflows to non-empty")
+	if AndOrWorkflows == "" {
+		t.Errorf("expected AndOrWorkflows to non-empty")
 	}
 }

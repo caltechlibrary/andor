@@ -48,6 +48,18 @@ needs to keep track of basic user information.</p>
 <dd>(list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is &ldquo;*&rdquo; it means the user is a member of all workflows, their for has all defined permissions</dd>
 </dl>
 
+<p>Here&rsquo;s an example of expressing that user in TOML.</p>
+
+<pre><code class="language-toml">    # User id
+    [&quot;jane.doe@example.edu&quot;]
+    # Diplsay Name
+    display_name = &quot;Jane Doe&quot;
+    # Default queue where objects can be created
+    create_queue = &quot;writer&quot;
+    # The queues/workflows this user can see.
+    member_of = [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+</code></pre>
+
 <h2>How the user object is used</h2>
 
 <p>When Jane authenticates with the system she goes from being

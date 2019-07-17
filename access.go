@@ -9,28 +9,14 @@
 package andor
 
 import (
-	"fmt"
-	"os"
 	"strings"
 )
-
-var debugOn = false
-
-func debug_msg(fString string, args ...interface{}) {
-	if debugOn {
-		fmt.Fprintf(os.Stderr, "DEBUG "+fString+"\n", args...)
-	}
-}
 
 // UserInWorkflow takes user and workflow and sees if
 // the user is indeed in the workflow or not.
 func UserInWorkflow(user *User, workflow *Workflow) bool {
-	debug_msg("user (%T) -> %+v\n", user, workflow)
-	debug_msg("Workflow (%T) -> %+v\n", workflow, workflow.String())
 	for _, queue := range user.MemberOf {
-		debug_msg("compare(%q, %q)\n\n", queue, workflow.Key)
 		if strings.Compare(queue, workflow.Key) == 0 {
-			debug_msg("matched\n\n")
 			return true
 		}
 	}
@@ -41,21 +27,16 @@ func UserInWorkflow(user *User, workflow *Workflow) bool {
 // the object is in the workflow's queue(s)
 func ObjectInWorkflow(object map[string]interface{}, workflow *Workflow) bool {
 	if s, ok := object["_Queue"]; ok == true {
-		debug_msg("s (%T) -> %+v\n", s, s)
-		debug_msg("Workflow (%T) -> %+v\n", workflow, workflow.String())
 		switch s.(type) {
 		case string:
 			queueName := s.(string)
 			for _, queue := range workflow.Queues {
-				debug_msg("compare(%q, %q)\n\n", queueName, queue)
 				if strings.Compare(queueName, queue) == 0 {
-					debug_msg("matched\n\n")
 					return true
 				}
 			}
 		}
 	}
-	debug_msg("NOT matched\n\n")
 	return false
 }
 

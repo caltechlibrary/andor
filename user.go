@@ -30,38 +30,65 @@ type User struct {
 	// Key holds the user id associated with a user.
 	// This is how we map into available workflows with
 	// MemberOf
-	Key string `json:"user_id"`
+	Key string `json:"user_id" toml:"user_id"`
 	// DisplayName holds the display name when a user is authenticated.
-	DisplayName string `json:"display_name"`
+	DisplayName string `json:"display_name" toml:"display_name"`
 	// CreateQueue holds the default queue name used
 	// when creating objects.
-	CreateQueue string `json:"create_queue"`
+	CreateQueue string `json:"create_queue" toml:"create_queue"`
 	// MemberOf holds a list of workflow names the user is a member of.
-	MemberOf []string `json:"member_of"`
+	MemberOf []string `json:"member_of" toml:"member_of"`
 }
 
-// ReadUserFile takes a filename, reads the file
-// (either JSON or TOML) and returns a user
-// object and error.
-func ReadUserFile(fName string) (*User, error) {
-	user := new(User)
-	src, err := ioutil.ReadFile(fName)
+// LoadUser takes one or more filenames, reads the file
+// (either JSON or TOML) and loads the users into AndOr
+// NOTE: it add/updates records and does NOT remove records.
+func LoadUser(fNames []string) error {
+	c, err := dataset.Open(AndOrUsers)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	switch path.Ext(fName) {
-	case ".json":
-		if err := json.Unmarshal(src, &user); err != nil {
-			return user, err
+	defer c.Close()
+
+	for _, fName := range fNames {
+		users := map[string]*User{}
+		src, err := ioutil.ReadFile(fName)
+		if err != nil {
+			return err
 		}
-	case ".toml":
-		if _, err := toml.Decode(string(src), &user); err != nil {
-			return user, err
+		fmt.Printf("DEBUG src -> %s\n", src)
+		switch path.Ext(fName) {
+		case ".json":
+			if err := json.Unmarshal(src, &users); err != nil {
+				return err
+			}
+		case ".toml":
+			if _, err := toml.Decode(string(src), &users); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("user must be either a .json or .toml file")
 		}
-	default:
-		return nil, fmt.Errorf("user must be either a .json or .toml file")
+		fmt.Printf("DEBUG users => %+v\n", users)
+		for key, user := range users {
+			user.Key = key
+			fmt.Printf("DEBUG user -> %s\n", user.Bytes())
+			src, err := json.MarshalIndent(user, "", "    ")
+			if err != nil {
+				return err
+			}
+			if c.HasKey(key) == true {
+				if err := c.UpdateJSON(key, src); err != nil {
+					return err
+				}
+			} else {
+				if err := c.CreateJSON(key, src); err != nil {
+					return err
+				}
+			}
+		}
 	}
-	return user, nil
+	return nil
 }
 
 // Bytes() outputs a user to []bytes in TOML.
@@ -87,7 +114,7 @@ func (user *User) String() string {
 // AddUser adds a user to the "users.AndOr"
 // dataset collection.
 func AddUser(userName string, user *User) error {
-	c, err := dataset.Open(andOrUsers)
+	c, err := dataset.Open(AndOrUsers)
 	if err != nil {
 		return err
 	}
@@ -101,7 +128,7 @@ func AddUser(userName string, user *User) error {
 
 // AddMemberOf adds a workflow to a user object
 func AddMemberOf(userName, workflowName string) error {
-	c, err := dataset.Open(andOrUsers)
+	c, err := dataset.Open(AndOrUsers)
 	if err != nil {
 		return err
 	}
@@ -128,39 +155,9 @@ func AddMemberOf(userName, workflowName string) error {
 	return c.UpdateJSON(userName, src)
 }
 
-// RemoveMemberOf removes a workflow for a user object
-func RemoveMemberOf(userName, workflowName string) error {
-	c, err := dataset.Open(andOrUsers)
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(userName)
-	if err != nil {
-		return err
-	}
-	user := new(User)
-	if err = json.Unmarshal(src, &user); err != nil {
-		return err
-	}
-	// Make remove any occurrences of the same workgroup name.
-	memberOf := []string{}
-	for _, key := range user.MemberOf {
-		if strings.Compare(workflowName, key) != 0 {
-			memberOf = append(user.MemberOf, key)
-		}
-	}
-	user.MemberOf = memberOf
-	src, err = json.MarshalIndent(user, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.UpdateJSON(userName, src)
-}
-
 // ListUsers returns a list of user objects
 func ListUsers() ([]*User, error) {
-	c, err := dataset.Open(andOrUsers)
+	c, err := dataset.Open(AndOrUsers)
 	if err != nil {
 		return nil, err
 	}
@@ -183,12 +180,21 @@ func ListUsers() ([]*User, error) {
 	return objects, nil
 }
 
-// RemoveUser removes a user from "users.AndOr"
-func RemoveUser(userName string) error {
-	c, err := dataset.Open(andOrUsers)
+// RemoveUser removes user(s) from "users.AndOr"
+func RemoveUser(userNames []string) error {
+	c, err := dataset.Open(AndOrUsers)
 	if err != nil {
 		return err
 	}
 	defer c.Close()
-	return c.Delete(userName)
+	for _, userName := range userNames {
+		if userName == "*" {
+			keys := c.Keys()
+			return RemoveUser(keys)
+		}
+		if err := c.Delete(userName); err != nil {
+			return err
+		}
+	}
+	return nil
 }

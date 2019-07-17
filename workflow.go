@@ -30,26 +30,26 @@ import (
 type Workflow struct {
 	// Key holds the key to be used when saving the workflow
 	// to workflows.AndOr. e.g. "editor", "curator", "public"
-	Key string `json:"workflow_id"`
+	Key string `json:"workflow_id" toml:"workflow_id"`
 	// Name, the display name, e.g. "Editor", "Curator", "Public View"
-	Name string `json:"workflow_name"`
+	Name string `json:"workflow_name" toml:"workflow_name"`
 	// Object level permissions, i.e. "create", "read", "update"
-	ObjectPermissions []string `json:"object_permissions"`
+	ObjectPermissions []string `json:"object_permissions" toml:"object_permissions"`
 	// AssignTo defines a list of workflows that this workflow
 	// can send objects to.
-	AssignTo []string `json:"assign_to"`
+	AssignTo []string `json:"assign_to" toml:"assign_to"`
 	// Queues holds an list of queue names of this workflow
 	// can view objects in. The queue name is the same as a
 	// defined workflow name. E.g. objects is the review queue
 	// would be in the review workflow state with those rights.
-	Queues []string `json:"queues"`
+	Queues []string `json:"queues" toml:"queues"`
 }
 
 // LoadWorkflow takes a filename, reads the file
 // (either JSON or TOML) and updates the workflow.AndOr
 // collection.
 func LoadWorkflow(fNames []string) error {
-	c, err := dataset.Open(andOrWorkflows)
+	c, err := dataset.Open(AndOrWorkflows)
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (workflow *Workflow) String() string {
 
 // ListWorkflow returns a list of workflow objects
 func ListWorkflow(keys []string) ([]*Workflow, error) {
-	c, err := dataset.Open(andOrWorkflows)
+	c, err := dataset.Open(AndOrWorkflows)
 	if err != nil {
 		return nil, err
 	}
@@ -142,12 +142,16 @@ func ListWorkflow(keys []string) ([]*Workflow, error) {
 
 // RemoveWorkflow removes one or more workflows from workflows.AndOr
 func RemoveWorkflow(workflowNames []string) error {
-	c, err := dataset.Open(andOrWorkflows)
+	c, err := dataset.Open(AndOrWorkflows)
 	if err != nil {
 		return err
 	}
 	defer c.Close()
 	for _, key := range workflowNames {
+		if key == "*" {
+			keys := c.Keys()
+			return RemoveWorkflow(keys)
+		}
 		if err := c.Delete(key); err != nil {
 			return err
 		}

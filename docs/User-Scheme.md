@@ -29,6 +29,18 @@ create\_queue
 member\_of
 : (list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is "\*" it means the user is a member of all workflows, their for has all defined permissions
 
+Here's an example of expressing that user in TOML.
+
+```toml
+    # User id
+    ["jane.doe@example.edu"]
+    # Diplsay Name
+    display_name = "Jane Doe"
+    # Default queue where objects can be created
+    create_queue = "writer"
+    # The queues/workflows this user can see.
+    member_of = [ "publisher", "editor", "writer" ]
+```
 
 ## How the user object is used
 

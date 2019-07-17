@@ -9,7 +9,7 @@ of a single user TOML file.
 
 ```toml
     # User id
-    [jane.doe@example.edu]
+    ["jane.doe@example.edu"]
     # Display name
     display_name = "Jane Doe"
     # By default objects are create in this queue

@@ -13,6 +13,6 @@ const (
 )
 
 var (
-	andOrUsers     = "users.AndOr"
-	andOrWorkflows = "workflows.AndOr"
+	AndOrUsers     = "users.AndOr"
+	AndOrWorkflows = "workflows.AndOr"
 )
