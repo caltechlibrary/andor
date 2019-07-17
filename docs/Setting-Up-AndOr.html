@@ -45,25 +45,38 @@ to setup and run it.</p>
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
-    bin/AndOr init repository.ds
+    # workflows.AndOr and users.AndOr must user those names.
+    bin/AndOr init repository.ds workflows.AndOr users.AndOr
 
-    # AndOr create-user will prompt for needed information.
-    bin/AndOr create-user
-    # AndOr create-workflow will prompt for the needed information.
-    bin/AndOr create-workflow
-    # AndOr config-service will prompt for the needed information.
-    bin/AndOr config-service
+    # We need some workflows. We create them in a TOML file
+    # and in this example the file is called &quot;workflows.toml&quot;.
+    # We then &quot;load&quot; the workflows into AndOr.
+    # NOTE: Loading only adds/updates workflows in AndOr.
+    $EDITOR workflows.toml
+    bin/AndOr load-workflow workflows.toml
 
-    # Startup the AndOr web service (we're hosting a single object
-    # collection.
-    bin/AndOr start
+    # AndOr create users is done first by create/editing a TOML
+    # file, in this example users.toml, then &quot;loading&quot; 
+    # it into AndOr. 
+    # NOTE: Loading ONLY adds/updates users in AndOr.
+    $EDITOR users.toml
+    bin/AndOr load-user user.toml
+
+    # Configure our AndOr web service (e.g. set hostname, port, 
+    # protocol, collection name(s))
+    bin/AndOr config &gt; webservice.toml
+    $EDITOR webservice.toml
+
+    # Startup the AndOr web service with webservice.toml 
+    bin/AndOr start webservice.toml
 </code></pre>
 
-<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can use
-additional options to control the port, hostname and protocol.</p>
+<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can
+change generating a TOML based config file, editing it and then
+using it to start AndOr.</p>
 
 <p>This is describing a proof of concept system. Don&rsquo;t expect
-this to work!</p>
+this to work yet!</p>
 
 </section>
 

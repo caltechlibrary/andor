@@ -33,9 +33,9 @@ type User struct {
 	Key string `json:"user_id"`
 	// DisplayName holds the display name when a user is authenticated.
 	DisplayName string `json:"display_name"`
-	// CreateObjectIn holds the default queue name used
+	// CreateQueue holds the default queue name used
 	// when creating objects.
-	CreateObjectsIn string `json:"create_object_as"`
+	CreateQueue string `json:"create_queue"`
 	// MemberOf holds a list of workflow names the user is a member of.
 	MemberOf []string `json:"member_of"`
 }
@@ -87,7 +87,7 @@ func (user *User) String() string {
 // AddUser adds a user to the "users.AndOr"
 // dataset collection.
 func AddUser(userName string, user *User) error {
-	c, err := dataset.Open("users.AndOr")
+	c, err := dataset.Open(andOrUsers)
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func AddUser(userName string, user *User) error {
 
 // AddMemberOf adds a workflow to a user object
 func AddMemberOf(userName, workflowName string) error {
-	c, err := dataset.Open("users.AndOr")
+	c, err := dataset.Open(andOrUsers)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func AddMemberOf(userName, workflowName string) error {
 
 // RemoveMemberOf removes a workflow for a user object
 func RemoveMemberOf(userName, workflowName string) error {
-	c, err := dataset.Open("users.AndOr")
+	c, err := dataset.Open(andOrUsers)
 	if err != nil {
 		return err
 	}
@@ -160,7 +160,7 @@ func RemoveMemberOf(userName, workflowName string) error {
 
 // ListUsers returns a list of user objects
 func ListUsers() ([]*User, error) {
-	c, err := dataset.Open("users.AndOr")
+	c, err := dataset.Open(andOrUsers)
 	if err != nil {
 		return nil, err
 	}
@@ -183,9 +183,9 @@ func ListUsers() ([]*User, error) {
 	return objects, nil
 }
 
-// RemoveUser removes a user from users.AndOr
+// RemoveUser removes a user from "users.AndOr"
 func RemoveUser(userName string) error {
-	c, err := dataset.Open("users.AndOr")
+	c, err := dataset.Open(andOrUsers)
 	if err != nil {
 		return err
 	}

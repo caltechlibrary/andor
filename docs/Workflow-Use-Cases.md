@@ -41,7 +41,7 @@ Jane's user object would look like.
     {
         "user_id": "jane@example.edu",
         "display_name": "Jane",
-        "create_objects_as": "curators",
+        "create_queue": "curators",
         "member_of": [ "curators" ]
     }
 ```
@@ -86,7 +86,7 @@ with the "published" workflow queue.
     {
         "userid": "anonymous",
         "display_name": "Public",
-        "create_objects_as": null,
+        "create_queue": null,
         "member_of": [ "published" ]
     }
 ```
@@ -123,7 +123,7 @@ a workflow queue called "deposit".
     {
         "userid": "anonymous",
         "display_name": "Public",
-        "create_objects_as": "deposit",
+        "create_queue": "deposit",
         "member_of": [ "published", "deposit" ]
     }
 ```
@@ -187,7 +187,7 @@ Millie's email is "mille@example.edu", her account would look like
     {
         "display_name": "Millie",
         "userid": "millie@example.edu",
-        "create_objects_as": null,
+        "create_queue": null,
         "member_of": [ "reviewer" ]
     }
 ```
@@ -257,7 +257,7 @@ Here is Olive's user object
     {
         "display_name": "Olive",
         "userid": "olive@example.edu",
-        "create_objects_as": "olive",
+        "create_queue": "olive",
         "member_of": [ "olive", "writer" ]
     }
 ```

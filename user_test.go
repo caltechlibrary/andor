@@ -15,3 +15,23 @@ import (
 func TestUser(t *testing.T) {
 	t.Errorf("TestUser() not implemented")
 }
+
+func TestLoadUser(t *testing.T) {
+	t.Errorf("TestLoadUser() not implemented")
+}
+
+func TestUserToBytes(t *testing.T) {
+	t.Errorf("TestUserToBytes() not implemented")
+}
+
+func TestUserToString(t *testing.T) {
+	t.Errorf("TestUserToString() not implemented")
+}
+
+func TestListUsers(t *testing.T) {
+	t.Errorf("TestListUsers() not implemented")
+}
+
+func TestRemoveUser(t *testing.T) {
+	t.Errorf("TestRemoveUser() not implemented")
+}

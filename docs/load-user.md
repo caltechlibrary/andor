@@ -12,8 +12,8 @@ of a single user TOML file.
     [jane.doe@example.edu]
     # Display name
     display_name = "Jane Doe"
-    # Objects are create in this queue
-    create_object_as = "deposit"
+    # By default objects are create in this queue
+    create_queue = "deposit"
     # Jane is a member of the "deposit" workflow/queue
     member_of = ["deposit"]
 ```

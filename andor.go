@@ -11,3 +11,8 @@ package andor
 const (
 	Version = `v0.0.0`
 )
+
+var (
+	andOrUsers     = "users.AndOr"
+	andOrWorkflows = "workflows.AndOr"
+)

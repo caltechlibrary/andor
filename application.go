@@ -3,6 +3,7 @@ package andor
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	// Caltech Library packages
 	"github.com/caltechlibrary/dataset"
@@ -37,14 +38,14 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 			return 1
 		}
 		//NOTE: We can actually read JSON or TOML files ...
-		err := LoadWorkflowFile(args[1:])
+		err := LoadWorkflow(args)
 		if err != nil {
 			fmt.Fprintf(eOut, "Can't read %s, %s", args[1], err)
 			return 1
 		}
 		return 0
 	case "list-workflow":
-		objects, err := ListWorkflows(args)
+		objects, err := ListWorkflow(args)
 		if err != nil {
 			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
 			return 1
@@ -86,13 +87,18 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
 	case "config":
+		//FIXME: Need to output an example TOML configuration file
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
 	case "start":
+		if len(args) == 0 {
+			fmt.Fprintf(eOut, "Missing TIML config filename")
+			return 1
+		}
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
 	default:
-		fmt.Fprintf(eOut, "%q, unknown action\n", verb)
+		fmt.Fprintf(eOut, "Don't understand \"%s %s\"", verb, strings.Join(args, " "))
 		return 1
 	}
 	return 0

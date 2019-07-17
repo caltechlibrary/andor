@@ -13,9 +13,8 @@ names correspond to work queues of "admin", "deposit",
 
 ```toml
     # This defines the workflow "admin"
+    # It sets workflow id is "admin"
     [admin]
-    # The workflow id is "admin"
-    workflow_id = "admin"
     # The display name is "Admin"
     workflow_name = "Admin"
     # Object level permisions in the "admin" queue
@@ -27,8 +26,6 @@ names correspond to work queues of "admin", "deposit",
 
     # This defines our "deposit" workflow
     [deposit]
-    # The workflow id is "deposit"
-    workflow_id = "deposit"
     # The display name is "Deposit"
     workflow_name = "Deposit"
     # Object level permissions in the "deposit" queue
@@ -41,8 +38,6 @@ names correspond to work queues of "admin", "deposit",
     # This defines our "published" workflow, it's terminal
     # So both object permissions and assign_to are restrictive.
     [published]
-    # The workflow id is "published"
-    workflow_id = "published"
     # The display name is "Published"
     workflow_name = "Published"
     # Object level permissions in the "published" queue

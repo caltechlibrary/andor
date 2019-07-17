@@ -15,7 +15,6 @@ import (
 	"io/ioutil"
 	"path"
 	"sort"
-	"strings"
 
 	// Caltech Library Packages
 	"github.com/caltechlibrary/dataset"
@@ -46,28 +45,52 @@ type Workflow struct {
 	Queues []string `json:"queues"`
 }
 
-// ReadWorkflowFile takes a filename, reads the file
-// (either JSON or TOML) and returns a workflow
-// object and error.
-func ReadWorkflowFile(fName string) (*Workflow, error) {
-	workflow := new(Workflow)
-	src, err := ioutil.ReadFile(fName)
+// LoadWorkflow takes a filename, reads the file
+// (either JSON or TOML) and updates the workflow.AndOr
+// collection.
+func LoadWorkflow(fNames []string) error {
+	c, err := dataset.Open(andOrWorkflows)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	switch path.Ext(fName) {
-	case ".json":
-		if err := json.Unmarshal(src, &workflow); err != nil {
-			return workflow, err
+	defer c.Close()
+
+	for _, fName := range fNames {
+		workflows := map[string]*Workflow{}
+		src, err := ioutil.ReadFile(fName)
+		if err != nil {
+			return err
 		}
-	case ".toml":
-		if _, err := toml.Decode(string(src), &workflow); err != nil {
-			return workflow, err
+		switch path.Ext(fName) {
+		case ".json":
+			if err := json.Unmarshal(src, &workflows); err != nil {
+				return err
+			}
+		case ".toml":
+			if _, err := toml.Decode(string(src), &workflows); err != nil {
+				return err
+			}
+		default:
+			return fmt.Errorf("workflow must be either a .json or .toml file")
 		}
-	default:
-		return nil, fmt.Errorf("workflow must be either a .json or .toml file")
+
+		for key, workflow := range workflows {
+			workflow.Key = key
+			src, err := json.MarshalIndent(workflow, "", "    ")
+			if err != nil {
+				return err
+			}
+			if c.HasKey(key) {
+				err = c.UpdateJSON(key, src)
+			} else {
+				err = c.CreateJSON(key, src)
+			}
+			if err != nil {
+				return nil
+			}
+		}
 	}
-	return workflow, nil
+	return nil
 }
 
 // Bytes() outputs a workflow to []bytes in TOML.
@@ -90,145 +113,16 @@ func (workflow *Workflow) String() string {
 	return buf.String()
 }
 
-// AddWorkflow adds a workflow to the "workflows.AndOr"
-// dataset collection.
-func AddWorkflow(workflowName string, workflow *Workflow) error {
-	c, err := dataset.Open("workflows.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := json.MarshalIndent(workflow, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.CreateJSON(workflowName, src)
-}
-
-// AddQueue adds a workflow name to Queues attribute.
-func AddQueue(workflowName, queueName string) error {
-	c, err := dataset.Open("workflows.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(workflowName)
-	if err != nil {
-		return err
-	}
-	workflow := new(Workflow)
-	if err = json.Unmarshal(src, &workflow); err != nil {
-		return err
-	}
-	// Make sure we're not adding duplicates
-	for _, key := range workflow.Queues {
-		if strings.Compare(queueName, key) != 0 {
-			return fmt.Errorf("already has queue of %q", queueName)
-		}
-	}
-	workflow.Queues = append(workflow.Queues, queueName)
-	src, err = json.MarshalIndent(workflow, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.UpdateJSON(workflowName, src)
-}
-
-// RemoveQueue adds a workflow name to Queues attribute.
-func RemoveQueue(workflowName, queueName string) error {
-	c, err := dataset.Open("workflows.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(workflowName)
-	if err != nil {
-		return err
-	}
-	workflow := new(Workflow)
-	if err = json.Unmarshal(src, &workflow); err != nil {
-		return err
-	}
-	queues := []string{}
-	for _, key := range workflow.Queues {
-		if strings.Compare(queueName, key) != 0 {
-			queues = append(queues, key)
-		}
-	}
-	workflow.Queues = queues
-	src, err = json.MarshalIndent(workflow, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.UpdateJSON(workflowName, src)
-}
-
-// AddAssignTo adds a workflow to AssignTo attribute.
-func AddAssignTo(workflowName, queueName string) error {
-	c, err := dataset.Open("workflows.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(workflowName)
-	if err != nil {
-		return err
-	}
-	workflow := new(Workflow)
-	if err = json.Unmarshal(src, &workflow); err != nil {
-		return err
-	}
-	// Make sure we're not adding duplicates
-	for _, key := range workflow.AssignTo {
-		if strings.Compare(queueName, key) != 0 {
-			return fmt.Errorf("already has assign to of %q", queueName)
-		}
-	}
-	workflow.Queues = append(workflow.AssignTo, queueName)
-	src, err = json.MarshalIndent(workflow, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.UpdateJSON(workflowName, src)
-}
-
-// RemoveAssignTo adds a workflow to AssignTo attribute.
-func RemoveAssignTo(workflowName, queueName string) error {
-	c, err := dataset.Open("workflows.AndOr")
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	src, err := c.ReadJSON(workflowName)
-	if err != nil {
-		return err
-	}
-	workflow := new(Workflow)
-	if err = json.Unmarshal(src, &workflow); err != nil {
-		return err
-	}
-	queues := []string{}
-	for _, key := range workflow.AssignTo {
-		if strings.Compare(queueName, key) != 0 {
-			queues = append(queues, key)
-		}
-	}
-	workflow.AssignTo = queues
-	src, err = json.MarshalIndent(workflow, "", "    ")
-	if err != nil {
-		return err
-	}
-	return c.UpdateJSON(workflowName, src)
-}
-
-// ListWorkflows returns a list of workflow objects
-func ListWorkflows() ([]*Workflow, error) {
-	c, err := dataset.Open("workflows.AndOr")
+// ListWorkflow returns a list of workflow objects
+func ListWorkflow(keys []string) ([]*Workflow, error) {
+	c, err := dataset.Open(andOrWorkflows)
 	if err != nil {
 		return nil, err
 	}
 	defer c.Close()
-	keys := c.Keys()
+	if len(keys) == 0 {
+		keys = c.Keys()
+	}
 	sort.Strings(keys)
 	objects := []*Workflow{}
 	for _, key := range keys {
@@ -246,77 +140,17 @@ func ListWorkflows() ([]*Workflow, error) {
 	return objects, nil
 }
 
-// RemoveWorkflow removes a workflow from workflows.AndOr
-func RemoveWorkflow(workflowName string) error {
-	c, err := dataset.Open("workflows.AndOr")
+// RemoveWorkflow removes one or more workflows from workflows.AndOr
+func RemoveWorkflow(workflowNames []string) error {
+	c, err := dataset.Open(andOrWorkflows)
 	if err != nil {
 		return err
 	}
 	defer c.Close()
-	return c.Delete(workflowName)
-}
-
-// UserInWorkflow takes user and workflow and sees if
-// the user is indeed in the workflow or not.
-func UserInWorkflow(user *User, workflow *Workflow) bool {
-	for _, queue := range user.MemberOf {
-		if strings.Compare(queue, workflow.Key) == 0 {
-			return true
+	for _, key := range workflowNames {
+		if err := c.Delete(key); err != nil {
+			return err
 		}
 	}
-	return false
-}
-
-// ObjectInWorkflow takes an object and workflow and sees if
-// the object is in the workflow's queue(s)
-func ObjectInWorkflow(object map[string]interface{}, workflow *Workflow) bool {
-	if s, ok := object["_Queue"]; ok == true {
-		switch s.(type) {
-		case string:
-			queueName := s.(string)
-			for _, queue := range workflow.Queues {
-				if strings.Compare(queueName, queue) == 0 {
-					return true
-				}
-			}
-		}
-	}
-	return false
-}
-
-// HasAccess takes a user, workflow, permission, and object
-// it returns true if permission is affirmed false otherwise.
-func HasAccess(user *User, workflow *Workflow, permission string, object map[string]interface{}) bool {
-	// Check if user is in workflow
-	// Check if object is in workflow's queues
-	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
-		// Check if work flow has rights on object
-		for _, objectPermission := range workflow.ObjectPermissions {
-			if strings.Compare(objectPermission, "*") == 0 ||
-				strings.Compare(permission, objectPermission) == 0 {
-				return true
-			}
-		}
-		return false
-	}
-
-	return false
-}
-
-// CanAssign takes a user, workflow, queue name and object
-// it returns true if assignment is allowed, false otherwise
-func CanAssign(user *User, workflow *Workflow, queueName string, object map[string]interface{}) bool {
-	// Check if user is in workflow
-	// Check if object is in workflow's queues
-	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
-		// Check if work flow has rights to assign to new queue
-		for _, assignTo := range workflow.AssignTo {
-			if strings.Compare(assignTo, "*") == 0 ||
-				strings.Compare(queueName, assignTo) == 0 {
-				return true
-			}
-		}
-		return false
-	}
-	return false
+	return nil
 }

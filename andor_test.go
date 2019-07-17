@@ -13,5 +13,10 @@ import (
 )
 
 func TestAndOr(t *testing.T) {
-	t.Errorf("andor_test.go, Tests Not implemented")
+	if andOrUsers == "" {
+		t.Errorf("expected andOrUsers to non-empty")
+	}
+	if andOrWorkflows == "" {
+		t.Errorf("expected andOrWorkflows to non-empty")
+	}
 }

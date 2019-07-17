@@ -60,7 +60,7 @@ Jane&rsquo;s user object would look like.</p>
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;jane@example.edu&quot;,
         &quot;display_name&quot;: &quot;Jane&quot;,
-        &quot;create_objects_as&quot;: &quot;curators&quot;,
+        &quot;create_queue&quot;: &quot;curators&quot;,
         &quot;member_of&quot;: [ &quot;curators&quot; ]
     }
 </code></pre>
@@ -102,7 +102,7 @@ with the &ldquo;published&rdquo; workflow queue.</p>
 <pre><code class="language-json">    {
         &quot;userid&quot;: &quot;anonymous&quot;,
         &quot;display_name&quot;: &quot;Public&quot;,
-        &quot;create_objects_as&quot;: null,
+        &quot;create_queue&quot;: null,
         &quot;member_of&quot;: [ &quot;published&quot; ]
     }
 </code></pre>
@@ -137,7 +137,7 @@ a workflow queue called &ldquo;deposit&rdquo;.</p>
 <pre><code class="language-json">    {
         &quot;userid&quot;: &quot;anonymous&quot;,
         &quot;display_name&quot;: &quot;Public&quot;,
-        &quot;create_objects_as&quot;: &quot;deposit&quot;,
+        &quot;create_queue&quot;: &quot;deposit&quot;,
         &quot;member_of&quot;: [ &quot;published&quot;, &quot;deposit&quot; ]
     }
 </code></pre>
@@ -201,7 +201,7 @@ a member of &ldquo;reviewer&rdquo;.</p>
 <pre><code class="language-json">    {
         &quot;display_name&quot;: &quot;Millie&quot;,
         &quot;userid&quot;: &quot;millie@example.edu&quot;,
-        &quot;create_objects_as&quot;: null,
+        &quot;create_queue&quot;: null,
         &quot;member_of&quot;: [ &quot;reviewer&quot; ]
     }
 </code></pre>
@@ -269,7 +269,7 @@ which is allowed to change the queue to reviewer.</p>
 <pre><code class="language-json">    {
         &quot;display_name&quot;: &quot;Olive&quot;,
         &quot;userid&quot;: &quot;olive@example.edu&quot;,
-        &quot;create_objects_as&quot;: &quot;olive&quot;,
+        &quot;create_queue&quot;: &quot;olive&quot;,
         &quot;member_of&quot;: [ &quot;olive&quot;, &quot;writer&quot; ]
     }
 </code></pre>

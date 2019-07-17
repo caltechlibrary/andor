@@ -10,7 +10,7 @@ Below is an example JSON document describing the user Jane Doe.
     {
         "user_id": "jane.doe@example.edu",
         "display_name": "Jane Doe",
-        "create_object_in": "writer",
+        "create_queue": "writer",
         "member_of": [ "publisher", "editor", "writer" ]
     }
 ```
@@ -23,7 +23,7 @@ user\_id
 display\_name
 : (string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious
 
-create\_objects\_in
+create\_queue
 : (string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)
 
 member\_of

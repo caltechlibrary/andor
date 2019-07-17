@@ -12,6 +12,27 @@ import (
 	"testing"
 )
 
-func TestWorkflow(t *testing.T) {
-	t.Errorf("TestWorkflow() not implemented")
+// TestLoadWorkflow ...
+func TestLoadWorkflow(t *testing.T) {
+	t.Errorf("TestLoadWorkflow() not implemented")
+}
+
+// TestToBytes for workflow structs
+func TestToBytes(t *testing.T) {
+	t.Errorf("TestToBytes() not implemented")
+}
+
+// TestToString for workflow structs
+func TestToString(t *testing.T) {
+	t.Errorf("TestToStrings() not implemented")
+}
+
+// TestListWorkflow
+func TestListWorkflow(t *testing.T) {
+	t.Errorf("TestListWorkflow() not implemented")
+}
+
+// TestRemoveWorkflow
+func TestRemoveWorkflow(t *testing.T) {
+	t.Errorf("TestRemoveWorkflow() not implemented")
 }
