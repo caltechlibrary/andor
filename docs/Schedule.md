@@ -24,7 +24,7 @@ capabilities
 
 1. Create, Update, Delete People and Group records (rows in the GSheet today)
 2. List People and Groups
-2. Support users authenticating via a simple system, (e.g. htaccess files with Apache/NginX)
+2. Support users authenticating via a simple system via NginX or Apache
 3. Have workflows for "suggested", "published" and "manage" objects in each collection
 
 ## Oral Histories as Proof of concept
