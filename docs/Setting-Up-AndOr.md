@@ -10,6 +10,7 @@ to setup and run it.
 1. Clone the AndOr repository
 2. Run Make to compile it
 3. Initialize dataset collections for user, workflows and repository
+    + also creates an example workflows.toml and users.toml you can edit
 4. Harvest content from EPrints repository being migrated
 5. Add workflow(s) 
 6. Add user(s)

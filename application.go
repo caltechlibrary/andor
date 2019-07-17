@@ -32,6 +32,9 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 				return 1
 			}
 		}
+		//FIXME: if files don't exist write out example
+		// workflows.toml and users.toml file so they can be
+		// easily edited to setup access.
 	case "load-workflow":
 		if len(args) == 0 {
 			fmt.Fprintf(eOut, "Missing workflow TOML file name")
