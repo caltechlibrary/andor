@@ -20,23 +20,31 @@
 </nav>
 
 <section>
-<h1>Documentation</h1>
+<h1 id="documentation">Documentation</h1>
+
+<h2 id="project">Project</h2>
 
 <p>Below are development documents outlining some of the
-concepts and rationale in our proof of concept <strong>AndOr</strong>.</p>
+concepts and rationale around <strong>AndOr</strong>.</p>
 
 <ul>
-<li><a href="migrating-eprints.html">Migrating an EPrints Repository</a></li>
-<li><a href="Oral-Histories-as-Proof-of-Concept.html">Oral Histories as Proof of Concept</a>
+<li>Proof of concept, a GUI<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> multi-user version of dataset
 
 <ul>
-<li><a href="Schedule.html">Schedule</a></li>
+<li><a href="people-groups.html">People and Groups</a> - Example of custom metadata objects</li>
+<li><a href="migrating-eprints.html">Migrating an EPrints Repository</a> and <a href="Oral-Histories-as-Proof-of-Concept.html">Oral Histories as Proof of Concept</a></li>
+<li>Proposed <a href="Schedule.html">Schedule</a></li>
 </ul></li>
-<li><a href="Setting-Up-AndOr.html">Setting up AndOr</a></li>
-<li><a href="Workflow-Use-Cases.html">Workflow Use Cases</a></li>
-<li>AndOr Scheme
+<li>How <strong>AndOr</strong> will work
 
 <ul>
+<li><a href="Setting-Up-AndOr.html">Setting up AndOr</a></li>
+</ul></li>
+<li>Scheme and scheme user cases
+
+<ul>
+<li><a href="Workflow-Use-Cases.html">Workflow Use Cases</a></li>
+<li>AndOr Scheme</li>
 <li><a href="User-Scheme.html">User Scheme</a></li>
 <li><a href="Workflow-Scheme.html">Workflow Scheme</a></li>
 <li><a href="Object-Scheme.html">Object Scheme</a></li>
@@ -49,7 +57,7 @@ concepts and rationale in our proof of concept <strong>AndOr</strong>.</p>
 </ul></li>
 </ul>
 
-<h2>(Example) documentation for <strong>AndOr</strong></h2>
+<h2 id="example-running-andor">(Example) Running <strong>AndOr</strong></h2>
 
 <p>The following are actions available from
 the command line usage of <strong>AndOr</strong>. While
@@ -58,19 +66,43 @@ packages and tools developed at Caltech Library
 <strong>AndOr</strong> itself is a self contained command
 line program.</p>
 
+<p>Basic <strong>AndOr</strong> actions available on the command line</p>
+
 <ul>
 <li><a href="init.html">init</a> - intialize dataset collections for use by <strong>AndOr</strong></li>
-<li><a href="add-workflow.html">add-workflow</a> - add a workflow</li>
-<li><a href="list-workflows">list-workflows</a> - list workflows</li>
-<li><a href="remove-workflow.html">remove-workflow</a> - remove a workflow</li>
-<li><a href="add-user.html">add-user</a> - add a user</li>
-<li><a href="add-user-workflow.html">add-user-workflow</a> - add a user to a workflow</li>
-<li><a href="remove-user-workflow.html">remove-user-workflow</a> - remove a workflow for  a user</li>
-<li><a href="list-users.html">list-users</a> - list users and assigned workflows</li>
-<li><a href="remove-user.html">remove-user</a> - remove a user</li>
+<li><a href="load-workflow.html">load-workflow</a> - reads a [TOML]() file and adds/updates workflow(s)</li>
+<li><a href="list-workflow.html">list-workflow</a> - Output workflow(s) in TOML</li>
+<li><a href="remove-workflow.html">remove-workflow</a> - Removes a workflow</li>
+<li><a href="load-user.html">load-user</a> - Output user(s) in TOML</li>
+<li><a href="remove-user.html">remove-user</a> - Removes a user</li>
 <li><a href="config.html">config</a> - configure <strong>AndOr</strong> web service</li>
 <li><a href="start.html">start</a> - start <strong>AndOr</strong> web service</li>
 </ul>
+
+<h2 id="example-how-to">(Example) How to ...</h2>
+
+<ul>
+<li><a href="add-user.html">Add a user</a></li>
+<li><a href="update-user.html">Update a user</a></li>
+<li><a href="remove-user.html">Remove a user</a></li>
+<li><a href="add-user-workflow.html">Add a workflow</a></li>
+<li><a href="update-a-workflow.html">Update a workflow</a></li>
+<li><a href="remove-a-workflow.html">Remove a workflow</a></li>
+<li><a href="listing-users.html">Listing one or more users</a></li>
+<li><a href="listing-workflows.html">Listing one or more workflows</a></li>
+<li><a href="toml-basics.html">Create a TOML file?</a></li>
+</ul>
+<h1 id="footnote-section">Footnotes</h1>
+
+<div class="footnotes">
+
+<hr>
+
+<ol>
+<li id="fn:1">GUI, Graphics user interface, in this case a web based user interface</li>
+</ol>
+
+</div>
 
 </section>
 

@@ -20,19 +20,13 @@
 </nav>
 
 <section>
-<h1 id="oral-histories-as-proof-of-concept">Oral Histories as Proof of concept</h1>
-
-<p><a href="http://oralhistories.caltech.edu">Oral Histories</a> is one of our
-smaller EPrints installations. It will need migrating soon
-because it is running on one of our older blades that lacks https
-support. Additionally we should be run on a more recent OS.<br>
-Oral Histories as less than 200 EPrints records. It is a good candidate
-for the proof of concept <strong>AndOr</strong>.</p>
+<h1 id="proposed-development-schedule">Proposed Development schedule</h1>
 <figure>
 <table>
 <thead>
 <tr>
 <th align="left">Week No.</th>
+<th align="left">Proposed start date</th>
 <th align="left">Activity</th>
 </tr>
 </thead>
@@ -40,38 +34,74 @@ for the proof of concept <strong>AndOr</strong>.</p>
 <tbody>
 <tr>
 <td align="left">1</td>
-<td align="left">Write script to remap EPrint XML based document paths</td>
+<td align="left">2019-07-22</td>
+<td align="left">Model users and workflows</td>
 </tr>
 
 <tr>
 <td align="left">1 - 2</td>
+<td align="left">2019-07-22</td>
 <td align="left">Write <strong>AndOr</strong> web service and testing</td>
 </tr>
 
 <tr>
 <td align="left">2 - 3</td>
-<td align="left">Write UI in HTML and JavaScript plus more testing</td>
+<td align="left">2019-07-29</td>
+<td align="left">Implement Basic UI in HTML and JavaScript plus more testing</td>
 </tr>
 
 <tr>
 <td align="left">3</td>
+<td align="left">2019-08-05</td>
 <td align="left">Lunr integration and NginX configuration for Authentication</td>
 </tr>
 
 <tr>
 <td align="left">4</td>
-<td align="left">Harvest Oral Histories for demo deployment</td>
+<td align="left">2019-08-12</td>
+<td align="left">Implement demo UIs for demo collections</td>
 </tr>
 
 <tr>
-<td align="left">4</td>
-<td align="left">Deploy a demo of a migrated Oral Histories on EC2</td>
+<td align="left">5</td>
+<td align="left">2019-08-19</td>
+<td align="left">Ready to demo of <strong>AndOr</strong></td>
 </tr>
 </tbody>
 </table>
-<figcaption>Proposed schedule assumes full time effort
+<figcaption>Proposed schedule assumes full time effort, dates subject to change
 </figcaption>
 </figure>
+
+<h2 id="people-and-groups-as-proof-of-concept">People and Groups as Proof of concept</h2>
+
+<p>We are out growing our GSheet based People and Groups list.
+<strong>AndOr</strong> is to provide an alternative curation alternatve.
+The demo will show workflows for managing two collections---
+People and Groups. It should provide the following basic
+capabilities</p>
+
+<ol>
+<li>Create, Update, Delete People and Group records (rows in the GSheet today)</li>
+<li>List People and Groups</li>
+<li>Support users authenticating via a simple system, (e.g. htaccess files with Apache/NginX)</li>
+<li>Have workflows for &quot;suggested&quot;, &quot;published&quot; and &quot;manage&quot; objects in each collection</li>
+</ol>
+
+<h2 id="oral-histories-as-proof-of-concept">Oral Histories as Proof of concept</h2>
+
+<p><a href="http://oralhistories.caltech.edu">Oral Histories</a> is one of our
+smaller EPrints installations. It will need migrating soon
+because it is running on one of our older blades that lacks https
+support. It is a good candidate for the proof of concept <strong>AndOr</strong>.
+The demo should demonstrate the following</p>
+
+<ol>
+<li>How to harvest the current EPrints based deployment</li>
+<li>Setup <strong>AndOr</strong> to host the harvested content</li>
+<li>Support user authenticating via a simple system</li>
+<li>Implement workflows currently available in EPrints</li>
+</ol>
 
 <p>Migrating other EPrints repositories will involve validating
 harvested content and updating the HTML/JavaScript to meet

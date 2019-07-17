@@ -17,9 +17,10 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 		return 1
 	}
 	verb := args[0]
+	args = args[1:]
 	switch verb {
 	case "init":
-		if len(args) < 2 {
+		if len(args) == 0 {
 			fmt.Fprintf(eOut, "Missing collection name(s)")
 			return 1
 		}
@@ -30,61 +31,58 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 				return 1
 			}
 		}
-	case "add-workflow":
-		//FIXME: We want to also provide an interactive version.
-		if len(args) < 3 {
-			fmt.Fprintf(eOut, "Missing workflow name and JSON/TOML document")
+	case "load-workflow":
+		if len(args) == 0 {
+			fmt.Fprintf(eOut, "Missing workflow TOML file name")
 			return 1
 		}
-		//FIXME: Need to handle case where we have JSON or TOML document
-		workflowName := args[1]
-		workflow, err := ReadWorkflowFile(args[2])
+		//NOTE: We can actually read JSON or TOML files ...
+		err := LoadWorkflowFile(args[1:])
 		if err != nil {
-			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
-			return 1
-		}
-		if err = AddWorkflow(workflowName, workflow); err != nil {
-			fmt.Fprintf(eOut, "%s", err)
+			fmt.Fprintf(eOut, "Can't read %s, %s", args[1], err)
 			return 1
 		}
 		return 0
-	case "list-workflows":
-		objects, err := ListWorkflows()
+	case "list-workflow":
+		objects, err := ListWorkflows(args)
 		if err != nil {
 			fmt.Fprintf(eOut, "Can't read %s, %s", args[2], err)
 			return 1
 		}
 		for _, obj := range objects {
 			fmt.Fprintln(out, "#")
-			fmt.Fprintf(out, "# Workflow: %s\n", obj.Name)
+			fmt.Fprintf(out, "# Workflow: %s\n", obj.Key)
+			fmt.Fprintf(out, "# Display Name: %s\n", obj.Name)
 			fmt.Fprintln(out, "#")
 			fmt.Fprintf(out, "%s\n\n", obj.String())
 		}
 		return 0
-	case "remove-workflows":
-		if len(args) < 2 {
+	case "remove-workflow":
+		if len(args) == 0 {
 			fmt.Fprintf(eOut, "Missing workflow name to remove")
 			return 1
 		}
-		err := RemoveWorkflow(args[1])
+		err := RemoveWorkflow(args)
 		if err != nil {
 			fmt.Fprintf(eOut, "%s\n", err)
 			return 1
 		}
 		return 0
-	case "add-user":
+	case "load-user":
+		if len(args) == 0 {
+			fmt.Fprintf(eOut, "Missing user TOML file to load")
+			return 1
+		}
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
-	case "add-user-workflow":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
-	case "remove-user-workflow":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
-	case "list-users":
+	case "list-user":
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
 	case "remove-user":
+		if len(args) == 0 {
+			fmt.Fprintf(eOut, "Missing user id to remove")
+			return 1
+		}
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
 	case "config":
@@ -93,14 +91,8 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 	case "start":
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)
 		return 1
-	case "restart":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
-	case "stop":
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
 	default:
-		fmt.Fprintf(eOut, "%q, unknown verb\n", verb)
+		fmt.Fprintf(eOut, "%q, unknown action\n", verb)
 		return 1
 	}
 	return 0
