@@ -165,15 +165,18 @@ workflows.
 
 ## Additional ideas
 
-+ [Migrating an EPrints repository](docs/migrating-eprints.html)
-+ [Oral Histories Use Case](docs/Oral-Histories-Use-Case.html)
-    + [Proposed Schedule for Proof of Concept](docs/Schedule.html)
-+ [Workflow use cases](docs/Workflow-Use-Cases.html)
-+ AndOr Scheme
++ Use cases
+    + [Users, Workflows and Queues](docs/Workflow-Use-Cases.html)
++ Concept proofs
+    + [People and Groups](docs/people-groups.html)
+    + [Migrating an EPrints Repository](docs/migrating-eprints.html) 
+    + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
++ Scheme walk throughs
     + [User Scheme](docs/User-Scheme.html)
     + [Workflow Scheme](docs/Workflow-Scheme.html)
+    + [Queue Scheme](docs/Queue-Scheme.html)
     + [Object Scheme](docs/Object-Scheme.html)
-+ [Setting Up AndOr](docs/Setting-up-AndOr.html)
+
 
 
 
