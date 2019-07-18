@@ -4,14 +4,16 @@ markup = "mmark"
 
 # Workflow Scheme
 
-Workflows encapsulate the concept of a queue[^1]
-and capabilities (e.g. access control).  A queue if it 
-is defined in at least one workflow.  **AndOr** 
-supports basic CRUD[^2] operations on any object associated 
-with a workflow's queue. In addition to CRUD operations 
-an additional capability is assignment. 
-Assignment is how we pass objects between workflow 
-states (e.g. "deposit", "review", "publish").
+A workflow encapsulates the concept of an object's status 
+or queue[^1] and the capabilities of the users who
+are members of the workflow. A set of workflows describe
+how objects can move through the repository systems.
+
+Each workflow specifies the operations that can be
+performed on a single queue. These include basic
+CRUD[^2] operations on all objects in the queue.
+It also specifies the assignment (handing off) of
+objects to other queues.
 
 An addition queue exists without definition. That queue
 is "deleted". Like EPrints[^3] **AndOr** doesn't delete

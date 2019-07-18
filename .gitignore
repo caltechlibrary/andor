@@ -8,3 +8,4 @@
 bin/*
 testdata/*
 dist/*
+test_*

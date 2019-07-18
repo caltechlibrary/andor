@@ -22,111 +22,110 @@
 <section>
 <h1>Workflow Use Cases</h1>
 
-<p>Below are use cases exploring how a workflow queue permission
-system could be used.</p>
+<p>Below are use cases exploring how a user/workflow/queue model
+would allow or prevent actions on objects in a collection.</p>
 
 <h2>Use case 1</h2>
 
 <p>We would like people (e.g. Jane) to curate the collection.
 To curate the whole collection Jane needs to have the
 following permissions&ndash; create, read, update, delete,
-change workflow queues, and to list all objects
-in the collection. To do that we can create a workflow queue called
-&ldquo;curators&rdquo;.</p>
+change workflow queues.  We can define a workflow to work
+apply to all objects and and make Jane a member of that workflow.</p>
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Curators&quot;,
         &quot;workflow_id&quot;: &quot;curators&quot;,
-        &quot;object_permissions&quot;: [
-            &quot;create&quot;,
-            &quot;read&quot;,
-            &quot;update&quot;
-        ],
+        &quot;queue&quot;: &quot;*&quot;,
+        &quot;create&quot;: true,
+        &quot;read&quot; : true,
+        &quot;update&quot; : true,
+        &quot;delete&quot; : true,
         &quot;assign_to&quot;: [ &quot;*&quot; ],
-        &quot;view_object_ids&quot;: [ &quot;*&quot; ]
     }
 </code></pre>
 
-<p>Notice that we have lists for the &ldquo;assign_to&rdquo; &ldquo;view_object_ids&rdquo; as
-well as &ldquo;object_permissions&rdquo;.  If the list contains
-a string with an asterisks any workflow will be matched.
-The alternative would be to list specific workflow queues, owners.</p>
+<p>Notice that we use &ldquo;*&rdquo; twice. First we specify the
+queue value as &ldquo;*&rdquo;. This special, it means this
+workflow applies to ALL objects holding any <code>._Queue</code>
+value. The second place of &ldquo;*&rdquo; is in the list of
+<code>.assign_to</code>. Again this means a curator can assign objects
+in this workflow to ANY workflow.</p>
 
-<p>Jane needs to be a curator. We need to create a user record for her
-and to make her a member of the &ldquo;curators&rdquo; workflow queue.  Jane&rsquo;s
-email address is &ldquo;jane@example.edu&rdquo; so we use that as her user id.
-Jane&rsquo;s user object would look like.</p>
+<p>Jane needs to be a curator. We add &ldquo;curator&rdquo; to the
+<code>.member_of</code> list in her user object.
+Jane&rsquo;s email address is &ldquo;jane@example.edu&rdquo; and what
+we&rsquo;ve used as a user id.</p>
 
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;jane@example.edu&quot;,
         &quot;display_name&quot;: &quot;Jane&quot;,
-        &quot;create_queue&quot;: &quot;curators&quot;,
         &quot;member_of&quot;: [ &quot;curators&quot; ]
     }
 </code></pre>
 
 <p>When Jane authenticates with the system she goes from being
 &ldquo;anonymous&rdquo; to &ldquo;jane@example.edu&rdquo; user.  This means she now has the
-permissions of a curator. If she creates an object the object will
-be assigned to the &ldquo;curators&rdquo; workflow queue. Since the curators
-workflow queue has change workflow queue permissions for any workflow
-queue of objects in the collection can take any action with any
-object as needed.</p>
+permissions of a curator. The workflow &ldquo;curator&rdquo; gives Jane
+all rights of creation, read, update, delete and assignment on
+any object in the collection(s). This workflow is generally
+too permissive outside private collections.</p>
 
 <h2>Use case 2</h2>
 
 <p>We would like the public to be able to view the &ldquo;published&rdquo; contents
-of the of our collection. We can do this by creating a workflow queue called
-&ldquo;published&rdquo;. The published workflow queue will be given read access to the
-objects. It&rsquo;ll be allowed to list objects in the &ldquo;published&rdquo; workflow queue.</p>
+of the of our collection. We can do this by creating a workflow queue
+&ldquo;public&rdquo; and given read access in the &ldquo;published&rdquo; queue. We also
+want to create a user object for &ldquo;anonymous&rdquo; (un-authenticated users)
+and make &ldquo;anonymous&rdquo; a member of &ldquo;public&rdquo;.</p>
 
 <p>The workflow queue object would look like</p>
 
 <pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Published&quot;,
-        &quot;workflow_id&quot;: &quot;published&quot;,
-        &quot;collection_permissions&quot;: [
-            &quot;read&quot;
-        ],
-        &quot;assign_to&quot;: [ ],
-        &quot;view_object_ids&quot;: [ &quot;published&quot; ]
+        &quot;workflow_name&quot;: &quot;Public&quot;,
+        &quot;workflow_id&quot;: &quot;public&quot;,
+        &quot;queue&quot;: &quot;published&quot;,
+        &quot;create&quot;: false,
+        &quot;read&quot;: true,
+        &quot;update&quot;: false,
+        &quot;delete&quot;: false,
+        &quot;assign_to&quot;: [ ]
     }
 </code></pre>
 
-<p>Any member of &ldquo;published&rdquo; will be able to read and objects
-associated with &ldquo;published&rdquo; workflow queue.</p>
-
-<p>Now we need to explicitly associated &ldquo;anonymous&rdquo;
-with the &ldquo;published&rdquo; workflow queue.</p>
+<p>The &ldquo;anonymous&rdquo; user object would look like</p>
 
 <pre><code class="language-json">    {
-        &quot;userid&quot;: &quot;anonymous&quot;,
-        &quot;display_name&quot;: &quot;Public&quot;,
-        &quot;create_queue&quot;: null,
-        &quot;member_of&quot;: [ &quot;published&quot; ]
+        &quot;user_id&quot;: &quot;anonymous&quot;,
+        &quot;display_name&quot;: &quot;&quot;,
+        &quot;member_of&quot;: [ &quot;public&quot; ]
     }
 </code></pre>
 
-<p>When anonymous goes to access an object and the workflow queue associated with
-the object is &ldquo;published&rdquo; then anonymous will be able to read the object.
-Likewise anonymous is not a member of any other workflow queues so they will
-have no permissions to access them.</p>
+<p>Combining this with use case 1, we would have a single user
+named Jane who can publish objects by assigning objects to
+&ldquo;public&rdquo;.</p>
 
 <h2>Use case 3</h2>
 
 <p>We want to allow anonymous users to &ldquo;deposit&rdquo; objects.  We can
 create a workflow queue called &ldquo;deposit&rdquo;. It should only have create
-permissions.  If we add &ldquo;anonymous&rdquo; to the &ldquo;deposit&rdquo; workflow queue
-we could then allow the public to submit records but nothing else.
-If anonymous is a member of &ldquo;published&rdquo; they will be able to still
-read all published records.</p>
+permissions for the &ldquo;review&rdquo; queue.  If we give &ldquo;anonymous&rdquo;
+&ldquo;deposit&rdquo; membership they can create objects that will be added
+to the &ldquo;review&rdquo; queue. They will not be in the &ldquo;published&rdquo; queue
+to until someone intervines they will be invisible to the public.
+Remember since anonymous is a member of &ldquo;public&rdquo; they will be
+able to still read all published records.</p>
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Depositor&quot;,
         &quot;workflow_id&quot;: &quot;deposit&quot;,
-        &quot;object_permissions&quot;: [ &quot;create&quot; ],
-        &quot;assign_to&quot;: [ ],
-        &quot;view_object_ids&quot;: [ ]
+        &quot;queue&quot;: &quot;review&quot;,
+        &quot;create&quot;: true,
+        &quot;read&quot;: false,
+        &quot;update&quot;: false, 
+        &quot;delete&quot;: false,
+        &quot;assign_to&quot;: [ ]
     }
 </code></pre>
 
@@ -137,12 +136,11 @@ a workflow queue called &ldquo;deposit&rdquo;.</p>
 <pre><code class="language-json">    {
         &quot;userid&quot;: &quot;anonymous&quot;,
         &quot;display_name&quot;: &quot;Public&quot;,
-        &quot;create_queue&quot;: &quot;deposit&quot;,
-        &quot;member_of&quot;: [ &quot;published&quot;, &quot;deposit&quot; ]
+        &quot;member_of&quot;: [ &quot;public&quot;, &quot;deposit&quot; ]
     }
 </code></pre>
 
-<p>Because the object created will have the workflow queue &ldquo;deposit&rdquo; and
+<p>Because the object created will have the workflow queue &ldquo;review&rdquo; and
 our &ldquo;curators&rdquo; workflow queue has permissions to list all objects workflow
 queues we can treat the &ldquo;deposit&rdquo; workflow queue as an inbox to be
 processed.  If the curators approved the deposit they can change the
@@ -151,202 +149,92 @@ objects&rsquo; workflow queue to &ldquo;published&rdquo;.</p>
 <h2>Use case 4</h2>
 
 <p>Creating workflows with queues. We would like our objects to travel
-through the following states - deposit, review, then either be
-flagged published, embargo, or needs curation.</p>
+between the following states - review, editorial, published, embargoed.
+Everything starts in review, our reviewers can move the object onto
+either editorial, published or embargoed states.</p>
 
 <p>Here are some of our policies we want to enforce.</p>
 
 <ol>
-<li>Allow any authenticated user to deposit</li>
-<li>Allow reviewers to choose between the following status &ndash; deposit, review, published, embargo, rejected and needs further curation</li>
-<li>If &ldquo;needs curation&rdquo; is chosen then the reviewer should no longer be able to see the object</li>
-<li>The depositor should not see the object after it is &ldquo;deposited&rdquo;</li>
-<li>Reviewers should not be able to change an object only change the workflow queue</li>
-<li>Reviewers can&rsquo;t create new objects</li>
+<li>Allow any authenticated user to deposit
+
+<ul>
+<li>remove the &ldquo;deposit&rdquo; workflow from &ldquo;anonymous&rdquo; user</li>
+</ul></li>
+<li>Allow reviewers to read and delete deposits but not create or update them.</li>
+<li>Allow reviewers to assign objects to editorial, published and embargoed queues</li>
+<li>Currators have full access to all objects in all queues</li>
 </ol>
 
-<p>Jane is a curator. Millie is a reviewer. Millie should not be able
-to update the objects but she should be able to list objects that
-have been deposited and change objects and workflow queue on an
-object to As</p>
+<p>Jane is a curator. Millie is a reviewer. Anne is a user who we want
+to be able to &ldquo;deposit&rdquo; objects but she has no other responsibilities.</p>
 
-<p>Jane is already in the curators workflow queue previously defined. We need
-to define a reviewer workflow queue. Millie will need to be created and be
-a member of &ldquo;reviewer&rdquo;.</p>
+<p>Here&rsquo;s the steps to implement a solution</p>
+
+<ol>
+<li>Remove &ldquo;anonymous&rdquo; membership in &ldquo;depost&rdquo;</li>
+<li>Add user objects for Mille and Anne</li>
+<li>Create a workflow called &ldquo;depositor&rdquo; with can create objects in the &ldquo;review&rdquo; queue</li>
+<li>Create a workflow called &ldquo;reviewer&rdquo; that operates on the &ldquo;review&rdquo; queue and given that workflow read, delete permission for objects in the queue and is allowed to assign objects to editorial, published and embargoed queues</li>
+<li>Create three more workflows to trigger the generation of our remaining</li>
+</ol>
+
+<p>Step 1. our &ldquo;anonymous&rdquo; user now should look like</p>
 
 <pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Reviewer&quot;,
-        &quot;workflow_id&quot;: &quot;review&quot;,
-        &quot;object_permissions&quot;: [ &quot;read&quot; ],
-        &quot;assign_to&quot;: [
-            &quot;deposit&quot;,
-            &quot;review&quot;,
-            &quot;published&quot;,
-            &quot;embargo&quot;,  
-            &quot;rejected&quot;,
-            &quot;curators&quot;
-            ],
-        &quot;view_object_ids&quot;: [
-            &quot;deposit&quot;,
-            &quot;review&quot;,
-            &quot;published&quot;,
-            &quot;embargo&quot;,
-            &quot;rejected&quot;
-        ]
+        &quot;user_id&quot;: &quot;anonymous&quot;,
+        &quot;display_name&quot;: &quot;&quot;,
+        &quot;member_of&quot;: [ &quot;public&quot; ]
     }
 </code></pre>
 
-<p>Millie&rsquo;s email is &ldquo;mille@example.edu&rdquo;, her account would look like</p>
+<p>Let&rsquo;s create user objects for Millie and Anne.</p>
 
 <pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;millie&quot;,
         &quot;display_name&quot;: &quot;Millie&quot;,
-        &quot;userid&quot;: &quot;millie@example.edu&quot;,
-        &quot;create_queue&quot;: null,
         &quot;member_of&quot;: [ &quot;reviewer&quot; ]
     }
 </code></pre>
 
-<p>If later we decide Millie should be able to create objects then
-we can add her the deposit workflow queue. She would not be able to
-edit her deposits but she could change the workflow queue value and list it.</p>
-
-<h2>Use case 5</h2>
-
-<p>We want a four level review process. Writers can create
-objects and edit them until they pass them on for review.
-The reviewer can either send them back to the writers or pass
-them on to the editors for further editing.  Editors can
-pass them back to the reviewers or writers or bump them up
-to the publisher. Editors can make changes to the
-objects. Publishers can do anything.</p>
-
-<ul>
-<li>Jane is a publisher, jane@example.org</li>
-<li>Millie is a editor, millie@example.org</li>
-<li>Alfred is an reviewer, alfred@example.org</li>
-<li>Olive is a writer, olive@example.org</li>
-</ul>
-
-<p>In this use case Olive needs to be able to edit her
-deposits but not someone else&rsquo;s. We can do this by
-create an &ldquo;olive&rdquo; workflow queue which and having that be
-the default workflow queue when she creates a new object.
-We can also associate olive with the writer workflow queue
-which is allowed to change the queue to reviewer.</p>
-
-<p>Here is Olive&rsquo;s workflow queue</p>
-
 <pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Olive&quot;,
-        &quot;workflow_id&quot;: &quot;olive&quot;,
-        &quot;object_permissions&quot;: [
-            &quot;create&quot;,
-            &quot;read&quot;,
-            &quot;update&quot;
-        ],
-        &quot;assign_to&quot;: [ ],
-        &quot;view_object_ids&quot;: [
-            &quot;olive&quot;
-        ]
+        &quot;user_id&quot;: &quot;anne&quot;,
+        &quot;display_name&quot;: &quot;Anne&quot;,
+        &quot;member_of&quot;: [ &quot;depositor&quot; ]
     }
 </code></pre>
 
-<p>Here is the general writer&rsquo;s workflow queue object</p>
+<p>Our depositor workflow looks like</p>
 
 <pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Writer&quot;,
-        &quot;workflow_id&quot;: &quot;writer&quot;,
-        &quot;object_permissions&quot;: [ ],
-        &quot;assign_to&quot;: [
-            &quot;reviewer&quot;
-        ],
-        &quot;view_object_ids&quot;: [ ]
+        &quot;workflow_id&quot;: &quot;depositor&quot;,
+        &quot;workflow_Name&quot;: &quot;Depositor&quot;,
+        &quot;queue&quot;: &quot;review&quot;,
+        &quot;create&quot;: true,
+        &quot;read&quot;: false,
+        &quot;update&quot;: false,
+        &quot;delete&quot;: false,
+        &quot;asign_to&quot;: [ ]
     }
 </code></pre>
 
-<p>Here is Olive&rsquo;s user object</p>
-
-<pre><code class="language-json">    {
-        &quot;display_name&quot;: &quot;Olive&quot;,
-        &quot;userid&quot;: &quot;olive@example.edu&quot;,
-        &quot;create_queue&quot;: &quot;olive&quot;,
-        &quot;member_of&quot;: [ &quot;olive&quot;, &quot;writer&quot; ]
-    }
-</code></pre>
-
-<p>Olive&rsquo;s workflow is then to create, update or delete
-any object with a workflow queue of &ldquo;olive&rdquo; (her objects) and because
-she is a member of the writer&rsquo;s workflow queue she has permission to
-change the ownership of her objects to &ldquo;reviewer&rdquo;. At this
-point she will not be able to see or change the object. It is
-the reviewer&rsquo;s responsibility to do something with that object.</p>
+<p>And our reviewer would look like</p>
 
 <pre><code class="language-json">    {
         &quot;workflow_name&quot;: &quot;Reviewer&quot;,
         &quot;workflow_id&quot;: &quot;reviewer&quot;,
-        &quot;object_permissions&quot;: [ &quot;read&quot; ],
-        &quot;assign_to&quot;: [
-            &quot;editor&quot;,
-            &quot;reviewer&quot;,
-            &quot;olive&quot;
-        ],
-        &quot;view_object_ids&quot;: [
-            &quot;reviewer&quot;,
-            &quot;olive&quot;
-        ]
+        &quot;queue&quot;: &quot;review&quot;,
+        &quot;create&quot;: false,
+        &quot;read&quot;: true,
+        &quot;update&quot;: false,
+        &quot;delete&quot;: true,
+        &quot;assign_to&quot;: [ &quot;review&quot;, &quot;editorial&quot;, &quot;published&quot;, &quot;embargoed&quot; ]
     }
 </code></pre>
 
-<p>Our reviewer can either pass the object on to the editor,
-leave it in the review queue or pass it back to Olive our
-writer.</p>
-
-<p>The editor is allowed to change the object and the editor
-is allowed to pass the object back down the workflow. The
-editor workflow queue would look like</p>
-
-<pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Editor&quot;,
-        &quot;workflow_id&quot;: &quot;editor&quot;,
-        &quot;object_permissions&quot;: [
-            &quot;create&quot;,
-            &quot;read&quot;,
-            &quot;update&quot;
-        ],
-        &quot;assign_to&quot;: [  
-            &quot;editor&quot;,
-            &quot;rejected&quot;,
-            &quot;buried&quot;,
-            &quot;publisher&quot;,
-            &quot;reviewer&quot;,
-            &quot;writer&quot;,
-            &quot;olive&quot;
-        ],
-        &quot;view_object_ids&quot;: [
-            &quot;olive&quot;,
-            &quot;writer&quot;,
-            &quot;reviewer&quot;,
-            &quot;editor&quot;,
-            &quot;rejected&quot;,
-            &quot;buried&quot;
-        ]
-    }
-</code></pre>
-
-<p>And finally the publisher has permissions on everything.</p>
-
-<pre><code class="language-json">    {
-        &quot;workflow_name&quot;: &quot;Publisher&quot;,
-        &quot;workflow_id&quot;: &quot;publisher&quot;,
-        &quot;object_permissions&quot;: [
-            &quot;create&quot;,
-            &quot;read&quot;,
-            &quot;update&quot;
-        ],
-        &quot;assign_to&quot;: [ &quot;*&quot; ],
-        &quot;view_object_ids&quot;: [ &quot;*&quot; ]
-    }
-</code></pre>
+<p>If later we decide Millie should be able to create objects then
+we can add her the deposit workflow queue. She would have the
+cummulative rights of both the &ldquo;deposit&rdquo; and &ldquo;reviewer&rdquo; workflows.</p>
 
 </section>
 

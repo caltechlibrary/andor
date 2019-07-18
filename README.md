@@ -12,35 +12,33 @@ repository implemented as "a multi-user version of
 [dataset](https://caltechlibrary.github.io/dataset) with a web 
 based GUI". It targets the ability to curate 
 metadata objects and attachments outside the scope of 
-our existing repositories.  If it could also serve as an interim 
-repository for the EPrints repositories we plan to migrate.
+our existing repositories.  
 
 **AndOr** is based on [dataset](https://caltechlibrary.github.io/dataset).
 It will provide a semi-RESTful JSON API and use 
 HTML, CSS and JavaScript to provide a GUI interface for curation.
 A minimum running system would consist of only two or three
 pieces of software. The minimum would be a web server[^1] 
-plus the **AndOr** service supporting multi-user interaction with the
-dataset collection.  Depending on size you could create
+plus the **AndOr** service supporting multi-user interaction with 
+dataset collections.  Depending on size you could create
 a micro service providing search via Python and Lunr[^2] or generate
 Lunrjs indexes to run browser side.  This arrangement has the 
 advantage of limiting the code to be written to the **AndOr** 
 web service plus the HTML, CSS and JavaScript needed to create 
 an acceptable UI[^3].
 
-This particular architecture is aligns with small machine hosting
-and cloud hosting keeping of hosting cost to a minimum. 
-In the cloud it should work on a small to medium EC2 instance
-with an S3 bucket for larger collections. A more elaborate version
-be using Cloud Front, S3, and running the API service
-in an AWS container or via the AWS Lambda. In house hosting
-could as light weight as Raspberry Pi 4 with attached disc 
-a NAS[^4].
+This particular architecture aligns with small machine hosting
+and cloud hosting keeping recurring costs to a minimum. 
+In the cloud it should work on a small to medium EC2 instance.
+A more elaborate version be using Cloud Front, S3, and running 
+the API service in an AWS container or via the AWS Lambda. 
+In house hosting could as light weight as Raspberry Pi 4 or
+as elaborate as a server with attached NAS[^4].
 
 
 ## Goals
 
-+ Provide a curatorial platform for metadata outside our existing reporitories
++ Provide a curatorial platform for metadata outside our existing repositories
 + Provide an __interim option__ for EPrints repositories requiring migration
 + Thin stack 
     + No RDMS requirement (only AndOr and a web server)
@@ -56,13 +54,13 @@ a NAS[^4].
 ## Project Assumptions
 
 + [dataset](https://github.com/caltechlibrary/dataset) collections are sufficient to hold metadata and media
-+ UI can be implemented using HTML 5 elements, and minimal JavaScript and CSS
++ UI can be implemented using HTML 5 elements, minimal JavaScript and CSS
 + Small number of curatorial users, larger number of readers
 + Configurable workflows are a requirement
     + workflows describe capabilities (permissions)
     + workflows describe a work queue (object state)
 + Use existing object scheme (e.g. EPrints XML in Oral Histories)
-+ Authentication is external (e.g. Basic AUTH via web server)
++ Authentication is external (e.g. Shibboleth, OAuth 2)
 + Search and query are handle independent of API
     + e.g. Lunr either browser or server side
 
@@ -81,17 +79,20 @@ Examples--
 + **AndOr** itself is a simple web API that accepts URL requests 
 and hands back JSON. The shape of the JSON is determined at time of
 migrating into **AndOr**. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.
-+ If you need additional end points beyond what **AndOr** provides (e.g. a search engine service) you supply those as micro services 
++ If you need additional end points beyond what **AndOr** provides (e.g. a search engine service) you supply those as micro services behind the same web server
 
 The web browser itself creates the illusion of a unified software system
 or single process. A single application is not required to support desire
-functionality. Customization then can be deferred to other micro services.
+functionality. Customization then can be deferred to other micro services
+or even external sytems (e.g. looking up something at datacite.org or
+orcid.org).
 
 Some features are unavoidable. The repository problem requires managing
 users and workflows. It doesn't require users and workflows
 be manage through the web. Setting up users and workflows can be 
-managed through simpler command line tools and configuration
-in large part because you've off loaded identify management already. 
+managed through simpler command line tools and configuration files.
+The is reasonable in large part because you've off loaded 
+identify management already. 
 
 By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
@@ -104,12 +105,12 @@ Two web API end points would be required
 1. `/COLLECTION_NAME/objects/` to list objects keys
 2.  `/COLLECTION_NAME/objects/OBJECT_ID` to provide an Object's details
 
-Lists can be filtered by workflow/queue name(s) 
+Lists can be filtered by workflow's queue name
 All other end points are static resources (e.g. HTML files, 
 CSS, JavaScript and Lunrjs indexes, a public faces website).  
 We can reducing our requirements to two end points because 
 we've discovered that is all we needed based on our work
-with [EPrints](https://www.eprints.org "A repository sytem developed at University of Southhampton").
+with [EPrints](https://www.eprints.org "A repository system developed at University of South Hampton").
 Everything else can be synthesized from a simple key list and object access.
 
 
@@ -124,11 +125,9 @@ JavaScript for our proof of concept.
 4. Create/edit Object details
 5. Search UI
 
-For public facing content (e.g. the things you want 
-Google, Bing, et el. to find and index) can be deployed 
-by a simple batch process that updates an existing
-public website. It can be external to the
-curatorial aspects of a digital object repository.
+For public facing content (e.g. things Google, Bing, et el. 
+should find and index) can be deployed separately by 
+process similar to how feeds.library.caltech.edu works.
 This also keeps **AndOr** simple with fewer requirements.
 
 
@@ -143,10 +142,12 @@ are restricted by workflows available for the "anonymous" user.
 This is how you would control having a dark versus publicly 
 visible repository.
 
-Complicated use cases integrations like community deposit could 
-then be deferred to a micro service(s) created for that purpose.
-The micro services simpler because of their narrow focus
-and limited abilities.
+Complicated use cases like electronic thesis deposits
+or faculty self deposit of articles could be implemented as 
+separate specialized micro services that interacts with
+external authentication then implements a specialized 
+workflow interacting with the API via a service account
+an appropriate workflow associated with it.
 
 
 ### Under the hood
@@ -158,7 +159,9 @@ can be extended to store diffs as well as the JSON documents.
 
 Like EPrints **AndOr** does not directly support deleting objects.
 Instead it can create the illusion of deleting objects by putting
-objects into a "delete" queue which is not visible to users.
+objects into a "deleted" queue which you can exclude from your
+workflows.
+
 
 ## Additional ideas
 

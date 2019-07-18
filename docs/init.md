@@ -1,11 +1,13 @@
 
 # init
 
-The `init` verb creates empty dataset collections. You can
-list as many dataset collections as you want it will sequencially
-go through the list creating them one at a time. If there is
-an error it will abort on the collectiont that encounters an
-error (e.g. permissions to create directories and files).
+The `init` verb creates empty dataset collections and also
+"users.toml", "workflows.toml", and "andor.toml" TOML
+files if they did not already exist.  You can list as many 
+dataset collections as you want and the init command will 
+attempt to initialize them one after the other.  If an error 
+is encountered it will abort creating futher collections
+after that.
 
 ## When to use init
 
@@ -13,20 +15,22 @@ If you are setting up a new repository you will need to initialize
 collections. A typical use case would look like the following.
 
 ```bash
-    AndOr init MyRepo.ds users.AndOr workflow.AndOr
+    AndOr init MyRepository.ds
 ```
 
-This command would create the following dataset collections
-in the following order.
+This command would create the dataset collection and following files.
 
-1. MyRepo.ds, the collection holding repository data
-2. users.AndOr, a dataset collection holding curitorial user information
-3. workflows.AndOr, a dataset collection hold workflow definitions
+1. MyRepoisotory.ds, the collection holding repository data
+2. andor.toml, the web service configuration use by `AndOr start`
+3. users.toml, the users file by `AndOr start`
+4. workflows.toml, the workflows file use by `AndOr start`
 
-**AndOr** requires two collections named "users.AndOr" and "workflows.AndOr". These define the curatorial users and workflows available to **AndOr**.
-**AndOr** can support one or more additional "repository" collections.
-Repository collections holds the content the API will provide.
-They can be called anything you like except "users.AndOr" or
-"workflows.AndOr".
+**AndOr** uses the three TOML files to configure how the web 
+service works, known users and the workflows and capabilties
+available to them.  Repository collections holds the content 
+the API will provide. An **AndOr** provides access to 
+the repositories listed in the "andor.toml" file. The users
+workflows apply across repositories listed the "andor.toml" file..
+
 
 

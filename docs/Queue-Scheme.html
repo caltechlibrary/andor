@@ -20,39 +20,30 @@
 </nav>
 
 <section>
-<h1>init</h1>
+<h1>Queues Scheme</h1>
 
-<p>The <code>init</code> verb creates empty dataset collections and also
-&ldquo;users.toml&rdquo;, &ldquo;workflows.toml&rdquo;, and &ldquo;andor.toml&rdquo; TOML
-files if they did not already exist.  You can list as many
-dataset collections as you want and the init command will
-attempt to initialize them one after the other.  If an error
-is encountered it will abort creating futher collections
-after that.</p>
+<p>A Queue is a list of objects associated with a
+given state. Queues have names and a retrieved
+by their names. Queues also are associated with
+workflows what define the actions available in
+the queue by users associated with those workflows.</p>
 
-<h2>When to use init</h2>
+<p>When you &ldquo;add&rdquo; an object to a queue you are changing
+the internal <code>._Queue</code> value in the object after
+verifying that a given user and the workflows allow
+the addition.</p>
 
-<p>If you are setting up a new repository you will need to initialize
-collections. A typical use case would look like the following.</p>
+<p>The queues are created when <strong>AndOr</strong> is started
+and it loads &ldquo;workflows.toml&rdquo;. The queue lasts
+as long as <strong>AndOr</strong> remains running. If an object
+has a <code>._Queue</code> value that is no longer defined in
+any workflow the object will be invisible to the
+<strong>AndOr</strong> web API. If that happens you well need
+to write a script or use the <strong>dataset</strong>[^1] command
+to update the <code>._Queue</code> value to something
+specified in a workflow.</p>
 
-<pre><code class="language-bash">    AndOr init MyRepository.ds
-</code></pre>
-
-<p>This command would create the dataset collection and following files.</p>
-
-<ol>
-<li>MyRepoisotory.ds, the collection holding repository data</li>
-<li>andor.toml, the web service configuration use by <code>AndOr start</code></li>
-<li>users.toml, the users file by <code>AndOr start</code></li>
-<li>workflows.toml, the workflows file use by <code>AndOr start</code></li>
-</ol>
-
-<p><strong>AndOr</strong> uses the three TOML files to configure how the web
-service works, known users and the workflows and capabilties
-available to them.  Repository collections holds the content
-the API will provide. An <strong>AndOr</strong> provides access to
-the repositories listed in the &ldquo;andor.toml&rdquo; file. The users
-workflows apply across repositories listed the &ldquo;andor.toml&rdquo; file..</p>
+<p>[^1]: dataset is a command line workflow for managing JSON objects in collections, see <a href="https://github.com/caltechlibrary/dataset">https://github.com/caltechlibrary/dataset</a></p>
 
 </section>
 
