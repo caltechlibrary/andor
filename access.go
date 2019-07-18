@@ -12,67 +12,66 @@ import (
 	"strings"
 )
 
-// UserInWorkflow takes user and workflow and sees if
-// the user is indeed in the workflow or not.
-func UserInWorkflow(user *User, workflow *Workflow) bool {
-	for _, queue := range user.MemberOf {
-		if strings.Compare(queue, workflow.Key) == 0 {
-			return true
+const (
+	_ = iota
+	CREATE
+	READ
+	UPDATE
+	DELETE
+)
+
+// IsAllowed tests if CRUD operations can be taken on object
+// based on user, object  and a permission.
+// It returns true if permission is affirmed false otherwise.
+func (s *AndOrService) IsAllowed(user *User, object map[string]interface{}, permission int) bool {
+	// Get the object's queue
+	queue := ObjectQueue(object)
+	if q, ok := s.Queues[queue]; ok == true {
+		// Get the queue's associated workflow(s)
+		for _, workflowName := range q.Workflows {
+			// Check if user is in a workflow associated with queue
+			if user.IsMemberOf(workflowName) {
+				// Get workflow
+				if workflow, ok := s.Workflows[workflowName]; ok {
+					// Check workflow permission requested
+					switch permission {
+					case CREATE:
+						return workflow.Create
+					case READ:
+						return workflow.Read
+					case UPDATE:
+						return workflow.Update
+					case DELETE:
+						return workflow.Delete
+					}
+				}
+
+			}
 		}
 	}
 	return false
 }
 
-// ObjectInWorkflow takes an object and workflow and sees if
-// the object is in the workflow's queue(s)
-func ObjectInWorkflow(object map[string]interface{}, workflow *Workflow) bool {
-	if s, ok := object["_Queue"]; ok == true {
-		switch s.(type) {
-		case string:
-			queueName := s.(string)
-			for _, queue := range workflow.Queues {
-				if strings.Compare(queueName, queue) == 0 {
-					return true
+// CanAssign takes a user, object and queue target and checks if the
+// asignment is allowed.
+func (s *AndOrService) CanAssign(user *User, object map[string]interface{}, targetQueue string) bool {
+	// Get the object's queue
+	queue := ObjectQueue(object)
+	if q, ok := s.Queues[queue]; ok == true {
+		// Get the queue's associated workflow(s)
+		for _, workflowName := range q.Workflows {
+			// Check if user is in a workflow associated with queue
+			if user.IsMemberOf(workflowName) {
+				// Check what workflow assignments are allowed.
+				if workflow, ok := s.Workflows[workflowName]; ok {
+					for _, queueName := range workflow.AssignTo {
+						if strings.Compare(queueName, targetQueue) == 0 {
+							return true
+						}
+					}
 				}
 			}
 		}
-	}
-	return false
-}
-
-// IsAllowed takes a user, workflow, permission, and object
-// it returns true if permission is affirmed false otherwise.
-func IsAllowed(user *User, workflow *Workflow, object map[string]interface{}, permission string) bool {
-	// Check if user is in workflow
-	// Check if object is in workflow's queues
-	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
-		// Check if work flow has rights on object
-		for _, objectPermission := range workflow.ObjectPermissions {
-			if strings.Compare(objectPermission, "*") == 0 ||
-				strings.Compare(permission, objectPermission) == 0 {
-				return true
-			}
-		}
-		return false
-	}
-
-	return false
-}
-
-// CanAssign takes a user, workflow, queue name and object
-// it returns true if assignment is allowed, false otherwise
-func CanAssign(user *User, workflow *Workflow, object map[string]interface{}, queueName string) bool {
-	// Check if user is in workflow
-	// Check if object is in workflow's queues
-	if UserInWorkflow(user, workflow) && ObjectInWorkflow(object, workflow) {
-		// Check if work flow has rights to assign to new queue
-		for _, assignTo := range workflow.AssignTo {
-			if strings.Compare(assignTo, "*") == 0 ||
-				strings.Compare(queueName, assignTo) == 0 {
-				return true
-			}
-		}
-		return false
 	}
 	return false
 }

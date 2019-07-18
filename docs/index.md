@@ -41,6 +41,7 @@ line program.
 Basic **AndOr** actions available on the command line
 
 + [init](init.html) - intialize dataset collections for use by **AndOr** and create example "users.toml", "workflows.toml" and "andor.toml" if needed
++ [check-config](check-config.html) - validates "users.toml", "workflows.toml", and "andor.toml"
 + [start](start.html) - start **AndOr** web service using "users.toml", "workflows.toml" and "andor.toml" for configuration
 
 ## (Example) How to ...

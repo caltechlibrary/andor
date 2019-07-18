@@ -11,15 +11,12 @@ package andor
 import (
 	"io/ioutil"
 	"testing"
-
 	// Caltech Library packages
-	"github.com/caltechlibrary/dataset"
 )
 
 func TestLoadUser(t *testing.T) {
-	AndOrUsers = "test_users.AndOr"
-	testUsers := "test_users.toml"
-	testUsersSrc := []byte(`
+	UsersTOML = "test_users.toml"
+	UsersTOMLSrc := []byte(`
 #
 # Example Test users file for testing 
 # LoadUser()
@@ -34,38 +31,13 @@ create_queue = "deposit"
 # Jane is a member of the "deposit" workflow/queue
 member_of = ["deposit"]
 `)
-	err := ioutil.WriteFile(testUsers, testUsersSrc, 0666)
+	err := ioutil.WriteFile(UsersTOML, UsersTOMLSrc, 0666)
 	if err != nil {
-		t.Errorf("%s, %s", testUsers, err)
+		t.Errorf("%s, %s", UsersTOML, err)
 		t.FailNow()
 	}
-	// Initial AndOrUsers just in case
-	_, err = dataset.InitCollection(AndOrUsers)
-	if err != nil {
-		t.Errorf("%s, %s", AndOrUsers, err)
-		t.FailNow()
-	}
-
-	// Reset the test collection for AndOrUsers
-	c, err := dataset.Open(AndOrUsers)
-	if err != nil {
-		t.Errorf("%s, %s", AndOrUsers, err)
-		t.FailNow()
-	}
-	keys := c.Keys()
-	for _, key := range keys {
-		if err := c.Delete(key); err != nil {
-			t.Errorf("%s (delete %s), %s", AndOrUsers, key, err)
-			t.FailNow()
-		}
-	}
-	c.Close()
-	if err = ioutil.WriteFile(testUsers, testUsersSrc, 0666); err != nil {
-		t.Errorf("%s, %s", testUsers, err)
-		t.FailNow()
-	}
-	if err := LoadUser([]string{testUsers}); err != nil {
-		t.Errorf("%s (%s), %s", testUsers, AndOrUsers, err)
+	if _, err := LoadUser(UsersTOML); err != nil {
+		t.Errorf("%s", err)
 		t.FailNow()
 	}
 }

@@ -14,10 +14,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
-	"sort"
 
 	// Caltech Library Packages
-	"github.com/caltechlibrary/dataset"
 
 	// Toml package
 	"github.com/BurntSushi/toml"
@@ -28,69 +26,67 @@ import (
 // the permissions about what can be viewed and
 // what additional workflows can be assigned to.
 type Workflow struct {
-	// Key holds the key to be used when saving the workflow
-	// to workflows.AndOr. e.g. "editor", "curator", "public"
+	// Key holds the key to be used when referencing the workflow
+	// E.g. "editor", "curator", "public"
 	Key string `json:"workflow_id" toml:"workflow_id"`
 	// Name, the display name, e.g. "Editor", "Curator", "Public View"
 	Name string `json:"workflow_name" toml:"workflow_name"`
-	// Object level permissions, i.e. "create", "read", "update"
-	ObjectPermissions []string `json:"object_permissions" toml:"object_permissions"`
-	// AssignTo defines a list of workflows that this workflow
+	// Queues hold name of the queue this workflow can operating on.
+	Queue string `json:"queue" toml:"queue"`
+	// Create permissions in .Queue
+	Create bool `json:"create" toml:"create"`
+	// Read permissions in .Queue
+	Read bool `json:"read" toml:"read"`
+	// Update permissions in .Queue
+	Update bool `json:"update" toml:"update"`
+	// Delete permissions in .Queue
+	Delete bool `json:"delete" toml:"delete"`
+	// AssignTo defines a list of queues that this workflow
 	// can send objects to.
 	AssignTo []string `json:"assign_to" toml:"assign_to"`
-	// Queues holds an list of queue names of this workflow
-	// can view objects in. The queue name is the same as a
-	// defined workflow name. E.g. objects is the review queue
-	// would be in the review workflow state with those rights.
-	Queues []string `json:"queues" toml:"queues"`
 }
 
-// LoadWorkflow takes a filename, reads the file
-// (either JSON or TOML) and updates the workflow.AndOr
-// collection.
-func LoadWorkflow(fNames []string) error {
-	c, err := dataset.Open(AndOrWorkflows)
+// LoadWorkflow reads a file (either JSON or TOML) at
+// start up of AndOr web service and sets up workflows and
+// queues. It returns a map[string]*Workflow,
+// a map[string]*Queue and an error
+func LoadWorkflow(fName string) (map[string]*Workflow, map[string]*Queue, error) {
+	workflows := map[string]*Workflow{}
+	queues := map[string]*Queue{}
+
+	// Parse our workflows
+	src, err := ioutil.ReadFile(fName)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
-	defer c.Close()
-
-	for _, fName := range fNames {
-		workflows := map[string]*Workflow{}
-		src, err := ioutil.ReadFile(fName)
-		if err != nil {
-			return err
+	switch path.Ext(fName) {
+	case ".json":
+		if err := json.Unmarshal(src, &workflows); err != nil {
+			return nil, nil, err
 		}
-		switch path.Ext(fName) {
-		case ".json":
-			if err := json.Unmarshal(src, &workflows); err != nil {
-				return err
-			}
-		case ".toml":
-			if _, err := toml.Decode(string(src), &workflows); err != nil {
-				return err
-			}
-		default:
-			return fmt.Errorf("workflow must be either a .json or .toml file")
+	case ".toml":
+		if _, err := toml.Decode(string(src), &workflows); err != nil {
+			return nil, nil, err
 		}
-
-		for key, workflow := range workflows {
-			workflow.Key = key
-			src, err := json.MarshalIndent(workflow, "", "    ")
-			if err != nil {
-				return err
+	default:
+		return nil, nil, fmt.Errorf("workflow must be either a .json or .toml file")
+	}
+	// Create Queues from workflows.Queue and workflows.AssignTo
+	for _, workflow := range workflows {
+		// For each queue mentioned in workflow, check if it
+		// exists and update it with the workflow information.
+		queueList := append([]string{workflow.Name}, workflow.AssignTo...)
+		for _, queue := range queueList {
+			q, ok := queues[queue]
+			if ok == false {
+				q := new(Queue)
+				q.Name = workflow.Queue
 			}
-			if c.HasKey(key) {
-				err = c.UpdateJSON(key, src)
-			} else {
-				err = c.CreateJSON(key, src)
-			}
-			if err != nil {
-				return nil
-			}
+			q.AddWorkflow(workflow.Name)
+			queues[queue] = q
 		}
 	}
-	return nil
+	return workflows, queues, nil
 }
 
 // Bytes() outputs a workflow to []bytes in TOML.
@@ -111,50 +107,4 @@ func (workflow *Workflow) String() string {
 		return string(src)
 	}
 	return buf.String()
-}
-
-// ListWorkflow returns a list of workflow objects
-func ListWorkflow(keys []string) ([]*Workflow, error) {
-	c, err := dataset.Open(AndOrWorkflows)
-	if err != nil {
-		return nil, err
-	}
-	defer c.Close()
-	if len(keys) == 0 {
-		keys = c.Keys()
-	}
-	sort.Strings(keys)
-	objects := []*Workflow{}
-	for _, key := range keys {
-		src, err := c.ReadJSON(key)
-		if err != nil {
-			return nil, err
-		}
-		obj := new(Workflow)
-		err = json.Unmarshal(src, &obj)
-		if err != nil {
-			return nil, err
-		}
-		objects = append(objects, obj)
-	}
-	return objects, nil
-}
-
-// RemoveWorkflow removes one or more workflows from workflows.AndOr
-func RemoveWorkflow(workflowNames []string) error {
-	c, err := dataset.Open(AndOrWorkflows)
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-	for _, key := range workflowNames {
-		if key == "*" {
-			keys := c.Keys()
-			return RemoveWorkflow(keys)
-		}
-		if err := c.Delete(key); err != nil {
-			return err
-		}
-	}
-	return nil
 }
