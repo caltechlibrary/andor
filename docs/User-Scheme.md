@@ -2,7 +2,8 @@
 # User Scheme
 
 While **AndOr** manages users outside the web UI it still 
-needs to keep track of basic user information.
+needs to keep track of basic user information such as the
+workflows they have acess to.
 
 Below is an example JSON document describing the user Jane Doe.
 
@@ -10,7 +11,6 @@ Below is an example JSON document describing the user Jane Doe.
     {
         "user_id": "jane.doe@example.edu",
         "display_name": "Jane Doe",
-        "create_queue": "writer",
         "member_of": [ "publisher", "editor", "writer" ]
     }
 ```
@@ -23,11 +23,8 @@ user\_id
 display\_name
 : (string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious
 
-create\_queue
-: (string, optional, defaults to null) if not null assigns the workflow value when an object is created (NOTE: workflow needs to allow creating objects)
-
 member\_of
-: (list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is "\*" it means the user is a member of all workflows, their for has all defined permissions
+: (list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is "\*" it means the user is a member of all workflows, this is useful for repository administrators
 
 Here's an example of expressing that user in TOML.
 
@@ -36,8 +33,6 @@ Here's an example of expressing that user in TOML.
     ["jane.doe@example.edu"]
     # Diplsay Name
     display_name = "Jane Doe"
-    # Default queue where objects can be created
-    create_queue = "writer"
     # The queues/workflows this user can see.
     member_of = [ "publisher", "editor", "writer" ]
 ```
@@ -47,10 +42,12 @@ Here's an example of expressing that user in TOML.
 When Jane authenticates with the system she goes from being
 "anonymous" to "jane@example.edu" user.  This means she now has the
 permissions associated with "publisher", "editor" and "writer" workflows.
-If Jane creates a new object it will be created in the "writer" workflow.
+If the "writer" workflow allows object creation Jane can create
+objects as a "writer". 
 Note if Jane doesn't have an have any workflows defined she would
 have zero permissions to access any objects. Each workflow list in
-"member\_of" establishes the permissions under which she can see objects.
+"member\_of" establishes her capabilities to interact with 
+objects in the collection(s) of the **AndOr** running.
 
 ## anonymous, the default user
 

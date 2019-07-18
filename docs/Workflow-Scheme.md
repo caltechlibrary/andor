@@ -5,27 +5,92 @@ markup = "mmark"
 # Workflow Scheme
 
 Workflows encapsulate the concept of a queue[^1]
-and access control.  If a user if a member of a
-workflow they gain the permissions of that workflow for objects
-defined viewable in that workflow.  If a user
-is assigned to a workflow that is not defined they gain no additional
-permissions.  A user who is a member of a workflow acquires the
-permissions of that workflow for objects associated with that workflow(s).  
+and capabilities (e.g. access control).  A queue if it 
+is defined in at least one workflow.  **AndOr** 
+supports basic CRUD[^2] operations on any object associated 
+with a workflow's queue. In addition to CRUD operations 
+an additional capability is assignment. 
+Assignment is how we pass objects between workflow 
+states (e.g. "deposit", "review", "publish").
 
-Here's an example of a workflow for someone allowed to curate any object
-in a collection.
+An addition queue exists without definition. That queue
+is "deleted". Like EPrints[^3] **AndOr** doesn't delete
+objects from disc. They continue to exist in a trashbin
+like state.  It is trivial to write a garbage collected
+that operates on objects having a `._Queue` value of 
+"deleted". 
+
+Here's an example object of defining a "deposit" workflow
+associated with a "deposit" queue. A user working in 
+the "deposit" workflow create objects but can not read them. 
+When an object in a workflow is assigned the `._Queue`
+value listed in the wrokflow. So our depository user
+can create objects in the "deposit" queue but they 
+have no other rights beyond that.
 
 ```json
     {
-        "workflow_name": "Curator",
-        "workflow_id": "curator"
-        "object_permissions": [
-            "create",
-            "read",
-            "update"
-        ]
-        "assign_to": [ "*" ],
-        "queues": [ "*" ]
+        "workflow_name": "Depositor",
+        "workflow_id": "deposit",
+        "queue": "review",
+        "create": true,
+        "read": false,
+        "update": false,
+        "delete": false,
+        "assign_to": [ ]
+    }
+
+```
+
+Someone who is a member of the "review" workflow and who should
+be is allowed to read, update, and delete objects (but not create) 
+and move them to a "published" queue would look like --
+
+```json
+    {
+        "workflow_name": "Review",
+        "workflow_id": "review"
+        "queue": "review",
+        "create": false,
+        "read" : true,
+        "update": true,
+        "delete": true,
+        "assign_to": [ "review", "published" ]
+    }
+```
+
+Finally our "published" workflow would only define the
+ability to read objects in the queue "published". 
+
+```json
+    {
+        "workflow_name": "Published",
+        "workflow_id": "published"
+        "queue": "published",
+        "create": false,
+        "read" : true,
+        "update": false,
+        "delete": false,
+        "assign_to": [ ]
+    }
+```
+
+What if we want to pull an object back from published state?
+We can create a workflow called "Unpublish" that is allowed to
+operate on the "published" queue. It has the right to read
+objects in "published" queue and to assign objects back to
+the "review" queue.
+
+```json
+    {
+        "workflow_name": "Unpublish",
+        "workflow_id": "unpublish"
+        "queue": "published",
+        "create": false,
+        "read" : true,
+        "update": false,
+        "delete": false,
+        "assign_to": [ "published", "review" ]
     }
 ```
 
@@ -35,84 +100,29 @@ workflow\_name
 workflow\_id
 : (string, required, must be unique) the id for this workflow
 
-object\_permissions
-: (array of string, default is empty list) this is where you give object level permissions for create, read and update. For the object level permissions objects must be viewable in the workflow. See "queues" field.
+queue
+: (string, required, may be unique) the associated queue the workflow describes
+
+create
+: (bool, defaults to false if not defined) the ability to create an object in the queue
+
+read
+: (boo, defaults to false if not defined) the ability to read an object in the queue
+
+update
+: (bool, defaults to false if not defined) the ability to update (edit) an object in the queue
+
+delete
+: (bool, defaults to false if not defined) the ability to "delete" an object (really move to a trashbin state)
 
 assign\_to
-: (array of string, default is empty list) this holds the ids of the workflows you are allow to assign an object to, if the "\*" string is included it means this workflow can assign an object to any other workflow
+: (list of string, may be empty) the list of queues that a workflow may assign objects into
 
-queues
-: (array of string, default is empty list) this holds the workflow ids of the objects you're allow to view, this is how we create a queue of objects. If the workflow is listed as "\*" it means you can see any object in the collection.  Note if you can see the object then the object\_permissions apply.
-
-
-In our example the workflow name is "Curator" and the id is "curator".
-Because "assign\_to" contains the "\*" string. A user who is associated
-with the workflow "curator" (you can also think of this as a queue)
-can move objects to any other workflow. A curator can also see all objects
-because "queues" also has the "\*" string.
-
-
-Normally a workflow is defined more granularly. A typical system
-would have a queue for curator, published and delete. If you
-limit the permissions for each of these you can create an integrated
-workflow.
-
-If you allow deleting objects you can create a workflow that
-has no object permissions in it. A "delete" workflow could look like
-
-```json
-    {
-        "workflow_name": "Deleted objects",
-        "workflow_id": "delete",
-        "object_permissions": [ ],
-        "assign_to": [ ],
-        "queues": [ ]
-    }
-```
-
-If a user has "delete" in their "member\_of" OR they have
-"delete" in the "assign\_to" list of a workflow they are a
-member of they could put the objects into the delete workflow.
-If the a workflow they belong to can see all objects (e.g. our
-curator example) the object would still be viewable but be in the
-workflow state (queue) of deleted. Otherwise the objects in "delete"
-workflow state would not be visible.
-
-Another common workflow would be "published". The published workflow
-could be defined this way.
-
-
-```json
-    {
-        "workflow_name": "Publishd Objects",
-        "workflow_id": "published",
-        "object_permissions": [ "read" ],
-        "assign_to": [ ],
-        "queues": [ "published" ]
-    }
-```
-
-If a user's "member\_of" field contained "published" they would
-then be allowed to see all objects held in the "published" workflow.
-Notice that we also give "published" the read permission at the
-object level. This is needed to display the objects details
-(e.g. a title field) as well as the id. "queues" only means
-you can view the id, that it the id will be returned in a list of 
-ids.
-
-Likewise if you wanted to make your "published" items viewable by 
-the public you create a record for the "anonymous" user and
-add "published" to the anonymous users' "member\_of" field. That
-would allow unauthenticated users to see published objects.
-
-The "assign\_to" controls where you can move an object to and
-"queues" controls which objects you can see while
-in this workflow. A object's workflow assignment also makes
-a workflow behave as a queue.
-
-Object permissions can be "create", "update" and "read".  
-**AndOr** doesn't support delating objects.  You can create the
-illusion of deletion by cleverly defining a "delete" workflow.
 
 
 [^1]: objects have a field called "\_Queue" that holds the name of the workflow queue they are currently associated with
+
+[^2]: CRUD, refer to "create", "read", "update", "delete" operations on a object
+
+[^3]: EPrints is an excellent Open Source Repository system from South Hampton University
+
