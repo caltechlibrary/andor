@@ -4,7 +4,7 @@
 *.bak
 *.exe
 *.ds
-*.AndOr
+*.toml
 bin/*
 testout/*
 dist/*

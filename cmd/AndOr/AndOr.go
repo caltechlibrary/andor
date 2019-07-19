@@ -83,5 +83,5 @@ func main() {
 	if showHelp {
 		usage(appName, andor.Version, args, 0)
 	}
-	os.Exit(andor.Application(appName, args, os.Stdin, os.Stdout, os.Stderr))
+	os.Exit(andor.Application("andor.toml", appName, args, os.Stdin, os.Stdout, os.Stderr))
 }
