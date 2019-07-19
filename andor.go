@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -40,6 +41,25 @@ type AndOrService struct {
 	Workflows map[string]*Workflow
 	// Queues holds teh queue map for the service
 	Queues map[string]*Queue
+}
+
+// GenerateAndOrTOML generates an example AndOr TOML file
+// suitable to edit and then use to run AndOr.
+func GenerateAndOrTOML(andorTOML, workflowsTOML, usersTOML string, collections []string) error {
+	src := []byte(fmt.Sprintf(`#
+# Example %q. Lines starting with "#" are comments.
+# This file configuration the AndOr web service.
+#
+port = "8246"
+host = "localhost"
+protocol = "http"
+workflows_toml = %q
+users_toml = %q
+repository = [ "%s" ]
+
+`, andorTOML, workflowsTOML, usersTOML,
+		strings.Join(collections, "\", \"")))
+	return ioutil.WriteFile(andorTOML, src, 0666)
 }
 
 // LoadAndOr reads a file, parses it and returns
@@ -72,11 +92,11 @@ func LoadAndOr(andorTOML string) (*AndOrService, error) {
 		service.UsersTOML = "users.toml"
 	}
 
-	service.Workflows, service.Queues, err = LoadWorkflow(service.WorkflowsTOML)
+	service.Workflows, service.Queues, err = LoadWorkflows(service.WorkflowsTOML)
 	if err != nil {
 		return nil, fmt.Errorf("%q, %s", service.WorkflowsTOML, err)
 	}
-	service.Users, err = LoadUser(service.UsersTOML)
+	service.Users, err = LoadUsers(service.UsersTOML)
 	if err != nil {
 		return nil, fmt.Errorf("%q, %s", service.UsersTOML, err)
 	}

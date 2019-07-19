@@ -46,11 +46,58 @@ type Workflow struct {
 	AssignTo []string `json:"assign_to" toml:"assign_to"`
 }
 
-// LoadWorkflow reads a file (either JSON or TOML) at
+// GenerateWorkflowsTOML generates the workflow.toml file
+// example suitable for editing when setting up AndOr.
+func GenerateWorkflowsTOML(workflowsTOML string) error {
+	src := []byte(fmt.Sprintf(`#
+# Example %q. Lines starting with "#" are comments.
+# This file setups up the workflows used by AndOr.
+#
+[admin]
+workflow_name = "Administrator"
+queue = "*"
+create = true
+read = true
+update = true
+delete = true
+assign_to = [ "*" ]
+
+[depositor]
+workflow_name = "Depositor"
+queue = "review"
+create = true
+read = false
+update = false
+delete = false
+assign_to = [ ]
+
+[reviewer]
+workflow_name = "Reviewer"
+queue = "review"
+create = false
+read = true
+update = true
+delete = true
+assign_to = [ "published" ]
+
+[published]
+workflow_name = "Published"
+queue = "published"
+create = false
+read = true
+update = false
+delete = false
+assign_to = [ ]
+
+`, workflowsTOML))
+	return ioutil.WriteFile(workflowsTOML, src, 0666)
+}
+
+// LoadWorkflows reads a file (either JSON or TOML) at
 // start up of AndOr web service and sets up workflows and
 // queues. It returns a map[string]*Workflow,
 // a map[string]*Queue and an error
-func LoadWorkflow(fName string) (map[string]*Workflow, map[string]*Queue, error) {
+func LoadWorkflows(fName string) (map[string]*Workflow, map[string]*Queue, error) {
 	workflows := map[string]*Workflow{}
 	queues := map[string]*Queue{}
 

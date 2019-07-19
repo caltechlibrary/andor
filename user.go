@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"path"
 	"strings"
 
@@ -44,10 +45,29 @@ func (u *User) IsMemberOf(workflowName string) bool {
 	return false
 }
 
-// LoadUser takes a file name, reads the file
+// GenerateUsersTOML generates an example users.toml file.
+// suitable to edit when setting up AndOr.
+func GenerateUsersTOML(usersTOML string) error {
+	userID := os.Getenv("USER")
+	if userID == "" {
+		userID = "admin"
+	}
+	src := []byte(fmt.Sprintf(`#
+#
+# Example %q. Lines starting with "#" are comments.
+# This shows example users.
+#
+[%q]
+display_name = %q
+member_of = [ "admin" ]
+`, usersTOML, userID, userID))
+	return ioutil.WriteFile(usersTOML, src, 0666)
+}
+
+// LoadUsers takes a file name, reads the file
 // (either JSON or TOML) and returns a map[string]*User
 // and an error
-func LoadUser(fName string) (map[string]*User, error) {
+func LoadUsers(fName string) (map[string]*User, error) {
 	users := map[string]*User{}
 	src, err := ioutil.ReadFile(fName)
 	if err != nil {

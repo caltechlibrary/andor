@@ -3,6 +3,7 @@ package andor
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	// Caltech Library packages
@@ -25,10 +26,10 @@ func Application(andorTOML, appName string, args []string, in io.Reader, out io.
 			fmt.Fprintf(eOut, "Missing collection name(s)")
 			return 1
 		}
-		workflowsTOML = "workflows.toml"
-		usersTOML = "users.toml"
+		workflowsTOML := "workflows.toml"
+		usersTOML := "users.toml"
 		collections := []string{}
-		for _, cName := range args[1:] {
+		for _, cName := range args {
 			_, err := dataset.InitCollection(cName)
 			if err != nil {
 				fmt.Fprintf(eOut, "%s\n", err)
@@ -38,7 +39,7 @@ func Application(andorTOML, appName string, args []string, in io.Reader, out io.
 		}
 		// NOTE: We should generate example andor.toml, workflows.toml,
 		// and users.toml so it is easy to finish setting AndOr.
-		if _, err := os.Stat(andorTOML); os.IsNotExists(err) {
+		if _, err := os.Stat(andorTOML); os.IsNotExist(err) {
 			err = GenerateAndOrTOML(andorTOML, workflowsTOML, usersTOML, collections)
 			if err != nil {
 				fmt.Printf("generating %q, %s", andorTOML, err)
@@ -57,14 +58,14 @@ func Application(andorTOML, appName string, args []string, in io.Reader, out io.
 				}
 			}
 		}
-		if _, err := os.Stat(workflowsTOML); os.IsNotExists(err) {
+		if _, err := os.Stat(workflowsTOML); os.IsNotExist(err) {
 			err = GenerateWorkflowsTOML(workflowsTOML)
 			if err != nil {
 				fmt.Printf("generating %q, %s", workflowsTOML, err)
 				os.Exit(1)
 			}
 		}
-		if _, err := os.Stat("users.toml"); os.IsNotExists(err) {
+		if _, err := os.Stat("users.toml"); os.IsNotExist(err) {
 			err = GenerateUsersTOML(usersTOML)
 			if err != nil {
 				fmt.Printf("generating %q, %s", usersTOML, err)

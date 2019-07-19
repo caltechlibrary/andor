@@ -14,12 +14,12 @@ import (
 	"testing"
 )
 
-func TestLoadUser(t *testing.T) {
+func TestLoadUsers(t *testing.T) {
 	usersTOML := path.Join("testdata", "users.toml")
 	usersTOMLSrc := []byte(`
 #
 # Example Test users file for testing 
-# LoadUser()
+# LoadUsers()
 #
 
 # User id
@@ -36,7 +36,7 @@ member_of = ["deposit"]
 		t.Errorf("%s, %s", usersTOML, err)
 		t.FailNow()
 	}
-	if _, err := LoadUser(usersTOML); err != nil {
+	if _, err := LoadUsers(usersTOML); err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
