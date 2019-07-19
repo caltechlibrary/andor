@@ -22,7 +22,7 @@ endif
 AndOr$(EXT): bin/AndOr$(EXT)
 
 
-bin/AndOr$(EXT): andor.go cmd/AndOr/AndOr.go
+bin/AndOr$(EXT): *.go cmd/AndOr/AndOr.go
 	go build -o bin/AndOr$(EXT) cmd/AndOr/AndOr.go
 
 build: $(PROJECT_LIST) libAndOr
@@ -43,6 +43,11 @@ cleanweb:
 clean: 
 	if [ -d bin ]; then rm -fR bin; fi
 	if [ -d dist ]; then rm -fR dist; fi
+	if [ -d repository.ds ]; then rm -fR respository.ds; fi
+	if [ -d test_repo.ds ]; then rm -fR test_repo.ds; fi
+	if [ -f andor.toml ]; then rm andor.toml; fi
+	if [ -f workflows.toml ]; then rm workflows.toml; fi
+	if [ -f users.toml ]; then rm users.toml; fi
 
 dist/linux-amd64:
 	mkdir -p dist/bin

@@ -9,30 +9,88 @@
 package andor
 
 import (
+	"bytes"
+	"fmt"
+	"io/ioutil"
+	"path"
+	"strings"
 	"testing"
 )
 
-// TestLoadWorkflow ...
-func TestLoadWorkflow(t *testing.T) {
-	t.Errorf("TestLoadWorkflow() not implemented")
+// TestLoadWorkflows ...
+func TestLoadWorkflows(t *testing.T) {
+	workflowTOML := path.Join("testdata", "workflows.toml")
+	w, q, err := LoadWorkflows(workflowTOML)
+	if err != nil {
+		t.Errorf("Failed to load %q, %s", workflowTOML, err)
+	}
+	if len(w) != 3 {
+		t.Errorf("expected 3 workflows, got %d", len(w))
+	}
+	if len(q) != 3 {
+		t.Errorf("expected 3 queues, got %d", len(q))
+	}
+	for _, wName := range []string{"draft", "review", "published"} {
+		if workflow, ok := w[wName]; ok == false {
+			t.Errorf("expected %q, not found -> %+v", wName, w)
+			if strings.Compare(workflow.Queue, wName) != 0 {
+				t.Errorf("expected %q, got %q for Queue", wName, workflow.Queue)
+			}
+		}
+	}
 }
 
-// TestToBytes for workflow structs
-func TestToBytes(t *testing.T) {
-	t.Errorf("TestToBytes() not implemented")
+// TestBytes for workflow structs
+func TestBytes(t *testing.T) {
+	workflowTOML := path.Join("testdata", "workflows2.toml")
+	workflowSrc, err := ioutil.ReadFile(workflowTOML)
+	if err != nil {
+		t.Errorf("expected to read %s, %s", workflowTOML, err)
+		t.FailNow()
+	}
+	w, _, err := LoadWorkflows(workflowTOML)
+	if err != nil {
+		t.Errorf("expected to load %q, got %s", workflowTOML, err)
+	}
+	src := []byte{}
+	for _, k := range []string{"draft", "review", "published"} {
+		v, _ := w[k]
+		src = append(src, []byte(fmt.Sprintf("[%s]\n", k))...)
+		src = append(src, v.Bytes()...)
+		src = append(src, []byte("\n")...)
+	}
+	if len(src) == 0 {
+		t.Errorf("expected a []byte with data for %+v", w)
+	}
+	if bytes.Compare(workflowSrc, src) != 0 {
+		t.Errorf("expected sources to match, got\n%s\n", src)
+	}
 }
 
-// TestToString for workflow structs
-func TestToString(t *testing.T) {
-	t.Errorf("TestToStrings() not implemented")
-}
-
-// TestListWorkflow
-func TestListWorkflow(t *testing.T) {
-	t.Errorf("TestListWorkflow() not implemented")
-}
-
-// TestRemoveWorkflow
-func TestRemoveWorkflow(t *testing.T) {
-	t.Errorf("TestRemoveWorkflow() not implemented")
+// TestString for workflow structs
+func TestString(t *testing.T) {
+	workflowTOML := path.Join("testdata", "workflows2.toml")
+	workflowSrc, err := ioutil.ReadFile(workflowTOML)
+	if err != nil {
+		t.Errorf("expected to read %s, %s", workflowTOML, err)
+		t.FailNow()
+	}
+	w, _, err := LoadWorkflows(workflowTOML)
+	if err != nil {
+		t.Errorf("expected to load %q, got %s", workflowTOML, err)
+	}
+	s := []string{}
+	for _, k := range []string{"draft", "review", "published"} {
+		v, _ := w[k]
+		s = append(s, fmt.Sprintf("[%s]\n", k))
+		s = append(s, v.String())
+		s = append(s, "\n")
+	}
+	src := strings.Join(s, "")
+	if len(src) == 0 {
+		t.Errorf("expected a string with data for %+v", w)
+	}
+	if strings.Compare(string(workflowSrc), src) != 0 {
+		t.Errorf("expected sources to match, got\n%s\n", src)
+	}
 }

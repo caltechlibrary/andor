@@ -9,8 +9,10 @@
 package andor
 
 import (
+	"bytes"
 	"io/ioutil"
 	"path"
+	"strings"
 	"testing"
 )
 
@@ -42,18 +44,32 @@ member_of = ["deposit"]
 	}
 }
 
-func TestUserToBytes(t *testing.T) {
-	t.Errorf("TestUserToBytes() not implemented")
+func TestUserBytes(t *testing.T) {
+	expected := []byte(`user_id = "jane.doe@example.edu"
+display_name = "Jane Doe"
+member_of = ["deposit"]
+`)
+	u := new(User)
+	u.Key = "jane.doe@example.edu"
+	u.DisplayName = "Jane Doe"
+	u.MemberOf = []string{"deposit"}
+	got := u.Bytes()
+	if bytes.Compare(expected, got) != 0 {
+		t.Errorf("expected\n%s\n\ngot\n\n%s\n", expected, got)
+	}
 }
 
-func TestUserToString(t *testing.T) {
-	t.Errorf("TestUserToString() not implemented")
-}
-
-func TestListUsers(t *testing.T) {
-	t.Errorf("TestListUsers() not implemented")
-}
-
-func TestRemoveUser(t *testing.T) {
-	t.Errorf("TestRemoveUser() not implemented")
+func TestUserString(t *testing.T) {
+	expected := `user_id = "jane.doe@example.edu"
+display_name = "Jane Doe"
+member_of = ["deposit"]
+`
+	u := new(User)
+	u.Key = "jane.doe@example.edu"
+	u.DisplayName = "Jane Doe"
+	u.MemberOf = []string{"deposit"}
+	got := u.String()
+	if strings.Compare(expected, got) != 0 {
+		t.Errorf("expected\n%s\n\ngot\n\n%s\n", expected, got)
+	}
 }

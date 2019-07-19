@@ -9,19 +9,20 @@
 package andor
 
 import (
+	"strings"
 	"testing"
 )
 
-// TestNewQueueMap makes sure we can create the QueueMap
-// used to run AndOr workflows
-func TestNewQueueMap(t *testing.T) {
-	t.Errorf("TestNewQueueMap() not implemented")
-}
-
-func TestNewQueue(t *testing.T) {
-	t.Errorf("TestNewQueue() not implemented")
-}
-
-func TestAddObject(t *testing.T) {
-	t.Errorf("TestAddObject() not implemented")
+func TestAddWorkflow(t *testing.T) {
+	q := new(Queue)
+	if len(q.Workflows) != 0 {
+		t.Errorf("Should have an empty q.Workflows -> %+v", q)
+	}
+	q.AddWorkflow("draft")
+	if len(q.Workflows) != 1 {
+		t.Errorf("Should have a single workflow -> %+v", q)
+	}
+	if strings.Compare(q.Workflows[0], "draft") != 0 {
+		t.Errorf("Should have draft in q.Workflows[0] -> %+v", q)
+	}
 }

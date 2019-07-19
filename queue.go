@@ -9,8 +9,6 @@
 package andor
 
 import (
-	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -31,23 +29,4 @@ func (q *Queue) AddWorkflow(workflow string) {
 		}
 	}
 	q.Workflows = append(q.Workflows, workflow)
-}
-
-// objKey inspects a map[string]interface{} (an object)
-// and returns the `._Key` value if it is set, otherwise an
-// empty string.
-func objKey(obj map[string]interface{}) string {
-	if key, ok := obj["_Key"]; ok == true {
-		switch key.(type) {
-		case json.Number:
-			return key.(json.Number).String()
-		case float64:
-			return fmt.Sprintf("%f", key.(float64))
-		case int:
-			return fmt.Sprintf("%d", key.(int))
-		case string:
-			return key.(string)
-		}
-	}
-	return ""
 }

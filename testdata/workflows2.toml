@@ -1,24 +1,30 @@
-#
-# This is an example workflows.toml. 
-#
 [draft]
+workflow_id = "draft"
 workflow_name = "Draft"
 queue = "draft"
 create = true
 read = false
 update = false
 delete = false
-assign_to = [ "review" ]
+assign_to = ["review"]
 
 [review]
+workflow_id = "review"
 workflow_name = "Review"
 queue = "review"
+create = false
 read = true
+update = false
 delete = true
-assign_to = [ "draft", "published" ]
+assign_to = ["draft", "published"]
 
 [published]
+workflow_id = "published"
 workflow_name = "Published"
 queue = "published"
+create = false
 read = true
+update = false
+delete = false
+assign_to = []
 

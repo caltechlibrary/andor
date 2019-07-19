@@ -93,11 +93,10 @@ func LoadUsers(fName string) (map[string]*User, error) {
 }
 
 // Bytes() outputs a user to []bytes in TOML.
-func (user *User) Bytes() []byte {
+func (u *User) Bytes() []byte {
 	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(user); err != nil {
-		src, _ := json.Marshal(user)
-		return src
+	if err := toml.NewEncoder(buf).Encode(u); err != nil {
+		return []byte("")
 	}
 	return buf.Bytes()
 }
@@ -106,8 +105,7 @@ func (user *User) Bytes() []byte {
 func (user *User) String() string {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(user); err != nil {
-		src, _ := json.Marshal(user)
-		return string(src)
+		return ""
 	}
 	return buf.String()
 }

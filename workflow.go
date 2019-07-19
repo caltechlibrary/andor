@@ -93,13 +93,34 @@ assign_to = [ ]
 	return ioutil.WriteFile(workflowsTOML, src, 0666)
 }
 
+// makeQueues() takes a set of workflows and returns a list of queues.
+func makeQueues(workflows map[string]*Workflow) map[string]*Queue {
+	queues := map[string]*Queue{}
+	// Create Queues from workflows.Queue and workflows.AssignTo
+	for key, workflow := range workflows {
+		workflow.Key = key
+		// For each queue mentioned in workflow, check if it
+		// exists and update it with the workflow information.
+		queueList := append([]string{workflow.Queue}, workflow.AssignTo...)
+		for _, queue := range queueList {
+			q, ok := queues[queue]
+			if ok == false {
+				q = new(Queue)
+				q.Key = workflow.Queue
+			}
+			q.AddWorkflow(workflow.Key)
+			queues[queue] = q
+		}
+	}
+	return queues
+}
+
 // LoadWorkflows reads a file (either JSON or TOML) at
 // start up of AndOr web service and sets up workflows and
 // queues. It returns a map[string]*Workflow,
 // a map[string]*Queue and an error
 func LoadWorkflows(fName string) (map[string]*Workflow, map[string]*Queue, error) {
 	workflows := map[string]*Workflow{}
-	queues := map[string]*Queue{}
 
 	// Parse our workflows
 	src, err := ioutil.ReadFile(fName)
@@ -118,22 +139,7 @@ func LoadWorkflows(fName string) (map[string]*Workflow, map[string]*Queue, error
 	default:
 		return nil, nil, fmt.Errorf("workflow must be either a .json or .toml file")
 	}
-	// Create Queues from workflows.Queue and workflows.AssignTo
-	for key, workflow := range workflows {
-		workflow.Key = key
-		// For each queue mentioned in workflow, check if it
-		// exists and update it with the workflow information.
-		queueList := append([]string{workflow.Queue}, workflow.AssignTo...)
-		for _, queue := range queueList {
-			q, ok := queues[queue]
-			if ok == false {
-				q = new(Queue)
-				q.Key = workflow.Queue
-			}
-			q.AddWorkflow(workflow.Key)
-			queues[queue] = q
-		}
-	}
+	queues := makeQueues(workflows)
 	return workflows, queues, nil
 }
 

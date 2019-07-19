@@ -4,8 +4,8 @@
 *.bak
 *.exe
 *.ds
-*.toml
 bin/*
 testout/*
 dist/*
 test_*
+./*.toml

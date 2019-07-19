@@ -9,11 +9,11 @@
 package andor
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"path"
-	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -34,6 +34,8 @@ type AndOrService struct {
 	Port string `json:"port" toml:"port"`
 	// Post is the hostname/ip address to listen on, e.g. localhost
 	Host string `json:"host" toml:"host"`
+	// Repository holds one or more repository names used for web API
+	Repositories []string `json:"repositories" toml:"repositories"`
 
 	// Users holds the user map for the service
 	Users map[string]*User
@@ -45,20 +47,29 @@ type AndOrService struct {
 
 // GenerateAndOrTOML generates an example AndOr TOML file
 // suitable to edit and then use to run AndOr.
-func GenerateAndOrTOML(andorTOML, workflowsTOML, usersTOML string, collections []string) error {
+func GenerateAndOrTOML(andorTOML string, collections []string) error {
+	s := new(AndOrService)
+	s.Port = "8246"
+	s.Host = "localhost"
+	s.Protocol = "http"
+	s.WorkflowsTOML = "workflows.toml"
+	s.UsersTOML = "users.toml"
+	if len(collections) > 0 {
+		s.Repositories = collections
+	}
+	buf := new(bytes.Buffer)
+	if err := toml.NewEncoder(buf).Encode(s); err != nil {
+		return err
+	}
+	//  Now write out our default config.
 	src := []byte(fmt.Sprintf(`#
-# Example %q. Lines starting with "#" are comments.
+# Example %q 
+#
+# Lines starting with "#" are comments.
 # This file configuration the AndOr web service.
 #
-port = "8246"
-host = "localhost"
-protocol = "http"
-workflows_toml = %q
-users_toml = %q
-repository = [ "%s" ]
-
-`, andorTOML, workflowsTOML, usersTOML,
-		strings.Join(collections, "\", \"")))
+%s
+`, andorTOML, buf.String()))
 	return ioutil.WriteFile(andorTOML, src, 0666)
 }
 
@@ -91,15 +102,23 @@ func LoadAndOr(andorTOML string) (*AndOrService, error) {
 	if service.UsersTOML == "" {
 		service.UsersTOML = "users.toml"
 	}
+	for i, repo := range service.Repositories {
+		if len(repo) == 0 {
+			suffix := ""
+			switch i + 1 {
+			case 1:
+				suffix = "st"
+			case 2:
+				suffix = "nd"
+			case 3:
+				suffix = "nd"
+			default:
+				suffix = "th"
+				return nil, fmt.Errorf("%d%s repository is an empty string", i, suffix)
+			}
+		}
+	}
 
-	service.Workflows, service.Queues, err = LoadWorkflows(service.WorkflowsTOML)
-	if err != nil {
-		return nil, fmt.Errorf("%q, %s", service.WorkflowsTOML, err)
-	}
-	service.Users, err = LoadUsers(service.UsersTOML)
-	if err != nil {
-		return nil, fmt.Errorf("%q, %s", service.UsersTOML, err)
-	}
 	if service.Protocol == "" {
 		return nil, fmt.Errorf("Missing protocol (e.g. http, https)")
 	}
@@ -109,14 +128,34 @@ func LoadAndOr(andorTOML string) (*AndOrService, error) {
 	if service.Host == "" {
 		return nil, fmt.Errorf("Host not set")
 	}
+	return service, nil
+}
+
+// LoadWorksAndUsers envokes LoadWorkflows() and LoadUsers() for
+// a service instance. This is separate from LoadAndOr() because you
+// may want to support HUP to reload workflows and users as well as
+// support independent validation and testing.
+func (s *AndOrService) LoadWorkersAndUsers() error {
+	var (
+		err error
+	)
+	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsTOML)
+	if err != nil {
+		return fmt.Errorf("%q, %s", s.WorkflowsTOML, err)
+	}
+	s.Users, err = LoadUsers(s.UsersTOML)
+	if err != nil {
+		return fmt.Errorf("%q, %s", s.UsersTOML, err)
+	}
+
 	// Finally check to make sure all the users MemberOf fields
 	// are accounted for.
-	for _, user := range service.Users {
+	for _, user := range s.Users {
 		for _, workflow := range user.MemberOf {
-			if _, ok := service.Workflows[workflow]; ok == false {
-				return nil, fmt.Errorf("%s not defined, referenced by %s", workflow, user.Key)
+			if _, ok := s.Workflows[workflow]; ok == false {
+				return fmt.Errorf("%s not defined, referenced by %s", workflow, user.Key)
 			}
 		}
 	}
-	return service, nil
+	return nil
 }
