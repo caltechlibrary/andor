@@ -11,29 +11,26 @@ package andor
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // Queue describes a queue's state, the object ideas and
 // and sorted id lists and workflows associated with the queue.
 type Queue struct {
-	// Name holds the name of the queue
-	Name string `json:"name"`
+	// Key holds the id of the queue
+	Key string `json:"queue_id"`
 	// Workflows thats operating on this queue
 	Workflows []string `json:"workflows"`
 }
 
 // AddWorkflow associates a workflow with the queue.
 func (q *Queue) AddWorkflow(workflow string) {
-	hasWorkflow := false
 	for _, key := range q.Workflows {
-		if key == workflow {
-			hasWorkflow = true
-			break
+		if strings.Compare(key, workflow) == 0 {
+			return
 		}
 	}
-	if hasWorkflow == false {
-		q.Workflows = append(q.Workflows, workflow)
-	}
+	q.Workflows = append(q.Workflows, workflow)
 }
 
 // objKey inspects a map[string]interface{} (an object)

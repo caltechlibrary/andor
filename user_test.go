@@ -10,13 +10,13 @@ package andor
 
 import (
 	"io/ioutil"
+	"path"
 	"testing"
-	// Caltech Library packages
 )
 
 func TestLoadUser(t *testing.T) {
-	UsersTOML = "test_users.toml"
-	UsersTOMLSrc := []byte(`
+	usersTOML := path.Join("testdata", "users.toml")
+	usersTOMLSrc := []byte(`
 #
 # Example Test users file for testing 
 # LoadUser()
@@ -31,12 +31,12 @@ create_queue = "deposit"
 # Jane is a member of the "deposit" workflow/queue
 member_of = ["deposit"]
 `)
-	err := ioutil.WriteFile(UsersTOML, UsersTOMLSrc, 0666)
+	err := ioutil.WriteFile(usersTOML, usersTOMLSrc, 0666)
 	if err != nil {
-		t.Errorf("%s, %s", UsersTOML, err)
+		t.Errorf("%s, %s", usersTOML, err)
 		t.FailNow()
 	}
-	if _, err := LoadUser(UsersTOML); err != nil {
+	if _, err := LoadUser(usersTOML); err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}

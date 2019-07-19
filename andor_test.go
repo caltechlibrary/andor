@@ -9,9 +9,17 @@
 package andor
 
 import (
+	"path"
 	"testing"
 )
 
-func TestAndOr(t *testing.T) {
-	t.Errorf("TestAndOr() not implemented")
+// TestLoadAndOr() tests if we can create a service object from
+// loading test copies of testdata/workflows.toml, testdata/users.toml
+/// and testdata/andor.toml.
+func TestLoadAndOr(t *testing.T) {
+	andorTOML := path.Join("testdata", "andor.toml")
+	if _, err := LoadAndOr(andorTOML); err != nil {
+		t.Errorf("LoadAndOr(%q) %s", andorTOML, err)
+		t.FailNow()
+	}
 }

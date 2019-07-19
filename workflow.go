@@ -72,17 +72,18 @@ func LoadWorkflow(fName string) (map[string]*Workflow, map[string]*Queue, error)
 		return nil, nil, fmt.Errorf("workflow must be either a .json or .toml file")
 	}
 	// Create Queues from workflows.Queue and workflows.AssignTo
-	for _, workflow := range workflows {
+	for key, workflow := range workflows {
+		workflow.Key = key
 		// For each queue mentioned in workflow, check if it
 		// exists and update it with the workflow information.
-		queueList := append([]string{workflow.Name}, workflow.AssignTo...)
+		queueList := append([]string{workflow.Queue}, workflow.AssignTo...)
 		for _, queue := range queueList {
 			q, ok := queues[queue]
 			if ok == false {
-				q := new(Queue)
-				q.Name = workflow.Queue
+				q = new(Queue)
+				q.Key = workflow.Queue
 			}
-			q.AddWorkflow(workflow.Name)
+			q.AddWorkflow(workflow.Key)
 			queues[queue] = q
 		}
 	}

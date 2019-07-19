@@ -12,7 +12,7 @@ import (
 // Application runs the command line interaction
 // for AndOr. It returns an exit status (e.g. 0
 // if everything is OK, non-zero for error).
-func Application(appName string, args []string, in io.Reader, out io.Writer, eOut io.Writer) int {
+func Application(andorTOML, appName string, args []string, in io.Reader, out io.Writer, eOut io.Writer) int {
 	if len(args) == 0 {
 		fmt.Fprintf(eOut, "Missing a verb like init, gen-user, gen-workflow, start\n")
 		return 1
@@ -36,25 +36,14 @@ func Application(appName string, args []string, in io.Reader, out io.Writer, eOu
 		// workflows.toml and users.toml file so they can be
 		// easily edited to setup access.
 	case "check-config":
-		_, _, err := LoadWorkflow(WorkflowsTOML)
-		if err != nil {
-			fmt.Fprintf(eOut, "Problem with %s, %s", WorkflowsTOML, err)
-			return 1
-		}
-		_, err = LoadUser(UsersTOML)
-		if err != nil {
-			fmt.Fprintf(eOut, "Problem with %s, %s", UsersTOML, err)
-			return 1
-		}
-		_, err = LoadAndOr(AndOrTOML)
-		if err != nil {
-			fmt.Fprintf(eOut, "Problem with %s, %s", AndOrTOML, err)
+		if _, err := LoadAndOr(andorTOML); err != nil {
+			fmt.Fprintf(eOut, "Problem with %s, %s", andorTOML, err)
 			return 1
 		}
 		return 0
 	case "start":
 		if len(args) == 0 {
-			fmt.Fprintf(eOut, "Missing TIML config filename")
+			fmt.Fprintf(eOut, "Missing TOML config filename")
 			return 1
 		}
 		fmt.Fprintf(eOut, "%q not implemented\n", verb)

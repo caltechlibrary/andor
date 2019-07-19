@@ -6,6 +6,6 @@
 *.ds
 *.AndOr
 bin/*
-testdata/*
+testout/*
 dist/*
 test_*

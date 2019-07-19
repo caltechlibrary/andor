@@ -65,6 +65,10 @@ func LoadUser(fName string) (map[string]*User, error) {
 	default:
 		return nil, fmt.Errorf("user must be either a .json or .toml file")
 	}
+	for key, user := range users {
+		user.Key = key
+	}
+
 	return users, nil
 }
 

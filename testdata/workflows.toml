@@ -1,0 +1,23 @@
+#
+# This is an example workflows.toml. 
+#
+[deposit]
+workflow_name = "Depositor"
+queue = "review"
+create = true
+read = false
+update = false
+delete = false
+assign_to = [ ]
+
+[review]
+workflow_name = "Reviwer"
+queue = "review"
+read = true
+assign_to = [ "published" ]
+
+[published]
+workflow_name = "Published"
+queue = "published"
+read = true
+
