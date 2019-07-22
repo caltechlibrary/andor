@@ -98,4 +98,34 @@ publish:
 	./mk_website.py
 	bash publish.bash
 
+spellcheck:
+	aspell -c README.md
+	aspell -c INSTALL.md
+	aspell -c INSTALL.md
+	aspell -c README.md
+	aspell -c TODO.md
+	aspell -c docs/Object-Scheme.md
+	aspell -c docs/Oral-Histories-as-Proof-of-Concept.md
+	aspell -c docs/Queue-Scheme.md
+	aspell -c docs/Reference.md
+	aspell -c docs/Schedule.md
+	aspell -c docs/Setting-Up-AndOr.md
+	aspell -c docs/User-Scheme.md
+	aspell -c docs/Workflow-Scheme.md
+	aspell -c docs/Workflow-Use-Cases.md
+	aspell -c docs/add-user-workflow.md
+	aspell -c docs/check.md
+	aspell -c docs/config.md
+	aspell -c docs/index.md
+	aspell -c docs/init.md
+	aspell -c docs/list-users.md
+	aspell -c docs/list-workflow.md
+	aspell -c docs/load-user.md
+	aspell -c docs/load-workflow.md
+	aspell -c docs/migrating-eprints.md
+	aspell -c docs/remove-user-workflow.md
+	aspell -c docs/remove-user.md
+	aspell -c docs/remove-workflow.md
+	aspell -c docs/start.md
+
 FORCE:

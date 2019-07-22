@@ -3,7 +3,7 @@
 
 While **AndOr** manages users outside the web UI it still 
 needs to keep track of basic user information such as the
-workflows they have acess to.
+workflows they have access to.
 
 Below is an example JSON document describing the user Jane Doe.
 
@@ -31,7 +31,7 @@ Here's an example of expressing that user in TOML.
 ```toml
     # User id
     ["jane.doe@example.edu"]
-    # Diplsay Name
+    # Display Name
     display_name = "Jane Doe"
     # The queues/workflows this user can see.
     member_of = [ "publisher", "editor", "writer" ]

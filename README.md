@@ -16,7 +16,7 @@ our existing repositories.
 
 **AndOr** is based on [dataset](https://caltechlibrary.github.io/dataset).
 It will provide a semi-RESTful JSON API and use 
-HTML, CSS and JavaScript to provide a GUI interface for curation.
+HTML, CSS and JavaScript to provide a GUI interface for curating.
 A minimum running system would consist of only two or three
 pieces of software. The minimum would be a web server[^1] 
 plus the **AndOr** service supporting multi-user interaction with 
@@ -84,7 +84,7 @@ migrating into **AndOr**. There is no customization.  If you want to change your
 The web browser itself creates the illusion of a unified software system
 or single process. A single application is not required to support desire
 functionality. Customization then can be deferred to other micro services
-or even external sytems (e.g. looking up something at datacite.org or
+or even external systems (e.g. looking up something at datacite.org or
 orcid.org).
 
 Some features are unavoidable. The repository problem requires managing
@@ -171,7 +171,7 @@ workflows.
     + [People and Groups](docs/people-groups.html)
     + [Migrating an EPrints Repository](docs/migrating-eprints.html) 
     + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
-+ Scheme walk throughs
++ Scheme walk through
     + [User Scheme](docs/User-Scheme.html)
     + [Workflow Scheme](docs/Workflow-Scheme.html)
     + [Queue Scheme](docs/Queue-Scheme.html)

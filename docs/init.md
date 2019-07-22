@@ -6,7 +6,7 @@ The `init` verb creates empty dataset collections and also
 files if they did not already exist.  You can list as many 
 dataset collections as you want and the init command will 
 attempt to initialize them one after the other.  If an error 
-is encountered it will abort creating futher collections
+is encountered it will abort creating further collections
 after that.
 
 ## When to use init
@@ -26,7 +26,7 @@ This command would create the dataset collection and following files.
 4. workflows.toml, the workflows file use by `AndOr start`
 
 **AndOr** uses the three TOML files to configure how the web 
-service works, known users and the workflows and capabilties
+service works, known users and the workflows and capabilities
 available to them.  Repository collections holds the content 
 the API will provide. An **AndOr** provides access to 
 the repositories listed in the "andor.toml" file. The users

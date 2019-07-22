@@ -46,7 +46,7 @@ example <code>$URL_TO_EPRINTS</code> would be the EPrints host and any authentic
 Here&rsquo;s the steps with existing Caltech Library tools to migrate an
 EPrints repository into a dataset collection.</p>
 
-<pre><code class="language-bash">    # Create an emprt AndOr deployment
+<pre><code class="language-bash">    # Create an empty AndOr deployment
     bin/AndOr init repository.ds users.AndOr workflow.AndOr
     # Import our metadata and files from an existing EPrints
     ep -api $URL_TO_EPRINTS -dataset repository.ds \
@@ -58,9 +58,9 @@ is complete you can add some workflows and users to curate your
 new repository.</p>
 
 <p>You could also using an incrementally migration/update from
-the EPrints collection by swaping out the <code>-export all</code> for an
+the EPrints collection by swapping out the <code>-export all</code> for an
 appropriate export strategy. In principle you could run the two
-in parellel assuming the data flow was one direction (i.e.
+in parallel assuming the data flow was one direction (i.e.
 from EPrints to AndOr).</p>
 
 <p><strong>AndOr</strong> is built on dataset collections. If there is a

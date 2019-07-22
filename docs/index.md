@@ -14,7 +14,7 @@ concepts and rationale around **AndOr**.
     + [People and Groups](people-groups.html) 
         + Example of custom metadata objects
     + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
-        + Example of integrating EPrints comntent
+        + Example of integrating EPrints content
         + [Migrating an EPrints Repository](migrating-eprints.html) 
     + [Users, Workflows and Queues](Workflow-Use-Cases.html)
         + How to manage access and capabilities
@@ -31,7 +31,7 @@ concepts and rationale around **AndOr**.
 
 The following are actions available from
 the command line usage of **AndOr**. While
-it takes avantage of the rich library of
+it takes advantage of the rich library of
 packages and tools developed at Caltech Library 
 **AndOr** itself is a self contained command
 line program.
@@ -40,8 +40,8 @@ line program.
 
 Basic **AndOr** actions available on the command line
 
-+ [init](init.html) - intialize dataset collections for use by **AndOr** and create example "users.toml", "workflows.toml" and "andor.toml" if needed
-+ [check-config](check-config.html) - validates "users.toml", "workflows.toml", and "andor.toml"
++ [init](init.html) - initialize dataset collections for use by **AndOr** and create example "users.toml", "workflows.toml" and "andor.toml" if needed
++ [check](check.html) - validates "users.toml", "workflows.toml", and "andor.toml"
 + [start](start.html) - start **AndOr** web service using "users.toml", "workflows.toml" and "andor.toml" for configuration
 
 ## (Example) How to ...

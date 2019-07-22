@@ -43,7 +43,7 @@ to setup and run it.
 
     # Configure our AndOr web service (e.g. set hostname, port, 
     # protocol, collection name(s))
-    bin/AndOr config > webservice.toml
+    bin/AndOr init > webservice.toml
     $EDITOR webservice.toml
 
     # Startup the AndOr web service with webservice.toml 

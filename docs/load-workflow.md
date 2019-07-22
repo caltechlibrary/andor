@@ -1,8 +1,8 @@
 
 # Loading Workflow(s)
 
-Workflows are a central organzation of **AndOr** for
-access (permissioning) as well as organizating curitorial 
+Workflows are a central organization of **AndOr** for
+access (permissioning) as well as organizing curatorial 
 into work queues.  The `load-workflow` verb will 
 create/update workflows available to **AndOr**. A
 workflow is defined in [TOML]().  A toml file can
@@ -17,7 +17,7 @@ names correspond to work queues of "admin", "deposit",
     [admin]
     # The display name is "Admin"
     workflow_name = "Admin"
-    # Object level permisions in the "admin" queue
+    # Object level permissions in the "admin" queue
     object_permissions = [ "create", "read", "update" ]
     # The available objects can be assigned to
     assign_to = ["*"]

@@ -31,7 +31,7 @@ sites. Users get disturbing warnings when they visit our site
 only access SSL protected sites.
 
 Setting up a working vanilla EPrints is non-trivial. Migrating
-our customizations is complex and error prone[^4].  Each operating
+our customization is complex and error prone[^4].  Each operating
 system, software upgrade and EPrints upgrades risks breaking EPrints
 particularly when we've customized the code.
 
@@ -71,7 +71,7 @@ successive migration would be shorter as we automate the process.
 The Oral Histories repository is small, 200 objects. It has a small
 number of users who curate the content (e.g. max number is likely
 size of the Archives staff plus two). A few objects are added/updated
-per week depending on funding and interviewable individuals.
+per week depending on funding and participating individuals.
 The metadata and media files can be curated separately from the
 public facing website (like we do now with the feeds or the
 archives own website).
@@ -79,12 +79,12 @@ archives own website).
 The curator needs to have a list of new objects needing work and also
 be able to access published objects and assets should the need arise.
 Ideally you wouldn't need to cut and paste the metadata between the
-curation tool and ArchivesSpace. Integrating generally with ArchivesSpace
+curating tool and ArchivesSpace. Integrating generally with ArchivesSpace
 would be desirable.
 
 It would be nice to have a newer designed website. It would be nice to
 have a good full text search available for content on the site
-(both in curation and for the public).
+(both in curating and for the public).
 
 It is a straight forward project to take what we've already implemented
 for feeds.library.caltech.edu and adapt to the needs of a much better
@@ -93,7 +93,7 @@ flexibility in picking the minimum feature set needed to curate the
 objects and media files.
 
 
-## Curation workflow based on existing EPrints implementation
+## Curating workflow based on existing EPrints implementation
 
 We already have the majority of the software for creating a light weight
 EPrints like system. What is lacking is a web service that functions
@@ -105,7 +105,7 @@ based version[^7].
 
 If we had a light weight EPrints like system migration would take
 a few days or so depending on the EPrints repository,
-number of objects the customization to the curation form. This is
+number of objects the customization to the curating form. This is
 considerably less than migrating EPrints itself.  The primary
 task would be the customization of the object edit and input forms
 to support each specific implementation. A secondary task would
@@ -245,7 +245,7 @@ make due with workflows defined in a simple configuration file.
 
 We can avoid the complexity of EPrints for most of our EPrints 
 deployments. It is likely we can even avoid complexity when supporting 
-are larger repository if we separate the curation/submission process 
+are larger repository if we separate the curating/submission process 
 from publicly viewable websites and switch to a more micro service 
 friendly architecture.  E.g we can easily drop database SQL searches 
 for full text searches based on something like Lunr, Solr or 
@@ -263,7 +263,7 @@ Elastic Search.
 
 [^5]: The disk0 folder is where both the EPrints XML is stored as well as any media (e.g. pdf, image file, audio file).
 
-[^6]: AWS has a hosted RDBMS (relational database manage system) that appears to your application as if it is MySQL (what EPrints uses). There are edge cases particularly when your record data has problematic character encodings (i.e. not UTF-8) that make this swap a project in itself. The actual migration would be existing MySQL/MariaDB to a clean copy with all encodings fixed MariaDB then dump and restore into AWS's RDBMS. Starting from a clean slate with RDBMS on the other hand is most trivial (basic sort out the connection string and permissions).
+[^6]: AWS has a hosted RDBMS (relational database manage system) that appears to your application as if it is MySQL (what EPrints uses). There are edge cases particularly when your record data has problematic character encoding (i.e. not UTF-8) that make this swap a project in itself. The actual migration would be existing MySQL/MariaDB to a clean copy with all encoding fixed MariaDB then dump and restore into AWS's RDBMS. Starting from a clean slate with RDBMS on the other hand is most trivial (basic sort out the connection string and permissions).
 
 [^7]: See [Migrating EPrints](migrating-eprints.html) 
 

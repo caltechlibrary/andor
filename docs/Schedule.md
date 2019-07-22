@@ -17,7 +17,7 @@ Table: Proposed schedule assumes full time effort, dates subject to change
 ## People and Groups as Proof of concept
 
 We are out growing our GSheet based People and Groups list.
-**AndOr** is to provide an alternative curation alternatve.
+**AndOr** is to provide an alternative curating interface.
 The demo will show workflows for managing two collections---
 People and Groups. It should provide the following basic
 capabilities

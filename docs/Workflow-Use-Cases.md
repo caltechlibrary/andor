@@ -97,7 +97,7 @@ create a workflow queue called "deposit". It should only have create
 permissions for the "review" queue.  If we give "anonymous" 
 "deposit" membership they can create objects that will be added
 to the "review" queue. They will not be in the "published" queue
-to until someone intervines they will be invisible to the public.
+to until someone intervenes they will be invisible to the public.
 Remember since anonymous is a member of "public" they will be 
 able to still read all published records.
 
@@ -145,14 +145,14 @@ Here are some of our policies we want to enforce.
     + remove the "deposit" workflow from "anonymous" user
 2. Allow reviewers to read and delete deposits but not create or update them. 
 3. Allow reviewers to assign objects to editorial, published and embargoed queues
-4. Currators have full access to all objects in all queues
+4. Curators have full access to all objects in all queues
 
 Jane is a curator. Millie is a reviewer. Anne is a user who we want
 to be able to "deposit" objects but she has no other responsibilities.
 
 Here's the steps to implement a solution
 
-1. Remove "anonymous" membership in "depost"
+1. Remove "anonymous" membership in "deposit"
 2. Add user objects for Mille and Anne
 3. Create a workflow called "depositor" with can create objects in the "review" queue
 3. Create a workflow called "reviewer" that operates on the "review" queue and given that workflow read, delete permission for objects in the queue and is allowed to assign objects to editorial, published and embargoed queues
@@ -197,7 +197,7 @@ Our depositor workflow looks like
         "read": false,
         "update": false,
         "delete": false,
-        "asign_to": [ ]
+        "assign_to": [ ]
     }
 ```
 
@@ -219,6 +219,6 @@ And our reviewer would look like
 
 If later we decide Millie should be able to create objects then
 we can add her the deposit workflow queue. She would have the 
-cummulative rights of both the "deposit" and "reviewer" workflows.
+cumulative rights of both the "deposit" and "reviewer" workflows.
 
 

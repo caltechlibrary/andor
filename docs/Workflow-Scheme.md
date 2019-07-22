@@ -26,7 +26,7 @@ Here's an example object of defining a "deposit" workflow
 associated with a "deposit" queue. A user working in 
 the "deposit" workflow create objects but can not read them. 
 When an object in a workflow is assigned the `._Queue`
-value listed in the wrokflow. So our depository user
+value listed in the workflow. So our depository user
 can create objects in the "deposit" queue but they 
 have no other rights beyond that.
 

@@ -114,7 +114,7 @@ create a workflow queue called &ldquo;deposit&rdquo;. It should only have create
 permissions for the &ldquo;review&rdquo; queue.  If we give &ldquo;anonymous&rdquo;
 &ldquo;deposit&rdquo; membership they can create objects that will be added
 to the &ldquo;review&rdquo; queue. They will not be in the &ldquo;published&rdquo; queue
-to until someone intervines they will be invisible to the public.
+to until someone intervenes they will be invisible to the public.
 Remember since anonymous is a member of &ldquo;public&rdquo; they will be
 able to still read all published records.</p>
 
@@ -164,7 +164,7 @@ either editorial, published or embargoed states.</p>
 </ul></li>
 <li>Allow reviewers to read and delete deposits but not create or update them.</li>
 <li>Allow reviewers to assign objects to editorial, published and embargoed queues</li>
-<li>Currators have full access to all objects in all queues</li>
+<li>Curators have full access to all objects in all queues</li>
 </ol>
 
 <p>Jane is a curator. Millie is a reviewer. Anne is a user who we want
@@ -173,7 +173,7 @@ to be able to &ldquo;deposit&rdquo; objects but she has no other responsibilitie
 <p>Here&rsquo;s the steps to implement a solution</p>
 
 <ol>
-<li>Remove &ldquo;anonymous&rdquo; membership in &ldquo;depost&rdquo;</li>
+<li>Remove &ldquo;anonymous&rdquo; membership in &ldquo;deposit&rdquo;</li>
 <li>Add user objects for Mille and Anne</li>
 <li>Create a workflow called &ldquo;depositor&rdquo; with can create objects in the &ldquo;review&rdquo; queue</li>
 <li>Create a workflow called &ldquo;reviewer&rdquo; that operates on the &ldquo;review&rdquo; queue and given that workflow read, delete permission for objects in the queue and is allowed to assign objects to editorial, published and embargoed queues</li>
@@ -215,7 +215,7 @@ to be able to &ldquo;deposit&rdquo; objects but she has no other responsibilitie
         &quot;read&quot;: false,
         &quot;update&quot;: false,
         &quot;delete&quot;: false,
-        &quot;asign_to&quot;: [ ]
+        &quot;assign_to&quot;: [ ]
     }
 </code></pre>
 
@@ -235,7 +235,7 @@ to be able to &ldquo;deposit&rdquo; objects but she has no other responsibilitie
 
 <p>If later we decide Millie should be able to create objects then
 we can add her the deposit workflow queue. She would have the
-cummulative rights of both the &ldquo;deposit&rdquo; and &ldquo;reviewer&rdquo; workflows.</p>
+cumulative rights of both the &ldquo;deposit&rdquo; and &ldquo;reviewer&rdquo; workflows.</p>
 
 </section>
 
