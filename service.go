@@ -9,6 +9,7 @@
 package andor
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,17 +22,48 @@ import (
 	"github.com/caltechlibrary/dataset"
 )
 
+func writeResponse(w http.ResponseWriter, r *http.Request, src []byte) {
+	w.Header().Add("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	if _, err := w.Write(src); err != nil {
+		log.Printf("Response write error, %s %s", r.URL.Path, err)
+		return
+	}
+	log.Printf("FIXME: Log successful requests here ... %s", r.URL.Path)
+}
+
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
-func requestKeys(cName string, c *dataset.Collection, p string, w http.ResponseWriter, r *http.Request) {
+// We only support GET on keys.
+func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply user/workflow/queue rules.
 	keys := c.Keys()
 	sort.Strings(keys)
-	log.Printf("requestKeys(%q, obj, %q, obj, obj) not implemented", cName, p)
+	src, err := json.MarshalIndent(keys, "", "    ")
+	if err != nil {
+		log.Printf("Internal Server error, %s %s", cName, err)
+		http.Error(w, "Internal Server error", http.StatusInternalServerError)
+		return
+	}
+	writeResponse(w, r, src)
 }
 
 // requestObject is the API version of
 //     `dataset read -c -p COLLECTION_NAME KEY`
-func requestObject(cName string, c *dataset.Collection, p string, w http.ResponseWriter, r *http.Request) {
-	log.Printf("requestObject(%q, obj, %q, obj, obj) not implemented", cName, p)
+func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply user/workflow/queue rules.
+	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/objects/")
+	if c.HasKey(key) == false {
+		log.Printf("%s, %s, unknown key", cName, r.URL.Path)
+		http.NotFound(w, r)
+		return
+	}
+	src, err := c.ReadJSON(key)
+	if err != nil {
+		log.Printf("Error reading key %q from %q, %s", key, cName, err)
+		http.Error(w, "Internal Server error", http.StatusInternalServerError)
+		return
+	}
+	writeResponse(w, r, src)
 }
 
 // RunService runs the http/https web service of AndOr.
@@ -49,11 +81,11 @@ func RunService(s *AndOrService) error {
 		http.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 			// Do we have an object request or keys request?
 			if strings.Compare(r.URL.Path, p) == 0 {
-				requestKeys(cName, c, p, w, r)
+				requestKeys(cName, c, w, r)
 				return
 			}
 			if strings.HasPrefix(r.URL.Path, p) {
-				requestObject(cName, c, r.URL.Path, w, r)
+				requestObject(cName, c, w, r)
 				return
 			}
 			// Unsupported request ...

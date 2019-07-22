@@ -3,7 +3,7 @@
 
 ## Bugs
 
-+ [ ] init should generate a workflows.toml and users.toml for editing if non exist
++ [x] init should generate a workflows.toml and users.toml for editing if non exist
 
 ## Address Missing features
 
