@@ -14,10 +14,9 @@ concepts and rationale around **AndOr**.
     + [People and Groups](people-groups.html) 
         + Example of custom metadata objects
     + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
-        + Example of integrating EPrints content
         + [Migrating an EPrints Repository](migrating-eprints.html) 
+        + Integrating curating Oral Histories content
     + [Users, Workflows and Queues](Workflow-Use-Cases.html)
-        + How to manage access and capabilities
 + Scheme and scheme user cases
     + [User Scheme](User-Scheme.html)
     + [Workflow Scheme](Workflow-Scheme.html)
@@ -44,17 +43,12 @@ Basic **AndOr** actions available on the command line
 + [check](check.html) - validates "users.toml", "workflows.toml", and "andor.toml"
 + [start](start.html) - start **AndOr** web service using "users.toml", "workflows.toml" and "andor.toml" for configuration
 
-## (Example) How to ...
+## (Example) What is ...
 
 + [What's a TOML file?](toml-basics.html)
-+ [Add a user](add-user.html)
-+ [Update a user](update-user.html)
-+ [Remove a user](remove-user.html)
-+ [Add a workflow](add-user-workflow.html)
-+ [Update a workflow](update-a-workflow.html)
-+ [Remove a workflow](remove-a-workflow.html)
-+ [Listing one or more users](listing-users.html)
-+ [Listing one or more workflows](listing-workflows.html)
++ [andor.toml](andor-toml.html)
++ [users.toml](users-toml.html)
++ [workflows.toml](workflows-toml.html)
 
 [^1]: GUI, Graphics user interface, in this case a web based user interface
 

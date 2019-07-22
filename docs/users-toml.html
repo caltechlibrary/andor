@@ -21,6 +21,29 @@
 
 <section>
 <blockquote class="red">DRAFT, Proof of Concept</blockquote>
+<h1>users.toml</h1>
+
+<p>The &ldquo;users.toml&rdquo; file specifies users and roles who can access
+the <strong>AndOr</strong> web service. Notice it DOES NOT specify authentication.
+Authentication is handled at the web server level via an
+external mechanism like OAuth 2, Shibboleth or in the development
+content BasicAUTH or Digest AUTH.</p>
+
+<p>The &ldquo;users.toml&rdquo; file needs to have a set of entries for each
+user. In the example below the user &ldquo;rsdoiel&rdquo; starts off with
+a <code>[&quot;rsdoiel&quot;]</code> heading. The &ldquo;member_of&rdquo; field is very important.
+This field designates a list of workflows available to the user.
+Workflows control access and capabilities in the <strong>AndOr</strong>
+web service.</p>
+
+<pre><code class="language-toml">    #
+    # Example &quot;users.toml&quot;. Lines starting with &quot;#&quot; are comments.
+    # This shows example users.
+    #
+    [&quot;rsdoiel&quot;]
+    display_name = &quot;R. S. Doiel&quot;&quot;
+    member_of = [ &quot;admin&quot; ]
+</code></pre>
 
 </section>
 

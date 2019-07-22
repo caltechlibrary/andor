@@ -21,6 +21,55 @@
 
 <section>
 <blockquote class="red">DRAFT, Proof of Concept</blockquote>
+<h1>workflows.toml</h1>
+
+<p>The &ldquo;workflows.toml&rdquo; defines two relation ships. First is the
+capabilities of users assigned to the workflow. The second
+is the <strong>queue</strong> of objects the workflow can workflow. A &ldquo;queue&rdquo;
+represents an objects&rsquo; state. Below is a set of example workflows
+define queues of &ldquo;review&rdquo; and &ldquo;publish&rdquo; as well as the workflows
+of &ldquo;admin&rdquo;, &ldquo;depositor&rdquo;, &ldquo;reviewer&rdquo;, and &ldquo;published&rdquo;.</p>
+
+<pre><code class="language-toml">    #
+    # Example &quot;workflows.toml&quot;. Lines starting with &quot;#&quot; are comments.
+    # This file setups up the workflows used by AndOr.
+    #
+    [admin]
+    workflow_name = &quot;Administrator&quot;
+    queue = &quot;*&quot;
+    create = true
+    read = true
+    update = true
+    delete = true
+    assign_to = [ &quot;*&quot; ]
+    
+    [depositor]
+    workflow_name = &quot;Depositor&quot;
+    queue = &quot;review&quot;
+    create = true
+    read = false
+    update = false
+    delete = false
+    assign_to = [ ]
+    
+    [reviewer]
+    workflow_name = &quot;Reviewer&quot;
+    queue = &quot;review&quot;
+    create = false
+    read = true
+    update = true
+    delete = true
+    assign_to = [ &quot;published&quot; ]
+    
+    [published]
+    workflow_name = &quot;Published&quot;
+    queue = &quot;published&quot;
+    create = false
+    read = true
+    update = false
+    delete = false
+    assign_to = [ ]
+</code></pre>
 
 </section>
 

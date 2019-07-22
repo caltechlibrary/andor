@@ -21,23 +21,9 @@
 
 <section>
 <blockquote class="red">DRAFT, Proof of Concept</blockquote>
-<h1>Load User</h1>
+<h1>check</h1>
 
-<p><strong>AndOr</strong> uses a dataset collection called &ldquo;user.AndOr&rdquo;
-when operating. You can load or update this collection
-using simple [TOML]() files. The file TOML file(s) can
-contain one or more user definitions. Here is an example
-of a single user TOML file.</p>
-
-<pre><code class="language-toml">    # User id
-    [&quot;jane.doe@example.edu&quot;]
-    # Display name
-    display_name = &quot;Jane Doe&quot;
-    # By default objects are create in this queue
-    create_queue = &quot;deposit&quot;
-    # Jane is a member of the &quot;deposit&quot; workflow/queue
-    member_of = [&quot;deposit&quot;]
-</code></pre>
+<p><code>check</code> is an action the <strong>AndOr</strong> command can take to check the configuration files and flag problem based on a syntax check.</p>
 
 </section>
 
