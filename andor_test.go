@@ -52,12 +52,12 @@ func TestGenerateAndOrTOML(t *testing.T) {
 	if err != nil {
 		t.Errorf("problem loading %q, %s", andorTOML, err)
 	}
-	if len(s.Repositories) != 1 {
-		t.Errorf("expected one repository got %d", len(s.Repositories))
+	if len(s.CollectionNames) != 1 {
+		t.Errorf("expected one collection name got %d", len(s.CollectionNames))
 	}
-	if len(s.Repositories) == 1 {
-		if strings.Compare(s.Repositories[0], collection) != 0 {
-			t.Errorf("Repositories value not correct, %+v", s.Repositories)
+	if len(s.CollectionNames) == 1 {
+		if strings.Compare(s.CollectionNames[0], collection) != 0 {
+			t.Errorf("CollectionNames value not correct, %+v", s.CollectionNames)
 		}
 	}
 }

@@ -136,8 +136,16 @@ func Application(appName, andorTOML string, args []string, in io.Reader, out io.
 		} else {
 			andorTOML = args[1]
 		}
-		fmt.Fprintf(eOut, "%q not implemented\n", verb)
-		return 1
+		service, err := LoadAndOr(andorTOML)
+		if err != nil {
+			fmt.Fprintf(eOut, "Error starting service, %s\n", err)
+			return 1
+		}
+		if err := service.Start(); err != nil {
+			fmt.Fprintf(eOut, "%s\n", err)
+			return 1
+		}
+		return 0
 	default:
 		fmt.Fprintf(eOut, "Don't understand \"%s %s\"", verb, strings.Join(args, " "))
 		return 1

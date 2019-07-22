@@ -115,7 +115,7 @@ func TestIsAllowed(t *testing.T) {
 
 	// Now start testing service IsAllowed()
 	s := new(AndOrService)
-	s.Repositories = []string{cName}
+	s.CollectionNames = []string{cName}
 	s.Workflows = map[string]*Workflow{
 		"draft":     draftWorkflow,
 		"review":    reviewWorkflow,
@@ -185,7 +185,7 @@ func TestCanAssign(t *testing.T) {
 
 	// Now start testing service IsAllowed()
 	s := new(AndOrService)
-	s.Repositories = []string{cName}
+	s.CollectionNames = []string{cName}
 	s.Workflows = map[string]*Workflow{
 		"draft":     draftWorkflow,
 		"review":    reviewWorkflow,

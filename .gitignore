@@ -8,4 +8,7 @@ bin/*
 testout/*
 dist/*
 test_*
-./*.toml
+htdocs/*
+andor.toml
+workflows.toml
+users.toml
