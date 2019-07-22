@@ -1,0 +1,13 @@
+#
+# This is an example user file. It can be loaded into AndOr's 
+# user.AndOr file via `AndOr user-setup test_admin.toml`
+# The user id is set in the file, see "[test_admin]" line.
+# The name of the file should end in ".toml" but maybe 
+# name what ever you want (though using same name as the
+# username if convient).
+#
+[test_admin]
+
+create_object_as = "deposit"
+member_if = [ "*" ]
+
