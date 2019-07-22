@@ -24,35 +24,28 @@ to setup and run it.
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
-    # workflows.AndOr and users.AndOr must user those names.
-    bin/AndOr init repository.ds workflows.AndOr users.AndOr
+    # the init command will create users.toml, workflows.toml
+    # and andor.toml if they don't exist.
+    bin/AndOr init repository.ds 
 
     # We need some workflows. We create them in a TOML file
-    # and in this example the file is called "workflows.toml".
-    # We then "load" the workflows into AndOr.
-    # NOTE: Loading only adds/updates workflows in AndOr.
+    # called "workflows.toml".
+    # When we start AndOr it "loads" three files --
+    # users.toml, workflows.toml and andor.toml.
     $EDITOR workflows.toml
-    bin/AndOr load-workflow workflows.toml
 
-    # AndOr create users is done first by create/editing a TOML
-    # file, in this example users.toml, then "loading" 
-    # it into AndOr. 
-    # NOTE: Loading ONLY adds/updates users in AndOr.
+    # AndOr creating/managing users is done first by editing 
+    # a TOML file called "users.toml". It will get "loaded" when
+    # you start the AndOr service.
     $EDITOR users.toml
-    bin/AndOr load-user user.toml
-
-    # Configure our AndOr web service (e.g. set hostname, port, 
-    # protocol, collection name(s))
-    bin/AndOr init > webservice.toml
-    $EDITOR webservice.toml
 
     # Startup the AndOr web service with webservice.toml 
-    bin/AndOr start webservice.toml
+    bin/AndOr start
 ```
 
 **AndOr** by default runs at http://localhost:8248. You can 
-change generating a TOML based config file, editing it and then
-using it to start AndOr.
+change it by updating your "andor.toml" file created with
+`bin/AndOr init`.
 
 This is describing a proof of concept system. Don't expect 
 this to work yet!

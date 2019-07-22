@@ -21,23 +21,17 @@
 
 <section>
 <blockquote class="red">DRAFT, Proof of Concept</blockquote>
-<h1>Load User</h1>
+<h1>What is TOML?</h1>
 
-<p><strong>AndOr</strong> uses a dataset collection called &ldquo;user.AndOr&rdquo;
-when operating. You can load or update this collection
-using simple [TOML]() files. The file TOML file(s) can
-contain one or more user definitions. Here is an example
-of a single user TOML file.</p>
+<p>&ldquo;TOML&rdquo; is a way of describing configuration. It is similar to and
+inspired by Microsoft&rsquo;s &ldquo;.ini&rdquo; files. TOML can be easily translated
+into JSON objects which makes it a good choice for processing
+by programs.  On the otherhand TOML can be easier for humans to
+type and read than JSON. It supports comments in the TOML files
+which can aid us humans when we need to review how we&rsquo;ve setup
+things in the past.</p>
 
-<pre><code class="language-toml">    # User id
-    [&quot;jane.doe@example.edu&quot;]
-    # Display name
-    display_name = &quot;Jane Doe&quot;
-    # By default objects are create in this queue
-    create_queue = &quot;deposit&quot;
-    # Jane is a member of the &quot;deposit&quot; workflow/queue
-    member_of = [&quot;deposit&quot;]
-</code></pre>
+<p>See TOML language description at <a href="https://github.com/toml-lang/toml">https://github.com/toml-lang/toml</a>.</p>
 
 </section>
 

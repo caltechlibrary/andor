@@ -9,12 +9,13 @@ markup = "mmark"
 [Oral Histories](http://oralhistories.library.caltech.edu) is an
 EPrints repository with a little less than 200 EPrint objects in
 it. It currently runs in a multi-host EPrints on some of our oldest
-hardware[^1].  Oral Histories also needs to run with HTTPS support.
-To achieve that in the current deployment would require restructuring
-the SSL certs. One of the deployments on that machine is Thesis
-redoing the certs would mean downtime and I'd like to avoid that for
-Thesis. In addition to needing SSL support, we need to swap out the
-operating system[^2] and upgrade EPrints[^3].
+hardware[^1].  Oral Histories currently lacks HTTPS support. This
+is beginning to impact usage due to evergreen browser requirements
+and the policies of major search engines.  Adding HTTPS support
+would cause downtime for CaltechTHESIS which resides in the same
+EPrints instance.  I'd like to avoid that.  In addition to needing 
+HTTPS support, we also need to upgrade the operating system[^2] and 
+upgrade EPrints[^3].
 
 I've started to migrate Oral Histories three times. Each time
 something important has come up and stopped my progress. Because of
@@ -25,15 +26,17 @@ project is essentially starting over.
 
 Lacking HTTPS support means our Oral History Project
 will increasingly become invisible to the rest of the web. 
-Search engines (e.g. Google) are now ranking non-HTTPS
-sites. Users get disturbing warnings when they visit our site
-(assuming they can find it) as Firefox, Chrome, et el. push people to
-only access SSL protected sites.
+Search engines (e.g. Google) penalize non-HTTPS sites
+in their search results.  Users get disturbing warnings when 
+they visit our site (assuming they can find it) as Firefox, 
+Chrome, et el. push people to only access SSL protected sites.
 
 Setting up a working vanilla EPrints is non-trivial. Migrating
-our customization is complex and error prone[^4].  Each operating
-system, software upgrade and EPrints upgrades risks breaking EPrints
-particularly when we've customized the code.
+our customizated version is complex and error prone[^4]. Each 
+operating system, software upgrade and EPrints upgrade risks 
+breaking EPrints particularly when we've customized the code.
+In software terms our EPrints deployments carry allot of
+technical dept.
 
 Our initial goal migrating our EPrints repositories like 
 Oral Histories is to migrate to an AWS EC2 instance in the same
@@ -48,12 +51,12 @@ essentially its own project. Testing means it each step can wind up
 as a multi-week project.
 
 We need to migrate to our EPrints servers from a rather stale
-RedHat Enterprise to a current Ubuntu LTS release.  Our current 
-version of RedHat isn't getting the same level of security patches 
-we need. The Internet is a hostile environment so you really want 
-to keep you operating system and any dependent software (e.g. Perl, 
-OpenSSL, MySQL) current. Each upgrade runs the risk of breaking 
-our EPrints deployment.
+RedHat Enterprise to a current Ubuntu LTS server release.  Our 
+current version of RedHat isn't getting the same level of security 
+patches we need. The Internet is a hostile environment so you really 
+want to keep you operating system and any dependent software (e.g. 
+Perl, OpenSSL, MySQL) current. Each upgrade runs the risk of 
+breaking our EPrints deployment.
 
 There are no adequate non-EPrints replacements for EPrints today.
 We've been betting a likely candidates would emerge but it might be
@@ -63,34 +66,36 @@ coming to Caltech Library several years back.
 I believe migrating any EPrints instance is at minimum a 4 to 8 weeks of
 full time continuous work for me. I think this estimate will hold for
 the first repository through the last repository migrated. Ideally each
-successive migration would be shorter as we automate the process.
+successive migration take less and less time but given the variations
+that appears to be an illusive goal suggests it worth looking at
+alternate approaches.
 
 
 ## Opportunities
 
 The Oral Histories repository is small, 200 objects. It has a small
-number of users who curate the content (e.g. max number is likely
+number of users who curate the content (e.g. max number is 
 size of the Archives staff plus two). A few objects are added/updated
 per week depending on funding and participating individuals.
 The metadata and media files can be curated separately from the
-public facing website (like we do now with the feeds or the
-archives own website).
+public facing website (like we do with the current archives website).
 
-The curator needs to have a list of new objects needing work and also
-be able to access published objects and assets should the need arise.
+The curator needs to have a list of new objects needing work. 
+They need to be able to access published objects and assets. 
 Ideally you wouldn't need to cut and paste the metadata between the
 curating tool and ArchivesSpace. Integrating generally with ArchivesSpace
-would be desirable.
+would be desirable. This last aspect would be difficult to achieve
+directly in EPrints given the differences in the data models.
 
-It would be nice to have a newer designed website. It would be nice to
+It would be nice to have a newer website design. It would be nice to
 have a good full text search available for content on the site
 (both in curating and for the public).
 
 It is a straight forward project to take what we've already implemented
-for feeds.library.caltech.edu and adapt to the needs of a much better
-Oral Histories site for public viewing. This leaves us with allot of
-flexibility in picking the minimum feature set needed to curate the
-objects and media files.
+for archives and feeds.library.caltech.edu and adapt to the needs of 
+a much better Oral Histories site for public viewing. This leaves us 
+with allot of flexibility in picking the minimum feature set needed to 
+curate the objects and media files.
 
 
 ## Curating workflow based on existing EPrints implementation
@@ -103,17 +108,17 @@ and associated document files. Only a simple script needs to be
 written to map the EPrint XML document paths to their dataset collection
 based version[^7].
 
-If we had a light weight EPrints like system migration would take
-a few days or so depending on the EPrints repository,
-number of objects the customization to the curating form. This is
-considerably less than migrating EPrints itself.  The primary
+In general if we had a light weight EPrints like system 
+migration would take a few days or so depending on the EPrints 
+repository, number of objects the customization to the curating form. 
+This is considerably less than migrating EPrints itself.  The primary
 task would be the customization of the object edit and input forms
 to support each specific implementation. A secondary task would
-be to identify and implement if necessary any micro services need to 
+be to identify and implement if necessary any micro services needed to 
 replicate specific repositories' specialized features (e.g. 
-workflow processes outside the repository like ETD).  In this way 
-**AndOr** could serve as an __interim solution__ while we wait for 
-systems like
+workflow processes outside like the ETD application for CaltechTHESIS)
+In this way **AndOr** could serve as an __interim solution__ while 
+we wait for systems like
 [Zenodo](https://zenodo.org/ "An Object Repository System used in conjunction with CERN") or
 [Achepelligo](http://archipelago.nyc/ "Metro's demonstration of their Open Source Digital Object Repository")
 to mature.
@@ -123,7 +128,7 @@ to mature.
 
 An ability for staff to login and have access to a work
 queues of objects. This includes the ability to create an object
-and add any related media files (e.g. audio, video, pdfs) and
+and add any related media files (e.g. audio, video, PDFs) and
 change queues appropriately.
 
 Creating an EPrint object follows the following pattern, pick
@@ -201,7 +206,7 @@ An "Oral Histories" deployment could be a few web pages that talk to
 a web service in the same way that the Builder Widget can talk to feeds
 and resent results.
 
-### Harvesting is already in the works
+### Harvesting already works
 
 Harvesting Oral Histories' metadata for feeds is already in available.
 The [EPrinttools](https://caltechlibrary.github.io/eprinttools) suite 
@@ -209,7 +214,7 @@ already provides the needed functionality to harvest metadata and harvest
 stored documents. The results are both stored in a 
 [dataset](https://github.com/caltechlibrary/dataset) collection.  
 **dataset** can replace the storage framework currently implemented 
-in EPrints.
+in EPrints via disc and relational database management system.
 
 ### A Repository Engine already is implemented
 
@@ -217,10 +222,10 @@ in EPrints.
 of a EPrints or a Fedora based repository system. It only lacks a web
 service interface. This is straight forward to implement in Go especially
 if you limit the service to a few end points (e.g. list objects, list an
-object's details, create/update an object). EPrints show us the
-way in its REST API already. Implementing a web service like this
-based on dataset is a straight forward process because we know how it
-should work and have implemented things like this in the past[^9].
+object's details, create/update an object). EPrints has demonstrated how 
+to do this well with its REST API.  Implementing a web service like 
+this based on dataset is a straight forward process because we know 
+how it should work and have implemented things like this in the past[^9].
 
 ### EPrints shows us the way, we can continue to work the EPrints way
 
@@ -233,23 +238,25 @@ Works define what actions can be performed on an object (e.g. "published"
 objects are read only for the public while an "editor" can see a link
 to edit the object).
 
-### We can avoid the things that repository systems (EPrints) complicated
+### We can avoid the things that make repository systems complicated
 
 + EPrints is complicated because it allows complete customization. Each
-customization though is technical debt because it complicates upgrades.
+customization becomes technical debt because it complicates upgrades.
 + EPrints is complicated because it must define and manage workflows. In
 a large library where administration is distributed across many staff
-this make sense. We're a small library (a tiny archive) which could
-make due with workflows defined in a simple configuration file.
-+ EPrints is complicated because it needs to support hosting MANY collections independently behind the same Apache web server. This is a historical approach and not a requirement today. 
+or campuses this make sense. We're a small library (a tiny archive) 
+which could make due with workflows defined in a simple configuration file.
++ EPrints is complicated because it needs to support hosting MANY 
+collections independently behind the same Apache web server. This is a 
+historical approach and not a requirement today. 
 
 We can avoid the complexity of EPrints for most of our EPrints 
 deployments. It is likely we can even avoid complexity when supporting 
-are larger repository if we separate the curating/submission process 
-from publicly viewable websites and switch to a more micro service 
+our larger repositories if we separate the curating/submission process 
+from publicly viewable websites and switch to a micro service 
 friendly architecture.  E.g we can easily drop database SQL searches 
 for full text searches based on something like Lunr, Solr or 
-Elastic Search.
+Elastic Search[^10].
 
 
 
@@ -271,3 +278,4 @@ Elastic Search.
 
 [^9]: An early version of dataset actually had a web service, we depreciated it because at the time we had no need of it.
 
+[^10]: Switching to a full text search engine will be an improvemenet as a long standing complaint about EPrints involves the limitations of SQL based search.
