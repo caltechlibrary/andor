@@ -14,7 +14,7 @@ import (
 	"path"
 
 	// AndOr package
-	"github.com/caltechlibrary/AndOr"
+	"github.com/caltechlibrary/andor"
 )
 
 var (
