@@ -41,13 +41,11 @@ Actions:
             Typically these are repository.ds,
             workflows.ds and users.ds.
 
-  create-user    
-            create a new user for AndOr
+  check [FILENAME]
+            Check a configuration file to make
+            sure it parses.
 
-  create-workflow    
-            will create a new workflow
-
-  host
+  start
             will run the AndOr web service, if
             a configuration file is not found
             it will prompt for the values to

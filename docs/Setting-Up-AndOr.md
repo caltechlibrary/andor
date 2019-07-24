@@ -1,7 +1,7 @@
 
 # Setting Up AndOr
 
-**AndOr** is a proof of concept so you're expected
+**andor** is a proof of concept so you're expected
 to clone the git repo and compile it before following the steps
 to setup and run it.
 
@@ -19,14 +19,14 @@ to setup and run it.
 ## Example: A simple empty repository
 
 ```bash
-    git clone https://github.com/caltechlibrary/AndOr.git
-    cd AndOr
+    git clone https://github.com/caltechlibrary/andor.git
+    cd andor
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
     # the init command will create users.toml, workflows.toml
     # and andor.toml if they don't exist.
-    bin/AndOr init repository.ds 
+    bin/andor init repository.ds 
 
     # We need some workflows. We create them in a TOML file
     # called "workflows.toml".
@@ -40,12 +40,12 @@ to setup and run it.
     $EDITOR users.toml
 
     # Startup the AndOr web service with webservice.toml 
-    bin/AndOr start
+    bin/andor start
 ```
 
-**AndOr** by default runs at http://localhost:8248. You can 
+**andor** by default runs at http://localhost:8248. You can 
 change it by updating your "andor.toml" file created with
-`bin/AndOr init`.
+`bin/andor init`.
 
 This is describing a proof of concept system. Don't expect 
 this to work yet!

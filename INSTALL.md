@@ -7,15 +7,15 @@ install it.  Typically the following steps are done to install
 (example is POSIX based).
 
 ```bash
-    git clone https://github.com/caltechlibrary/AndOr
-    cd AndOr
-    go build -o bin/AndOr cmd/AndOr/AndOr.go
+    git clone https://github.com/caltechlibrary/andor
+    cd andor
+    go build -o bin/andor cmd/andor/andor.go
 ```
 
 You can then run the following to see if the tool works.
 
 ```bash
-    bin/AndOr -help
+    bin/andor -help
 ```
 
 See [Setting Up AndOr](docs/Setting-Up-AndOr.html) for details.

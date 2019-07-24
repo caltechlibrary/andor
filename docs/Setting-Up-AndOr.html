@@ -23,7 +23,7 @@
 <blockquote class="red">DRAFT, Proof of Concept</blockquote>
 <h1>Setting Up AndOr</h1>
 
-<p><strong>AndOr</strong> is a proof of concept so you&rsquo;re expected
+<p><strong>andor</strong> is a proof of concept so you&rsquo;re expected
 to clone the git repo and compile it before following the steps
 to setup and run it.</p>
 
@@ -45,14 +45,14 @@ to setup and run it.</p>
 
 <h2>Example: A simple empty repository</h2>
 
-<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/AndOr.git
-    cd AndOr
+<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/andor.git
+    cd andor
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
     # the init command will create users.toml, workflows.toml
     # and andor.toml if they don't exist.
-    bin/AndOr init repository.ds 
+    bin/andor init repository.ds 
 
     # We need some workflows. We create them in a TOML file
     # called &quot;workflows.toml&quot;.
@@ -66,12 +66,12 @@ to setup and run it.</p>
     $EDITOR users.toml
 
     # Startup the AndOr web service with webservice.toml 
-    bin/AndOr start
+    bin/andor start
 </code></pre>
 
-<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can
+<p><strong>andor</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can
 change it by updating your &ldquo;andor.toml&rdquo; file created with
-<code>bin/AndOr init</code>.</p>
+<code>bin/andor init</code>.</p>
 
 <p>This is describing a proof of concept system. Don&rsquo;t expect
 this to work yet!</p>
