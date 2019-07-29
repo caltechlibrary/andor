@@ -46,9 +46,9 @@ type Workflow struct {
 	AssignTo []string `json:"assign_to" toml:"assign_to"`
 }
 
-// GenerateWorkflowsTOML generates the workflow.toml file
+// GenerateWorkflows generates the workflow.toml file
 // example suitable for editing when setting up AndOr.
-func GenerateWorkflowsTOML(workflowsTOML string) error {
+func GenerateWorkflows(fName string) error {
 	src := []byte(fmt.Sprintf(`#
 # Example %q. Lines starting with "#" are comments.
 # This file setups up the workflows used by AndOr.
@@ -89,8 +89,8 @@ update = false
 delete = false
 assign_to = [ ]
 
-`, workflowsTOML))
-	return ioutil.WriteFile(workflowsTOML, src, 0666)
+`, fName))
+	return ioutil.WriteFile(fName, src, 0666)
 }
 
 // makeQueues() takes a set of workflows and returns a list of queues.

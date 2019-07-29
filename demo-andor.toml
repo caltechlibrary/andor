@@ -1,0 +1,23 @@
+#
+# Example "demo-andor.toml" 
+#
+# Lines starting with "#" are comments.
+# This file configuration the AndOr web service.
+#
+cert_pem = ""
+KeyPEM = ""
+scheme = "http"
+port = "8246"
+host = "localhost"
+htdocs = "demoroot"
+collections = ["repository.ds"]
+workflows_file = "demo-workflows.toml"
+users_file = "demo-users.toml"
+#access_file = "demo-access.toml"
+
+
+# If running under TLS you need to include cert_pem and key_pem
+# fileds that point at your cert.pem and key.pem certificate files.
+#protocol = "https"
+#cert_pem = "/etc/ssl/certs/cert.pem"
+#key_pem = "/etc/ssl/certs/key.pem"

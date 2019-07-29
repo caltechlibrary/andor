@@ -48,8 +48,8 @@ Actions:
   start
             will run the AndOr web service, if
             a configuration file is not found
-            it will prompt for the values to
-            create one.
+            it look for "andor.toml" in the 
+			current directory.
 
 %s %s
 `

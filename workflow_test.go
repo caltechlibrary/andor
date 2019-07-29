@@ -19,10 +19,10 @@ import (
 
 // TestLoadWorkflows ...
 func TestLoadWorkflows(t *testing.T) {
-	workflowTOML := path.Join("testdata", "workflows.toml")
-	w, q, err := LoadWorkflows(workflowTOML)
+	workflowFile := path.Join("testdata", "workflows.toml")
+	w, q, err := LoadWorkflows(workflowFile)
 	if err != nil {
-		t.Errorf("Failed to load %q, %s", workflowTOML, err)
+		t.Errorf("Failed to load %q, %s", workflowFile, err)
 	}
 	if len(w) != 3 {
 		t.Errorf("expected 3 workflows, got %d", len(w))
@@ -42,15 +42,15 @@ func TestLoadWorkflows(t *testing.T) {
 
 // TestBytes for workflow structs
 func TestBytes(t *testing.T) {
-	workflowTOML := path.Join("testdata", "workflows2.toml")
-	workflowSrc, err := ioutil.ReadFile(workflowTOML)
+	workflowFile := path.Join("testdata", "workflows2.toml")
+	workflowSrc, err := ioutil.ReadFile(workflowFile)
 	if err != nil {
-		t.Errorf("expected to read %s, %s", workflowTOML, err)
+		t.Errorf("expected to read %s, %s", workflowFile, err)
 		t.FailNow()
 	}
-	w, _, err := LoadWorkflows(workflowTOML)
+	w, _, err := LoadWorkflows(workflowFile)
 	if err != nil {
-		t.Errorf("expected to load %q, got %s", workflowTOML, err)
+		t.Errorf("expected to load %q, got %s", workflowFile, err)
 	}
 	src := []byte{}
 	for _, k := range []string{"draft", "review", "published"} {
@@ -69,15 +69,15 @@ func TestBytes(t *testing.T) {
 
 // TestString for workflow structs
 func TestString(t *testing.T) {
-	workflowTOML := path.Join("testdata", "workflows2.toml")
-	workflowSrc, err := ioutil.ReadFile(workflowTOML)
+	workflowFile := path.Join("testdata", "workflows2.toml")
+	workflowSrc, err := ioutil.ReadFile(workflowFile)
 	if err != nil {
-		t.Errorf("expected to read %s, %s", workflowTOML, err)
+		t.Errorf("expected to read %s, %s", workflowFile, err)
 		t.FailNow()
 	}
-	w, _, err := LoadWorkflows(workflowTOML)
+	w, _, err := LoadWorkflows(workflowFile)
 	if err != nil {
-		t.Errorf("expected to load %q, got %s", workflowTOML, err)
+		t.Errorf("expected to load %q, got %s", workflowFile, err)
 	}
 	s := []string{}
 	for _, k := range []string{"draft", "review", "published"} {

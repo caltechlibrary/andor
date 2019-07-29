@@ -20,7 +20,10 @@ import (
 
 	// Caltech Library Packages
 	"github.com/caltechlibrary/dataset"
+	"github.com/caltechlibrary/wsfn"
 )
+
+var webService *wsfn.WebService
 
 func writeResponse(w http.ResponseWriter, r *http.Request, src []byte) {
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
@@ -66,19 +69,42 @@ func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r
 	writeResponse(w, r, src)
 }
 
+func addAccessRoute(a *wsfn.Access, p string) {
+	if a != nil {
+		if a.Routes == nil {
+			a.Routes = []string{}
+		}
+		a.Routes = append(a.Routes, p)
+	}
+}
+
 // RunService runs the http/https web service of AndOr.
 func RunService(s *AndOrService) error {
+	var (
+		access *wsfn.Access
+		cors   *wsfn.CORSPolicy
+	)
+	// Setup our web service from our *AndOrService
 	u := new(url.URL)
 	u.Scheme = s.Scheme
 	u.Host = s.Host + ":" + s.Port
+	if s.Access != nil {
+		access = s.Access
+	}
+	if s.CORS != nil {
+		cors = s.CORS
+	}
+	mux := http.NewServeMux()
 
 	log.Printf("Have %d collection(s)", len(s.Collections))
+
 	for cName, c := range s.Collections {
-		log.Printf("Adding %q collection handlers", cName)
 		//NOTE: We create a function handler based on on the
 		// current collection being processed.
+		log.Printf("Adding %q collection handlers", cName)
 		p := "/" + path.Base(cName) + "/objects/"
-		http.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		addAccessRoute(access, p)
+		mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 			// Do we have an object request or keys request?
 			if strings.Compare(r.URL.Path, p) == 0 {
 				requestKeys(cName, c, w, r)
@@ -89,21 +115,23 @@ func RunService(s *AndOrService) error {
 				return
 			}
 			// Unsupported request ...
-			//FIXME: need to log misses
 			http.NotFound(w, r)
 		})
 	}
-	if len(s.Htdocs) > 0 {
-		fs := htdocsFileSystem{http.Dir(s.Htdocs)}
-		http.Handle("/", http.FileServer(fs))
+	if s.Htdocs != "" {
+		fs, err := wsfn.MakeSafeFileSystem(s.Htdocs)
+		if err != nil {
+			return err
+		}
+		mux.Handle("/", http.FileServer(fs))
 	}
 	hostname := fmt.Sprintf("%s:%s", u.Hostname(), u.Port())
 	log.Printf("Starting service %s", hostname)
 	switch s.Scheme {
 	case "http":
-		return http.ListenAndServe(hostname, nil)
+		return http.ListenAndServe(hostname, wsfn.RequestLogger(cors.Handler(access.Handler(mux))))
 	case "https":
-		return http.ListenAndServeTLS(hostname, s.CertPEM, s.KeyPEM, nil)
+		return http.ListenAndServeTLS(hostname, s.CertPEM, s.KeyPEM, wsfn.RequestLogger(cors.Handler(access.Handler(mux))))
 	default:
 		return fmt.Errorf("%q url scheme not supported", s.Scheme)
 	}

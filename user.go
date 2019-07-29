@@ -45,9 +45,9 @@ func (u *User) IsMemberOf(workflowName string) bool {
 	return false
 }
 
-// GenerateUsersTOML generates an example users.toml file.
+// GenerateUsers generates an example users.toml file.
 // suitable to edit when setting up AndOr.
-func GenerateUsersTOML(usersTOML string) error {
+func GenerateUsers(fName string) error {
 	userID := os.Getenv("USER")
 	if userID == "" {
 		userID = "admin"
@@ -60,8 +60,8 @@ func GenerateUsersTOML(usersTOML string) error {
 [%q]
 display_name = %q
 member_of = [ "admin" ]
-`, usersTOML, userID, userID))
-	return ioutil.WriteFile(usersTOML, src, 0666)
+`, fName, userID, userID))
+	return ioutil.WriteFile(fName, src, 0666)
 }
 
 // LoadUsers takes a file name, reads the file
@@ -92,7 +92,7 @@ func LoadUsers(fName string) (map[string]*User, error) {
 	return users, nil
 }
 
-// Bytes() outputs a user to []bytes in TOML.
+// Bytes() outputs a user to []bytes in file..
 func (u *User) Bytes() []byte {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(u); err != nil {
@@ -101,7 +101,7 @@ func (u *User) Bytes() []byte {
 	return buf.Bytes()
 }
 
-// String() outputs a user to a string TOML.
+// String() outputs a user to a string file..
 func (user *User) String() string {
 	buf := new(bytes.Buffer)
 	if err := toml.NewEncoder(buf).Encode(user); err != nil {

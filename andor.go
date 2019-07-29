@@ -22,6 +22,7 @@ import (
 
 	// Caltech Library
 	"github.com/caltechlibrary/dataset"
+	"github.com/caltechlibrary/wsfn"
 )
 
 const (
@@ -34,10 +35,10 @@ type AndOrService struct {
 	CertPEM string `json:"cert_pem" toml:"cert_pem"`
 	// KeyPEM if running under TLS this is the key file
 	KeyPEM string `json:"key_pem": toml:"key_pem"`
-	// WorkflowsTOML
-	WorkflowsTOML string `json:"workflows_toml" toml:"workflows_toml"`
-	// UsersTOML
-	UsersTOML string `json:"users_toml" toml:"users_toml"`
+	// WorkflowsFile
+	WorkflowsFile string `json:"workflows_file" toml:"workflows_file"`
+	// UsersFile
+	UsersFile string `json:"users_file" toml:"users_file"`
 	// Scheme is usually either "https" or "http"
 	Scheme string `json:"scheme" toml:"scheme"`
 	// Port is the port to listen on, usually 8246
@@ -47,6 +48,9 @@ type AndOrService struct {
 	// Htdocs is the static page directory if desired (e.g. could
 	// host web forms or JavaScript libraries.
 	Htdocs string `json:"htdocs" toml:"htdocs"`
+
+	// CORS policy
+	CORS *wsfn.CORSPolicy `json:"cors" toml:"cors"`
 
 	// CollectionNames holds one or more dataset
 	// collection names used for web API
@@ -60,18 +64,23 @@ type AndOrService struct {
 	Queues map[string]*Queue
 	// Collections holds a map of collection name to dataset collection pointer
 	Collections map[string]*dataset.Collection
+
+	// Access is based on wsfn.Access model. It supports Basic Auth
+	// and could be extended to support Shibboleth, OAuth 2 or
+	// JSON web tokens. You use the wsfn tools to maintain this file.
+	AccessFile string `json:"access_file,omitempty" toml:"access_file,omitempty"`
+
+	// Access holds an *wsfn.Access object
+	Access *wsfn.Access
 }
 
-// GenerateAndOrTOML generates an example AndOr TOML file
+// GenerateAndOr generates an example AndOr TOML or JSON file
 // suitable to edit and then use to run AndOr.
-func GenerateAndOrTOML(andorTOML string, collections []string) error {
+func GenerateAndOr(fName string, collections []string) error {
 	s := new(AndOrService)
 	s.Port = "8246"
 	s.Host = "localhost"
 	s.Scheme = "http"
-	s.WorkflowsTOML = "workflows.toml"
-	s.UsersTOML = "users.toml"
-	s.Htdocs = "htdocs"
 	if len(collections) > 0 {
 		s.CollectionNames = collections
 	}
@@ -80,7 +89,12 @@ func GenerateAndOrTOML(andorTOML string, collections []string) error {
 		return err
 	}
 	//  Now write out our default config.
-	src := []byte(fmt.Sprintf(`#
+	var (
+		src []byte
+		err error
+	)
+
+	src = []byte(fmt.Sprintf(`#
 # Example %q 
 #
 # Lines starting with "#" are comments.
@@ -88,25 +102,55 @@ func GenerateAndOrTOML(andorTOML string, collections []string) error {
 #
 %s
 
+#
+# You should uncomment these after editing them appropriately
+#
+
+# htdocs holds your web document root, e.g. /var/www/htdocs
+#htdocs = "htdocs"
+
+# collections holds a list of dataset collections
+#collections = ["repository.ds"]
+
+# workflows holds the workflows and queue definitions for this And/Or
+#workflows = "workflows.toml"
+
+# users holds user workflow assignments
+#users = "users.toml"
+
+# If using basic auth create this file with "webaccess" tool from
+# https://github.com/caltechlibrary/wsfn project.
+#access = "access.toml"
+
 # If running under TLS you need to include cert_pem and key_pem
 # fileds that point at your cert.pem and key.pem certificate files.
 #protocol = "https"
 #cert_pem = "/etc/ssl/certs/cert.pem"
 #key_pem = "/etc/ssl/certs/key.pem"
-`, andorTOML, buf.String()))
-	return ioutil.WriteFile(andorTOML, src, 0666)
+`, fName, buf.String()))
+	switch {
+	case strings.HasSuffix(fName, ".json"):
+		o := new(AndOrService)
+		if _, err = toml.Decode(string(src), &o); err != nil {
+			return err
+		}
+		if src, err = json.MarshalIndent(o, "", "    "); err != nil {
+			return err
+		}
+	}
+	return ioutil.WriteFile(fName, src, 0666)
 }
 
 // LoadAndOr reads a file, parses it and returns
 // an AndOrService object or error. It calls
 // LoadWorkflows and LoadUsers internally.
-func LoadAndOr(andorTOML string) (*AndOrService, error) {
+func LoadAndOr(fName string) (*AndOrService, error) {
 	service := new(AndOrService)
-	src, err := ioutil.ReadFile(andorTOML)
+	src, err := ioutil.ReadFile(fName)
 	if err != nil {
-		return nil, fmt.Errorf("%q, %s", andorTOML, err)
+		return nil, fmt.Errorf("%q, %s", fName, err)
 	}
-	switch path.Ext(andorTOML) {
+	switch path.Ext(fName) {
 	case ".json":
 		if err := json.Unmarshal(src, &service); err != nil {
 			return nil, err
@@ -119,12 +163,15 @@ func LoadAndOr(andorTOML string) (*AndOrService, error) {
 		return nil, fmt.Errorf("service must be either a .json or .toml file")
 	}
 
-	// Set optional values if unset.
-	if service.WorkflowsTOML == "" {
-		service.WorkflowsTOML = "workflows.toml"
+	// Check required values
+	if service.WorkflowsFile == "" {
+		return nil, fmt.Errorf("%q, missing workflows file", fName)
 	}
-	if service.UsersTOML == "" {
-		service.UsersTOML = "users.toml"
+	if service.UsersFile == "" {
+		return nil, fmt.Errorf("%q, missing users file", fName)
+	}
+	if len(service.CollectionNames) == 0 {
+		return nil, fmt.Errorf("%q, missing collection name(s)", fName)
 	}
 	for i, repo := range service.CollectionNames {
 		if len(repo) == 0 {
@@ -163,13 +210,13 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 	var (
 		err error
 	)
-	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsTOML)
+	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsFile)
 	if err != nil {
-		return fmt.Errorf("%q, %s", s.WorkflowsTOML, err)
+		return fmt.Errorf("%q, %s", s.WorkflowsFile, err)
 	}
-	s.Users, err = LoadUsers(s.UsersTOML)
+	s.Users, err = LoadUsers(s.UsersFile)
 	if err != nil {
-		return fmt.Errorf("%q, %s", s.UsersTOML, err)
+		return fmt.Errorf("%q, %s", s.UsersFile, err)
 	}
 
 	// Finally check to make sure all the users MemberOf fields
@@ -188,17 +235,25 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 // of the service struct.
 func (s *AndOrService) Start() error {
 	var err error
-	// Load workflows.toml
-	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsTOML)
+	// Load an workflows.toml
+	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsFile)
 	if err != nil {
-		log.Printf("Failed to load %q, %s", s.WorkflowsTOML, err)
+		log.Printf("Failed to load %q, %s", s.WorkflowsFile, err)
 		return err
 	}
-	// Load users.toml
-	s.Users, err = LoadUsers(s.UsersTOML)
+	// Load an users.toml
+	s.Users, err = LoadUsers(s.UsersFile)
 	if err != nil {
-		log.Printf("Failed to load %q, %s", s.UsersTOML, err)
+		log.Printf("Failed to load %q, %s", s.UsersFile, err)
 		return err
+	}
+
+	// Load an access.toml
+	if s.AccessFile != "" {
+		s.Access, err = wsfn.LoadAccess(s.AccessFile)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Validate AndOrService configuration

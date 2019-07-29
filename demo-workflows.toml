@@ -1,0 +1,40 @@
+#
+# Example "workflows.toml". Lines starting with "#" are comments.
+# This file setups up the workflows used by AndOr.
+#
+[admin]
+workflow_name = "Administrator"
+queue = "*"
+create = true
+read = true
+update = true
+delete = true
+assign_to = [ "*" ]
+
+[depositor]
+workflow_name = "Depositor"
+queue = "review"
+create = true
+read = false
+update = false
+delete = false
+assign_to = [ ]
+
+[reviewer]
+workflow_name = "Reviewer"
+queue = "review"
+create = false
+read = true
+update = true
+delete = true
+assign_to = [ "published" ]
+
+[published]
+workflow_name = "Published"
+queue = "published"
+create = false
+read = true
+update = false
+delete = false
+assign_to = [ ]
+

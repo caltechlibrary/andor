@@ -1,0 +1,8 @@
+#
+#
+# Example "users.toml". Lines starting with "#" are comments.
+# This shows example users.
+#
+["rsdoiel"]
+display_name = "rsdoiel"
+member_of = [ "admin" ]
