@@ -101,7 +101,7 @@ func RunService(s *AndOrService) error {
 	for cName, c := range s.Collections {
 		//NOTE: We create a function handler based on on the
 		// current collection being processed.
-		log.Printf("Adding %q collection handlers", cName)
+		log.Printf("Adding collection handlers for %q", cName)
 		p := "/" + path.Base(cName) + "/objects/"
 		addAccessRoute(access, p)
 		mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
