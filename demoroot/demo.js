@@ -45,16 +45,75 @@ You may assign objects to&mdash;
         oReq.send();
     }
 
+    function listObject(ul, object_id) {
+        let liReq = new XMLHttpRequest();
+        liReq.addEventListener("load", function (evt) {
+            let o = JSON.parse(liReq.response), 
+                li = document.createElement("li"),
+                anchor = document.createElement("a");
+            anchor.setAttribute("href", "view.html?id="+object_id);
+            anchor.innerHTML = o.title;
+            li.appendChild(anchor);
+            ul.appendChild(li);
+        });
+        liReq.open("GET", "/repository/objects/"+object_id);
+        liReq.send();
+    }
+
     Demo.listObjects = function(elem) {
-        var li = document.createElement("li");
-        li.innerHTML = "Hello World (list objects)";
-        elem.appendChild(li);
+        var div = document.createElement("div"),
+            oReq = new XMLHttpRequest();
+        div.innerHTML = "Retreiving objects profile&hellops;";
+        elem.appendChild(div)
+        oReq.addEventListener("progress", function(evt) {
+            div.innertHTML = "progressing ...";
+            console.log("Progressing");
+        });
+        oReq.addEventListener("load", function(evt) {
+            let o_list = JSON.parse(oReq.response), blocks = [],
+                ul = document.createElement("ul");
+            div.innerHTML = "<h1>Objects list (unordered)</h1><p>";
+            div.appendChild(ul);
+            for (let i in o_list) {
+                listObject(ul, o_list[i]);
+            }
+            console.log("loaded", JSON.stringify(o_list));
+        });
+        oReq.addEventListener("error", function(evt) {
+            div.innerHTML = "error";
+            console.log("Error happened", evt);
+        });
+        oReq.open("GET", "/repository/objects/");
+        oReq.send();
     };
 
-    Demo.viewObject = function(elem) {
-        var div = document.createElement("div");
-        div.innerHTML = "Hello World (view object)";
+    Demo.viewObject = function(elem, object_id) {
+        var div = document.createElement("div"),
+            oReq = new XMLHttpRequest();
+        div.innerHTML = "Retreiving object profile&hellops;";
         elem.appendChild(div)
+        oReq.addEventListener("progress", function(evt) {
+            div.innertHTML = "progressing ...";
+            console.log("Progressing");
+        });
+        oReq.addEventListener("load", function(evt) {
+            let o = JSON.parse(oReq.response);
+                console.log("loaded", JSON.stringify(o));
+                div.innerHTML = `<h1>${o.title}</h1>
+<h2>URL</h2>
+<div><a href="${o.official_url}">${o.official_url}</a></div>
+<h2>abstract</h2>
+<div class="abstract">${o.abstract}</div>
+<h2>citation</h2>
+<div class="citation">${o.official_cit}</div>
+<p>`;
+        });
+        oReq.addEventListener("error", function(evt) {
+            div.innerHTML = "error";
+            console.log("Error happened", evt);
+        });
+        oReq.open("GET", "/repository/objects/"+ object_id);
+        oReq.send();
     };
     window.Demo = Demo;
 }(window, document));

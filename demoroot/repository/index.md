@@ -10,4 +10,4 @@ Web UI:
 
 + [who am I](whoami.html) - who am I?
 + [list](list.html) - list objects
-+ [view](view.html) - view an object
++ [view](view.html?id=150) - view object id 150

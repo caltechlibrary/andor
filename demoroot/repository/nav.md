@@ -1,4 +1,4 @@
 + [Home](/)
-+ [repository](./)
-+ [list objects](list.html)
-+ [who am I?](whoami.html)
++ [Repository](./)
++ [List objects](list.html)
++ [Who am I?](whoami.html)
