@@ -3,9 +3,9 @@ markup = "mmark"
 +++
 
 
-# AndOr
+# And/Or
 
-> <span class="red">An</span>other <span class="red">d</span>igital <span class="red">O</span>bject <span class="red">r</span>epository
+> <span class="red">An</span>other <span class="red">d</span>igital / <span class="red">O</span>bject <span class="red">r</span>epository
 
 This is a concept document for a very light weight digital object
 repository implemented as "a multi-user version of 
@@ -14,12 +14,12 @@ based GUI". It targets the ability to curate
 metadata objects and attachments outside the scope of 
 our existing repositories.  
 
-**AndOr** is based on [dataset](https://caltechlibrary.github.io/dataset).
+**And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset).
 It will provide a semi-RESTful JSON API and use 
 HTML, CSS and JavaScript to provide a GUI interface for curating.
 A minimum running system would consist of only two or three
 pieces of software. The minimum would be a web server[^1] 
-plus the **AndOr** service supporting multi-user interaction with 
+plus the **And/Or** service supporting multi-user interaction with 
 dataset collections.  Depending on size you could create
 a micro service providing search via Python and Lunr[^2] or generate
 Lunrjs indexes to run browser side.  This arrangement has the 

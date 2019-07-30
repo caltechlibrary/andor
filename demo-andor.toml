@@ -13,7 +13,7 @@ htdocs = "demoroot"
 collections = ["repository.ds"]
 workflows_file = "demo-workflows.toml"
 users_file = "demo-users.toml"
-#access_file = "demo-access.toml"
+access_file = "demo-access.toml"
 
 
 # If running under TLS you need to include cert_pem and key_pem

@@ -35,6 +35,39 @@ func writeResponse(w http.ResponseWriter, r *http.Request, src []byte) {
 	log.Printf("FIXME: Log successful requests here ... %s", r.URL.Path)
 }
 
+func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request) {
+	//FIXME: This should really be JSON Web Token based ...
+	username, _, ok := r.BasicAuth()
+	if ok == false || username == "" {
+		username = "anonymous"
+	}
+
+	log.Printf("DEBUG username %q", username)
+	// Are we logged in?
+	if u, ok := s.Users[username]; ok == true {
+		workflowMap := make(map[string]*Workflow)
+		// Is user member of workflow?
+		for _, key := range u.MemberOf {
+			if workflow, ok := s.Workflows[key]; ok == true {
+				workflowMap[key] = workflow
+			}
+		}
+		src, err := json.MarshalIndent(map[string]interface{}{
+			"user":      u,
+			"workflows": workflowMap,
+		}, "", "    ")
+		if err != nil {
+			log.Printf("Failed to marshal %q, %s", username, err)
+			http.Error(w, "Internal Server error", http.StatusInternalServerError)
+		}
+		// return payload appropriately
+		writeResponse(w, r, src)
+		return
+	}
+	// Otherwise return 404, Not Found
+	http.NotFound(w, r)
+}
+
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
 // We only support GET on keys.
 func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
@@ -70,6 +103,7 @@ func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r
 }
 
 func addAccessRoute(a *wsfn.Access, p string) {
+	log.Printf("DEBUG a -> %+v", a)
 	if a != nil {
 		if a.Routes == nil {
 			a.Routes = []string{}
@@ -101,22 +135,28 @@ func RunService(s *AndOrService) error {
 	for cName, c := range s.Collections {
 		//NOTE: We create a function handler based on on the
 		// current collection being processed.
-		log.Printf("Adding collection handlers for %q", cName)
-		p := "/" + path.Base(cName) + "/objects/"
-		addAccessRoute(access, p)
+		log.Printf("Adding collection %q", cName)
+		p := "/" + path.Base(cName)
+		log.Printf("Adding access route %q", p)
+		if s.IsAccessRestricted() {
+			addAccessRoute(access, p)
+		}
+		p += "/objects/"
+		log.Printf("Adding handler %s", p)
 		mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+			log.Printf("DEBUG r.URL.Path %q", r.URL.Path)
 			// Do we have an object request or keys request?
-			if strings.Compare(r.URL.Path, p) == 0 {
+			if strings.HasSuffix(r.URL.Path, "/objects/") {
+				log.Printf("DEBUG requestKeys() %q", r.URL.Path)
 				requestKeys(cName, c, w, r)
 				return
 			}
-			if strings.HasPrefix(r.URL.Path, p) {
-				requestObject(cName, c, w, r)
-				return
-			}
-			// Unsupported request ...
-			http.NotFound(w, r)
+			log.Printf("DEBUG requestObjects() %q", r.URL.Path)
+			requestObject(cName, c, w, r)
 		})
+		p = "/" + path.Base(cName) + "/access/"
+		log.Printf("Adding handler %s", p)
+		mux.HandleFunc(p, s.requestAccessInfo)
 	}
 	if s.Htdocs != "" {
 		fs, err := wsfn.MakeSafeFileSystem(s.Htdocs)

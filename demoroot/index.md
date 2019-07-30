@@ -13,4 +13,4 @@ JSON object repository.
 + [JSON Object](/repository/objects/150) - object id 150
 
 
-[^1]: And/Or is after a character in [Ruby](https://www.zbs.org/index_new.php/store/ruby) stories produced by [ZBS](https://www.zbs.org) 
+[^1]: And/Or is named after a character in [Ruby](https://www.zbs.org/index_new.php/store/ruby) stories produced by [ZBS](https://www.zbs.org) 
