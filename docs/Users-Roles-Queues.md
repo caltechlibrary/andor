@@ -8,14 +8,14 @@ Below are use cases exploring how a user/role/queue model.
 We would like people (e.g. Jane) to curate the collection.
 To curate the whole collection Jane needs to have the
 following permissions-- create, read, update, delete,
-change queues.  We can define a role that applies to
-all objects in all queues and assign Jane to it.
+and move objects between states.  We first define a role 
+that applies to all objects in all states.
 
 ```json
     {
         "role_name": "Curator",
         "role_id": "curator",
-        "queues": [ "*" ],
+        "states": [ "*" ],
         "create": true,
         "read" : true,
         "update" : true,
@@ -24,14 +24,14 @@ all objects in all queues and assign Jane to it.
     }
 ```
 
-Notice that we use "\*" twice. First we specify the 
-queues value include "\*". This special, it means this
-role applies to ALL objects holding any `._Queue`
-value. The second place of "\*" is in the list of
-`.assign_to`. Again this means a curator can assign objects
+Notice that we use `"\*"` twice. First we set the 
+states value to `"\*"`, which means this
+role applies to ALL objects holding ANY `._Queue`
+value. Next we set the `.assign_to` value to `"\*"`
+, which means the curator can assign objects
 to any queue.
 
-Jane needs to be a curator. We add "curator" to the
+Next we assign Jane the role of curator. We add "curator" to the
 `.roles` list in her user object.
 Jane's email address is "jane@example.edu" and what
 we've used as a user id.
@@ -59,13 +59,13 @@ of the of our collection. We can do this by creating a role queue
 want to create a user object for "anonymous" (un-authenticated users)
 and make "anonymous" a member of "public".
 
-The role queue object would look like
+The role definition would look like
 
 ```json
     {
         "role_name": "Public",
         "role_id": "public",
-        "queue": [ "published" ],
+        "states": [ "published" ],
         "create": false,
         "read": true,
         "update": false,
@@ -92,11 +92,11 @@ when she assignes the objects to the "published" queue.
 
 We want to allow anonymous users to "deposit" objects.  We can
 create a role called "depositor" with create permissions
-in a queue called "review".  If we give "anonymous" 
+in a state called "review".  If we give "anonymous" 
 "deposit" membership anyone can deposit objects. The "review"
-queue would function like an inbox.  With only create permission
-they would not be able to see any objects except those they would
-see if they have a role of "public". The review queue objects would
+state would function like an inbox.  With only create permission
+they would not be able to see any objects, unless the "public" role
+had access to the "review" state. In this use case the review queue objects would
 remain invisible to the anonymous user(s) until the objects were
 moved into the "published" queue by a curator (e.g. Jane).
 
@@ -104,7 +104,7 @@ moved into the "published" queue by a curator (e.g. Jane).
     {
         "role_name": "Depositor",
         "role_id": "depositor",
-        "queues": [ "review" ],
+        "states": [ "review" ],
         "create": true,
         "read": false,
         "update": false, 
@@ -114,7 +114,7 @@ moved into the "published" queue by a curator (e.g. Jane).
 ```
 
 Now if we update our "anonymous" user we can add the 
-the "depositor" role queue. Any objects created by
+the "depositor" role. Any objects created by
 "anonymous" would be created in "review". 
 
 ```json
@@ -127,14 +127,15 @@ the "depositor" role queue. Any objects created by
 
 ## Use case 4
 
-Exploring the relationship between roles and queues.
+Let's build a more complicated publishing workflow.
 We would like our objects to travel between the following 
-states - review, published, embargoed.
+states - review, accepted, embargoed. This will explore the
+relationship between roles and states.
 
-We'd like objects to be created in review queue only.
+We'd like objects to be created with review state only.
 Any authenticated user should be able to create objects. 
-A reviewer's should be able to perform the editorial function
-of moving objects to "published" and "embargoed" queues.
+A reviewer should be able to perform the editorial function
+of moving objects to "accepted" and "embargoed" states.
 Our publisher should be able to move objects anywhere.
 
 Here are some of our policies we want to enforce.
@@ -143,8 +144,7 @@ Here are some of our policies we want to enforce.
     + i.e remove the "depositor" role from "anonymous" user
     + All users need to have the "depositor" role explicitly.
 2. Allow reviewers to read and delete deposits but not create or update them. 
-    + i.e. remove the "create" and "update" permissions from the "reviewer" role 
-3. Allow reviewers to assign objects to "published" and "embargoed" queues
+3. Allow reviewers to assign objects to "published" and "embargoed" states
 4. Allow curators need all the permissions of the review plus the "update" permission.
 5. "Publisher" be able to create objects in "review" queue and read, update, delete objects in any queue. They should be able to move objects into any queue.
     + A "publisher" wouldn't be a single role but a composit of "depositor" and "currator".
@@ -155,15 +155,14 @@ Bea is a depositor.
 Here's the steps to implement a solution started with previous use case.
 
 1. Remove "depositor" from "anonymous" roles
-2. Add/Update our users
-    a. Assign Innez the roles of "depositor" and "currator"
-    b. Assign Jane the roles of "depositor" and "currator"
+2. Use our previous "depositor" role
+3. Create a "reviewer" role with only read and delete permissions
+4. Update our "curator" role to explicitly list states and assignments, remove create permission
+5. Add/Update our users
+    a. Assign Innez the roles of "depositor" and "curator"
+    b. Assign Jane the roles of "depositor" and "curator"
     c. Assign Millie the roles of "depositor" and "reviewer"
     d. Assign Bea the role of "depositor"
-3. Use our previous "depositor" role
-4. Update our "reviewer" role with only read and delete permissions
-5. Update our "curator" role to explicitly list queues and assignments, remove create permission
-
 
 Step 1. our "anonymous" user now should look like
 
@@ -175,13 +174,58 @@ Step 1. our "anonymous" user now should look like
     }
 ```
 
-Let's create/update user objects for Innez, Jane, Millie and Bea.
+Our depositor role looks like
+
+```json
+    {
+        "role_id": "depositor",
+        "role_Name": "Depositor",
+        "states": [ "review" ],
+        "create": true,
+        "read": false,
+        "update": false,
+        "delete": false,
+        "assign_to": [ ]
+    }
+```
+
+The new reviewer role would look like
+
+```json
+    {
+        "role_name": "Reviewer",
+        "role_id": "reviewer",
+        "states": [ "review" ],
+        "create": false,
+        "read": true,
+        "update": false,
+        "delete": true,
+        "assign_to": [ "published", "embargoed" ]
+    }
+```
+
+Our curator role should look like
+
+```json
+    {
+        "role_id": "curator",
+        "role_name": "Curator",
+        "states": [ "review", "embargoed", "published" ],
+        "create": false,
+        "read": true,
+        "update": true,
+        "delete": true,
+        "assign_to": [ "*" ]
+    }
+```
+
+Let's create user objects for Innez, Jane, Millie and Bea.
 
 ```json
     {
         "user_id": "innez",
         "display_name": "Innez",
-        "roles": [ "depositor", "currator" ]
+        "roles": [ "depositor", "curator" ]
     }
 ```
 
@@ -189,7 +233,7 @@ Let's create/update user objects for Innez, Jane, Millie and Bea.
     {
         "user_id": "jane",
         "display_name": "Jane",
-        "roles": [ "depositor", "currator" ]
+        "roles": [ "curator" ]
     }
 ```
 
@@ -197,7 +241,7 @@ Let's create/update user objects for Innez, Jane, Millie and Bea.
     {
         "user_id": "millie",
         "display_name": "Millie",
-        "roles": [ "depositor", "reviewer" ]
+        "roles": [ "reviewer" ]
     }
 ```
 
@@ -208,52 +252,4 @@ Let's create/update user objects for Innez, Jane, Millie and Bea.
         "roles": [ "depositor" ]
     }
 ```
-
-Our curator role should look like
-
-```json
-    {
-        "role_id": "curator",
-        "role_name": "Curator",
-        "queues": [ "review", "embargoed", "published" ],
-        "create": false,
-        "read": true,
-        "update": true,
-        "delete": true,
-        "assign_to": [ "*" ]
-    }
-```
-
-Our depositor role looks like
-
-```json
-    {
-        "role_id": "depositor",
-        "role_Name": "Depositor",
-        "queues": [ "review" ],
-        "create": true,
-        "read": false,
-        "update": false,
-        "delete": false,
-        "assign_to": [ ]
-    }
-```
-
-And our reviewer would look like
-
-
-```json
-    {
-        "role_name": "Reviewer",
-        "role_id": "reviewer",
-        "queues": [ "review" ],
-        "create": false,
-        "read": true,
-        "update": false,
-        "delete": true,
-        "assign_to": [ "review", "published", "embargoed" ]
-    }
-```
-
-
 

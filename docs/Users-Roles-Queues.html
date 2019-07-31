@@ -29,13 +29,13 @@
 <p>We would like people (e.g. Jane) to curate the collection.
 To curate the whole collection Jane needs to have the
 following permissions&ndash; create, read, update, delete,
-change queues.  We can define a role that applies to
-all objects in all queues and assign Jane to it.</p>
+and move objects between states.  We first define a role
+that applies to all objects in all states.</p>
 
 <pre><code class="language-json">    {
         &quot;role_name&quot;: &quot;Curator&quot;,
         &quot;role_id&quot;: &quot;curator&quot;,
-        &quot;queues&quot;: [ &quot;*&quot; ],
+        &quot;states&quot;: [ &quot;*&quot; ],
         &quot;create&quot;: true,
         &quot;read&quot; : true,
         &quot;update&quot; : true,
@@ -44,14 +44,14 @@ all objects in all queues and assign Jane to it.</p>
     }
 </code></pre>
 
-<p>Notice that we use &ldquo;*&rdquo; twice. First we specify the
-queues value include &ldquo;*&rdquo;. This special, it means this
-role applies to ALL objects holding any <code>._Queue</code>
-value. The second place of &ldquo;*&rdquo; is in the list of
-<code>.assign_to</code>. Again this means a curator can assign objects
+<p>Notice that we use <code>&quot;\*&quot;</code> twice. First we set the
+states value to <code>&quot;\*&quot;</code>, which means this
+role applies to ALL objects holding ANY <code>._Queue</code>
+value. Next we set the <code>.assign_to</code> value to <code>&quot;\*&quot;</code>
+, which means the curator can assign objects
 to any queue.</p>
 
-<p>Jane needs to be a curator. We add &ldquo;curator&rdquo; to the
+<p>Next we assign Jane the role of curator. We add &ldquo;curator&rdquo; to the
 <code>.roles</code> list in her user object.
 Jane&rsquo;s email address is &ldquo;jane@example.edu&rdquo; and what
 we&rsquo;ve used as a user id.</p>
@@ -77,12 +77,12 @@ of the of our collection. We can do this by creating a role queue
 want to create a user object for &ldquo;anonymous&rdquo; (un-authenticated users)
 and make &ldquo;anonymous&rdquo; a member of &ldquo;public&rdquo;.</p>
 
-<p>The role queue object would look like</p>
+<p>The role definition would look like</p>
 
 <pre><code class="language-json">    {
         &quot;role_name&quot;: &quot;Public&quot;,
         &quot;role_id&quot;: &quot;public&quot;,
-        &quot;queue&quot;: [ &quot;published&quot; ],
+        &quot;states&quot;: [ &quot;published&quot; ],
         &quot;create&quot;: false,
         &quot;read&quot;: true,
         &quot;update&quot;: false,
@@ -108,18 +108,18 @@ when she assignes the objects to the &ldquo;published&rdquo; queue.</p>
 
 <p>We want to allow anonymous users to &ldquo;deposit&rdquo; objects.  We can
 create a role called &ldquo;depositor&rdquo; with create permissions
-in a queue called &ldquo;review&rdquo;.  If we give &ldquo;anonymous&rdquo;
+in a state called &ldquo;review&rdquo;.  If we give &ldquo;anonymous&rdquo;
 &ldquo;deposit&rdquo; membership anyone can deposit objects. The &ldquo;review&rdquo;
-queue would function like an inbox.  With only create permission
-they would not be able to see any objects except those they would
-see if they have a role of &ldquo;public&rdquo;. The review queue objects would
+state would function like an inbox.  With only create permission
+they would not be able to see any objects, unless the &ldquo;public&rdquo; role
+had access to the &ldquo;review&rdquo; state. In this use case the review queue objects would
 remain invisible to the anonymous user(s) until the objects were
 moved into the &ldquo;published&rdquo; queue by a curator (e.g. Jane).</p>
 
 <pre><code class="language-json">    {
         &quot;role_name&quot;: &quot;Depositor&quot;,
         &quot;role_id&quot;: &quot;depositor&quot;,
-        &quot;queues&quot;: [ &quot;review&quot; ],
+        &quot;states&quot;: [ &quot;review&quot; ],
         &quot;create&quot;: true,
         &quot;read&quot;: false,
         &quot;update&quot;: false, 
@@ -129,7 +129,7 @@ moved into the &ldquo;published&rdquo; queue by a curator (e.g. Jane).</p>
 </code></pre>
 
 <p>Now if we update our &ldquo;anonymous&rdquo; user we can add the
-the &ldquo;depositor&rdquo; role queue. Any objects created by
+the &ldquo;depositor&rdquo; role. Any objects created by
 &ldquo;anonymous&rdquo; would be created in &ldquo;review&rdquo;.</p>
 
 <pre><code class="language-json">    {
@@ -141,14 +141,15 @@ the &ldquo;depositor&rdquo; role queue. Any objects created by
 
 <h2>Use case 4</h2>
 
-<p>Exploring the relationship between roles and queues.
+<p>Let&rsquo;s build a more complicated publishing workflow.
 We would like our objects to travel between the following
-states - review, published, embargoed.</p>
+states - review, accepted, embargoed. This will explore the
+relationship between roles and states.</p>
 
-<p>We&rsquo;d like objects to be created in review queue only.
+<p>We&rsquo;d like objects to be created with review state only.
 Any authenticated user should be able to create objects.
-A reviewer&rsquo;s should be able to perform the editorial function
-of moving objects to &ldquo;published&rdquo; and &ldquo;embargoed&rdquo; queues.
+A reviewer should be able to perform the editorial function
+of moving objects to &ldquo;accepted&rdquo; and &ldquo;embargoed&rdquo; states.
 Our publisher should be able to move objects anywhere.</p>
 
 <p>Here are some of our policies we want to enforce.</p>
@@ -160,12 +161,8 @@ Our publisher should be able to move objects anywhere.</p>
 <li>i.e remove the &ldquo;depositor&rdquo; role from &ldquo;anonymous&rdquo; user</li>
 <li>All users need to have the &ldquo;depositor&rdquo; role explicitly.</li>
 </ul></li>
-<li>Allow reviewers to read and delete deposits but not create or update them.
-
-<ul>
-<li>i.e. remove the &ldquo;create&rdquo; and &ldquo;update&rdquo; permissions from the &ldquo;reviewer&rdquo; role</li>
-</ul></li>
-<li>Allow reviewers to assign objects to &ldquo;published&rdquo; and &ldquo;embargoed&rdquo; queues</li>
+<li>Allow reviewers to read and delete deposits but not create or update them.</li>
+<li>Allow reviewers to assign objects to &ldquo;published&rdquo; and &ldquo;embargoed&rdquo; states</li>
 <li>Allow curators need all the permissions of the review plus the &ldquo;update&rdquo; permission.</li>
 <li>&ldquo;Publisher&rdquo; be able to create objects in &ldquo;review&rdquo; queue and read, update, delete objects in any queue. They should be able to move objects into any queue.
 
@@ -181,14 +178,14 @@ Bea is a depositor.</p>
 
 <ol>
 <li>Remove &ldquo;depositor&rdquo; from &ldquo;anonymous&rdquo; roles</li>
+<li>Use our previous &ldquo;depositor&rdquo; role</li>
+<li>Create a &ldquo;reviewer&rdquo; role with only read and delete permissions</li>
+<li>Update our &ldquo;curator&rdquo; role to explicitly list states and assignments, remove create permission</li>
 <li>Add/Update our users
-a. Assign Innez the roles of &ldquo;depositor&rdquo; and &ldquo;currator&rdquo;
-b. Assign Jane the roles of &ldquo;depositor&rdquo; and &ldquo;currator&rdquo;
+a. Assign Innez the roles of &ldquo;depositor&rdquo; and &ldquo;curator&rdquo;
+b. Assign Jane the roles of &ldquo;depositor&rdquo; and &ldquo;curator&rdquo;
 c. Assign Millie the roles of &ldquo;depositor&rdquo; and &ldquo;reviewer&rdquo;
 d. Assign Bea the role of &ldquo;depositor&rdquo;</li>
-<li>Use our previous &ldquo;depositor&rdquo; role</li>
-<li>Update our &ldquo;reviewer&rdquo; role with only read and delete permissions</li>
-<li>Update our &ldquo;curator&rdquo; role to explicitly list queues and assignments, remove create permission</li>
 </ol>
 
 <p>Step 1. our &ldquo;anonymous&rdquo; user now should look like</p>
@@ -200,56 +197,12 @@ d. Assign Bea the role of &ldquo;depositor&rdquo;</li>
     }
 </code></pre>
 
-<p>Let&rsquo;s create/update user objects for Innez, Jane, Millie and Bea.</p>
-
-<pre><code class="language-json">    {
-        &quot;user_id&quot;: &quot;innez&quot;,
-        &quot;display_name&quot;: &quot;Innez&quot;,
-        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;currator&quot; ]
-    }
-</code></pre>
-
-<pre><code class="language-json">    {
-        &quot;user_id&quot;: &quot;jane&quot;,
-        &quot;display_name&quot;: &quot;Jane&quot;,
-        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;currator&quot; ]
-    }
-</code></pre>
-
-<pre><code class="language-json">    {
-        &quot;user_id&quot;: &quot;millie&quot;,
-        &quot;display_name&quot;: &quot;Millie&quot;,
-        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;reviewer&quot; ]
-    }
-</code></pre>
-
-<pre><code class="language-json">    {
-        &quot;user_id&quot;: &quot;bea&quot;,
-        &quot;display_name&quot;: &quot;Bea&quot;,
-        &quot;roles&quot;: [ &quot;depositor&quot; ]
-    }
-</code></pre>
-
-<p>Our curator role should look like</p>
-
-<pre><code class="language-json">    {
-        &quot;role_id&quot;: &quot;curator&quot;,
-        &quot;role_name&quot;: &quot;Curator&quot;,
-        &quot;queues&quot;: [ &quot;review&quot;, &quot;embargoed&quot;, &quot;published&quot; ],
-        &quot;create&quot;: false,
-        &quot;read&quot;: true,
-        &quot;update&quot;: true,
-        &quot;delete&quot;: true,
-        &quot;assign_to&quot;: [ &quot;*&quot; ]
-    }
-</code></pre>
-
 <p>Our depositor role looks like</p>
 
 <pre><code class="language-json">    {
         &quot;role_id&quot;: &quot;depositor&quot;,
         &quot;role_Name&quot;: &quot;Depositor&quot;,
-        &quot;queues&quot;: [ &quot;review&quot; ],
+        &quot;states&quot;: [ &quot;review&quot; ],
         &quot;create&quot;: true,
         &quot;read&quot;: false,
         &quot;update&quot;: false,
@@ -258,17 +211,61 @@ d. Assign Bea the role of &ldquo;depositor&rdquo;</li>
     }
 </code></pre>
 
-<p>And our reviewer would look like</p>
+<p>The new reviewer role would look like</p>
 
 <pre><code class="language-json">    {
         &quot;role_name&quot;: &quot;Reviewer&quot;,
         &quot;role_id&quot;: &quot;reviewer&quot;,
-        &quot;queues&quot;: [ &quot;review&quot; ],
+        &quot;states&quot;: [ &quot;review&quot; ],
         &quot;create&quot;: false,
         &quot;read&quot;: true,
         &quot;update&quot;: false,
         &quot;delete&quot;: true,
-        &quot;assign_to&quot;: [ &quot;review&quot;, &quot;published&quot;, &quot;embargoed&quot; ]
+        &quot;assign_to&quot;: [ &quot;published&quot;, &quot;embargoed&quot; ]
+    }
+</code></pre>
+
+<p>Our curator role should look like</p>
+
+<pre><code class="language-json">    {
+        &quot;role_id&quot;: &quot;curator&quot;,
+        &quot;role_name&quot;: &quot;Curator&quot;,
+        &quot;states&quot;: [ &quot;review&quot;, &quot;embargoed&quot;, &quot;published&quot; ],
+        &quot;create&quot;: false,
+        &quot;read&quot;: true,
+        &quot;update&quot;: true,
+        &quot;delete&quot;: true,
+        &quot;assign_to&quot;: [ &quot;*&quot; ]
+    }
+</code></pre>
+
+<p>Let&rsquo;s create user objects for Innez, Jane, Millie and Bea.</p>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;innez&quot;,
+        &quot;display_name&quot;: &quot;Innez&quot;,
+        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;curator&quot; ]
+    }
+</code></pre>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;jane&quot;,
+        &quot;display_name&quot;: &quot;Jane&quot;,
+        &quot;roles&quot;: [ &quot;curator&quot; ]
+    }
+</code></pre>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;millie&quot;,
+        &quot;display_name&quot;: &quot;Millie&quot;,
+        &quot;roles&quot;: [ &quot;reviewer&quot; ]
+    }
+</code></pre>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;bea&quot;,
+        &quot;display_name&quot;: &quot;Bea&quot;,
+        &quot;roles&quot;: [ &quot;depositor&quot; ]
     }
 </code></pre>
 
