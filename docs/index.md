@@ -12,7 +12,7 @@ concepts and rationale around **AndOr**.
 
 + Concepts 
     + [Collections, Objects and Attachments](Collections-Objects-Attachments.html)
-    + [Users, Roles and Queues](Users-Roles-Queues.html)
+    + [Users, Roles and States](Users-Roles-States.html)
 + Proof of concepts (planned demos)
     + [People and Groups](people-groups.html) 
         + Example of custom metadata objects

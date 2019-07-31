@@ -11,7 +11,7 @@ documents. They have a unique ID in the collection.
 The minimum object for dataset includes a `._Key` 
 attribute and value. The `._Key` reflects the unique id
 in the collection. The minimum And/Or object holds a `._Key` 
-and `._Queue` attributes. The later is used to map an object
+and `._State` attributes. The later is used to map an object
 to a workflow and apply the capabilities expressed in And/Or's
 roles.
 
