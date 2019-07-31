@@ -31,9 +31,9 @@ available to **AndOr**.
     # Import our metadata and files from an existing EPrints
     ep -api $URL_TO_EPRINTS -dataset repository.ds \
         -export-with-docs -export all
-    # Edit your users and workflows in users.toml, workflows.toml
+    # Edit your users and roles in users.toml, roles.toml
     $EDITOR users.toml
-    $EDITOR workflows.toml
+    $EDITOR roles.toml
     # Start the web service and begin working
     AndOr start
     # Start your web service configured to talk to AndOr
@@ -41,7 +41,7 @@ available to **AndOr**.
 ```
 
 That's it, you run those commands and wait. When the import
-is complete you can add some workflows and users to curate your
+is complete you can add some roles and users to curate your
 new repository, start the w.
 
 You could also using an incrementally migration/update from
@@ -51,6 +51,6 @@ in parallel assuming the data flow was one direction (i.e.
 from EPrints to AndOr).
 
 **AndOr** is built on dataset collections. If there is a
-workflows.AndOr, users.AndOr and a dataset collection
+roles.AndOr, users.AndOr and a dataset collection
 **AndOr** is ready to fire up and test.
 

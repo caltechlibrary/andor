@@ -27,22 +27,22 @@ func (s *AndOrService) IsAllowed(user *User, object map[string]interface{}, perm
 	// Get the object's queue
 	queue := ObjectQueue(object)
 	if q, ok := s.Queues[queue]; ok == true {
-		// Get the queue's associated workflow(s)
-		for _, workflowName := range q.Workflows {
-			// Check if user is in a workflow associated with queue
-			if user.IsMemberOf(workflowName) {
-				// Get workflow
-				if workflow, ok := s.Workflows[workflowName]; ok {
-					// Check workflow permission requested
+		// Get the queue's associated role(s)
+		for _, roleName := range q.Roles {
+			// Check if user is in a role associated with queue
+			if user.IsMemberOf(roleName) {
+				// Get role
+				if role, ok := s.Roles[roleName]; ok {
+					// Check role permission requested
 					switch permission {
 					case CREATE:
-						return workflow.Create
+						return role.Create
 					case READ:
-						return workflow.Read
+						return role.Read
 					case UPDATE:
-						return workflow.Update
+						return role.Update
 					case DELETE:
-						return workflow.Delete
+						return role.Delete
 					}
 				}
 
@@ -58,13 +58,13 @@ func (s *AndOrService) CanAssign(user *User, object map[string]interface{}, targ
 	// Get the object's queue
 	queue := ObjectQueue(object)
 	if q, ok := s.Queues[queue]; ok == true {
-		// Get the queue's associated workflow(s)
-		for _, workflowName := range q.Workflows {
-			// Check if user is in a workflow associated with queue
-			if user.IsMemberOf(workflowName) {
-				// Check what workflow assignments are allowed.
-				if workflow, ok := s.Workflows[workflowName]; ok {
-					for _, queueName := range workflow.AssignTo {
+		// Get the queue's associated role(s)
+		for _, roleName := range q.Roles {
+			// Check if user is in a role associated with queue
+			if user.IsMemberOf(roleName) {
+				// Check what role assignments are allowed.
+				if role, ok := s.Roles[roleName]; ok {
+					for _, queueName := range role.AssignTo {
 						if strings.Compare(queueName, targetQueue) == 0 {
 							return true
 						}

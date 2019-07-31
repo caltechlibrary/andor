@@ -20,56 +20,35 @@
 </nav>
 
 <section>
-<blockquote class="red">DRAFT, Proof of Concept</blockquote>
-<h1>workflows.toml</h1>
+<h2 id="example-running-andor">(Example) Running <strong>AndOr</strong></h2>
 
-<p>The &ldquo;workflows.toml&rdquo; defines two relation ships. First is the
-capabilities of users assigned to the workflow. The second
-is the <strong>queue</strong> of objects the workflow can workflow. A &ldquo;queue&rdquo;
-represents an objects&rsquo; state. Below is a set of example workflows
-define queues of &ldquo;review&rdquo; and &ldquo;publish&rdquo; as well as the workflows
-of &ldquo;admin&rdquo;, &ldquo;depositor&rdquo;, &ldquo;reviewer&rdquo;, and &ldquo;published&rdquo;.</p>
+<p>The following are actions available from
+the command line usage of <strong>AndOr</strong>. While
+it takes advantage of the rich library of
+packages and tools developed at Caltech Library
+<strong>AndOr</strong> itself is a self contained command
+line program.</p>
 
-<pre><code class="language-toml">    #
-    # Example &quot;workflows.toml&quot;. Lines starting with &quot;#&quot; are comments.
-    # This file setups up the workflows used by AndOr.
-    #
-    [admin]
-    workflow_name = &quot;Administrator&quot;
-    queue = &quot;*&quot;
-    create = true
-    read = true
-    update = true
-    delete = true
-    assign_to = [ &quot;*&quot; ]
-    
-    [depositor]
-    workflow_name = &quot;Depositor&quot;
-    queue = &quot;review&quot;
-    create = true
-    read = false
-    update = false
-    delete = false
-    assign_to = [ ]
-    
-    [reviewer]
-    workflow_name = &quot;Reviewer&quot;
-    queue = &quot;review&quot;
-    create = false
-    read = true
-    update = true
-    delete = true
-    assign_to = [ &quot;published&quot; ]
-    
-    [published]
-    workflow_name = &quot;Published&quot;
-    queue = &quot;published&quot;
-    create = false
-    read = true
-    update = false
-    delete = false
-    assign_to = [ ]
-</code></pre>
+<ul>
+<li><a href="Setting-Up-AndOr.html">Setting up AndOr</a></li>
+</ul>
+
+<p>Basic <strong>AndOr</strong> actions available on the command line</p>
+
+<ul>
+<li><a href="init.html">init</a> - initialize dataset collections for use by <strong>AndOr</strong> and create example &quot;users.toml&quot;, &quot;roles.toml&quot; and &quot;andor.toml&quot; if needed</li>
+<li><a href="check.html">check</a> - validates &quot;users.toml&quot;, &quot;roles.toml&quot;, and &quot;andor.toml&quot;</li>
+<li><a href="start.html">start</a> - start <strong>AndOr</strong> web service using &quot;users.toml&quot;, &quot;roles.toml&quot; and &quot;andor.toml&quot; for configuration</li>
+</ul>
+
+<h2 id="example-what-is">(Example) What is ...</h2>
+
+<ul>
+<li><a href="toml-basics.html">What's a TOML file?</a></li>
+<li><a href="andor-toml.html">andor.toml</a></li>
+<li><a href="users-toml.html">users.toml</a></li>
+<li><a href="roles-toml.html">roles.toml</a></li>
+</ul>
 
 </section>
 

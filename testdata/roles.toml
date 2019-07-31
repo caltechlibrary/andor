@@ -1,8 +1,8 @@
 #
-# This is an example workflows.toml. 
+# This is an example roles.toml. 
 #
 [draft]
-workflow_name = "Draft"
+role_name = "Draft"
 queue = "draft"
 create = true
 read = false
@@ -11,14 +11,14 @@ delete = false
 assign_to = [ "review" ]
 
 [review]
-workflow_name = "Review"
+role_name = "Review"
 queue = "review"
 read = true
 delete = true
 assign_to = [ "draft", "published" ]
 
 [published]
-workflow_name = "Published"
+role_name = "Published"
 queue = "published"
 read = true
 

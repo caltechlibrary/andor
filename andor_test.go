@@ -21,43 +21,43 @@ import (
 // loading test copies of testdata/workflows.toml, testdata/users.toml
 /// and testdata/andor.toml.
 func TestLoadAndOr(t *testing.T) {
-	andorTOML := path.Join("testdata", "andor.toml")
-	if _, err := LoadAndOr(andorTOML); err != nil {
-		t.Errorf("LoadAndOr(%q) %s", andorTOML, err)
+	andorFile := path.Join("testdata", "andor.toml")
+	if _, err := LoadAndOr(andorFile); err != nil {
+		t.Errorf("LoadAndOr(%q) %s", andorFile, err)
 		t.FailNow()
 	}
 }
 
-// TestGenerateAndOrTOML() generates testout/andor.toml
+// TestGenerateAndOr() generates testout/andor.toml
 // and then makes sure it can read it back.
-func TestGenerateAndOrTOML(t *testing.T) {
-	andorTOML := path.Join("testout", "andor.toml")
+func TestGenerateAndOr(t *testing.T) {
+	andorFile := path.Join("testout", "andor.toml")
 	collection := path.Join("testout", "repository.ds")
 	if _, err := os.Stat("testout"); os.IsNotExist(err) {
 		os.MkdirAll("testout", 0777)
 	}
-	if err := GenerateAndOrTOML(andorTOML, []string{collection}); err != nil {
+	if err := GenerateAndOr(andorFile, []string{collection}); err != nil {
 		t.Errorf("Expected success, got %s", err)
 		t.FailNow()
 	}
-	src, err := ioutil.ReadFile(andorTOML)
+	src, err := ioutil.ReadFile(andorFile)
 	if err != nil {
-		t.Errorf("Can't read back %q, %s", andorTOML, err)
+		t.Errorf("Can't read back %q, %s", andorFile, err)
 		t.FailNow()
 	}
 	if bytes.Contains(src, []byte(collection)) == false {
-		t.Errorf("%q is missing %q", andorTOML, collection)
+		t.Errorf("%q is missing %q", andorFile, collection)
 	}
-	s, err := LoadAndOr(andorTOML)
+	s, err := LoadAndOr(andorFile)
 	if err != nil {
-		t.Errorf("problem loading %q, %s", andorTOML, err)
+		t.Errorf("problem loading %q, %s", andorFile, err)
 	}
-	if len(s.Repositories) != 1 {
-		t.Errorf("expected one repository got %d", len(s.Repositories))
+	if len(s.CollectionNames) != 1 {
+		t.Errorf("expected one collection name got %d", len(s.CollectionNames))
 	}
-	if len(s.Repositories) == 1 {
-		if strings.Compare(s.Repositories[0], collection) != 0 {
-			t.Errorf("Repositories value not correct, %+v", s.Repositories)
+	if len(s.CollectionNames) == 1 {
+		if strings.Compare(s.CollectionNames[0], collection) != 0 {
+			t.Errorf("CollectionNames value not correct, %+v", s.CollectionNames)
 		}
 	}
 }

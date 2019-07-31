@@ -9,9 +9,9 @@ content BasicAUTH or Digest AUTH.
 
 The "users.toml" file needs to have a set of entries for each 
 user. In the example below the user "rsdoiel" starts off with
-a `["rsdoiel"]` heading. The "member\_of" field is very important.
-This field designates a list of workflows available to the user.
-Workflows control access and capabilities in the **AndOr**
+a `["rsdoiel"]` heading. The "roles" field is very important.
+This field designates a list of roles available to the user.
+Roles control access and capabilities in the **AndOr**
 web service.
 
 ```toml
@@ -21,5 +21,5 @@ web service.
     #
     ["rsdoiel"]
     display_name = "R. S. Doiel""
-    member_of = [ "admin" ]
+    roles = [ "admin" ]
 ```

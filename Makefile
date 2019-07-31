@@ -9,7 +9,7 @@ BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
 
 PKGASSETS = $(shell which pkgassets)
 
-PROJECT_LIST = AndOr
+PROJECT_LIST = andor
 
 OS = $(shell uname)
 
@@ -19,21 +19,21 @@ ifeq ($(OS), Windows)
 endif
 
 
-AndOr$(EXT): bin/AndOr$(EXT)
+andor$(EXT): bin/andor$(EXT)
 
 
-bin/AndOr$(EXT): *.go cmd/AndOr/AndOr.go
-	go build -o bin/AndOr$(EXT) cmd/AndOr/AndOr.go
+bin/andor$(EXT): *.go cmd/andor/andor.go
+	go build -o bin/andor$(EXT) cmd/andor/andor.go
 
-build: $(PROJECT_LIST) libAndOr
+build: $(PROJECT_LIST) libandor
 
 install: 
-	env GOBIN=$(GOPATH)/bin go install cmd/AndOr/AndOr.go
+	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 	./mk_website.py $(baseurl)
 
-test: clean bin/AndOr$(EXT)
+test: clean bin/andor$(EXT)
 	go test
 
 cleanweb:
@@ -51,25 +51,25 @@ clean:
 
 dist/linux-amd64:
 	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/AndOr
+	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/andor
 	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/windows-amd64:
 	mkdir -p dist/bin
-	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/AndOr.exe
+	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/andor.exe
 	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/macosx-amd64:
 	mkdir -p dist/bin
-	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/AndOr
+	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/andor
 	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
 dist/raspbian-arm7:
 	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/AndOr cmd/AndOr/AndOr.go
+	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/andor cmd/andor/andor.go
 	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
 	rm -fR dist/bin
 
@@ -85,7 +85,7 @@ distribute_docs:
 update_version:
 	./update_version.py --yes
 
-release: clean AndOr.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
+release: clean andor.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
 
 status:
 	git status

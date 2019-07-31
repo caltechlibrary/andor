@@ -20,10 +20,9 @@
 </nav>
 
 <section>
-<blockquote class="red">DRAFT, Proof of Concept</blockquote>
 <h1>Setting Up AndOr</h1>
 
-<p><strong>AndOr</strong> is a proof of concept so you&rsquo;re expected
+<p><strong>andor</strong> is a proof of concept so you&rsquo;re expected
 to clone the git repo and compile it before following the steps
 to setup and run it.</p>
 
@@ -32,33 +31,33 @@ to setup and run it.</p>
 <ol>
 <li>Clone the AndOr repository</li>
 <li>Run Make to compile it</li>
-<li>Initialize dataset collections for user, workflows and repository
+<li>Initialize dataset collections for user, roles and repository
 
 <ul>
-<li>also creates an example workflows.toml and users.toml you can edit</li>
+<li>also creates an example roles.toml and users.toml you can edit</li>
 </ul></li>
 <li>Harvest content from EPrints repository being migrated</li>
-<li>Add workflow(s)</li>
+<li>Add role(s)</li>
 <li>Add user(s)</li>
 <li>Start up AndOr and view with your web browser</li>
 </ol>
 
 <h2>Example: A simple empty repository</h2>
 
-<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/AndOr.git
-    cd AndOr
+<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/andor.git
+    cd andor
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
-    # the init command will create users.toml, workflows.toml
+    # the init command will create users.toml, roles.toml
     # and andor.toml if they don't exist.
-    bin/AndOr init repository.ds 
+    bin/andor init repository.ds 
 
-    # We need some workflows. We create them in a TOML file
-    # called &quot;workflows.toml&quot;.
+    # We need some roles. We create them in a TOML file
+    # called &quot;roles.toml&quot;.
     # When we start AndOr it &quot;loads&quot; three files --
-    # users.toml, workflows.toml and andor.toml.
-    $EDITOR workflows.toml
+    # users.toml, roles.toml and andor.toml.
+    $EDITOR roles.toml
 
     # AndOr creating/managing users is done first by editing 
     # a TOML file called &quot;users.toml&quot;. It will get &quot;loaded&quot; when
@@ -66,12 +65,12 @@ to setup and run it.</p>
     $EDITOR users.toml
 
     # Startup the AndOr web service with webservice.toml 
-    bin/AndOr start
+    bin/andor start
 </code></pre>
 
-<p><strong>AndOr</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can
+<p><strong>andor</strong> by default runs at <a href="http://localhost:8248">http://localhost:8248</a>. You can
 change it by updating your &ldquo;andor.toml&rdquo; file created with
-<code>bin/AndOr init</code>.</p>
+<code>bin/andor init</code>.</p>
 
 <p>This is describing a proof of concept system. Don&rsquo;t expect
 this to work yet!</p>

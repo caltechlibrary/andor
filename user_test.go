@@ -17,8 +17,8 @@ import (
 )
 
 func TestLoadUsers(t *testing.T) {
-	usersTOML := path.Join("testdata", "users.toml")
-	usersTOMLSrc := []byte(`
+	usersFile := path.Join("testdata", "users.toml")
+	usersFileSrc := []byte(`
 #
 # Example Test users file for testing 
 # LoadUsers()
@@ -33,12 +33,12 @@ create_queue = "deposit"
 # Jane is a member of the "deposit" workflow/queue
 member_of = ["deposit"]
 `)
-	err := ioutil.WriteFile(usersTOML, usersTOMLSrc, 0666)
+	err := ioutil.WriteFile(usersFile, usersFileSrc, 0666)
 	if err != nil {
-		t.Errorf("%s, %s", usersTOML, err)
+		t.Errorf("%s, %s", usersFile, err)
 		t.FailNow()
 	}
-	if _, err := LoadUsers(usersTOML); err != nil {
+	if _, err := LoadUsers(usersFile); err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">GitHub</a>
+<!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
+</ul>
+
+</nav>
+
+<section>
+<h1 id="collections-objects-and-attachments">Collections, Objects and Attachments</h1>
+
+<p>Collections hold objects. Objects are expressed as JSON
+documents. They have a unique ID in the collection.
+The minimum object for dataset includes a <code>._Key</code>
+attribute and value. The <code>._Key</code> reflects the unique id
+in the collection. The minimum And/Or object holds a <code>._Key</code>
+and <code>._Queue</code> attributes. The later is used to map an object
+to a workflow and apply the capabilities expressed in And/Or's
+roles.</p>
+
+<p>Objects as JSON documents but sometimes that isn't enough.
+It is commont to want to the JSON object as metadata about
+something else like a PDF document. Since encoding documents
+like PDF into valid JSON is extremely ineffecient And/Or
+via dataset supports the concept of &quot;attachments&quot;. This is
+like attachments in email. In email you might write a memo
+to someone and include the files that the memo is about. In
+And/Or and dataset you might &quot;attach&quot; the files to the JSON
+object. The attachments are versioned using a semver<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>.
+In this way dataset and And/Or form the foundation on which
+most repository systems are built.</p>
+
+<h2 id="the-plumbing">The plumbing</h2>
+
+<p>And/Or is based on Caltech Library's <a href="https://caltechlibrary.github.io/dataset">dataset</a> tool. dataset is a simple JSON
+object store organized as a directory containing a pairtree<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.
+Each brand of the pair tree contains an object and any &quot;attached&quot;
+files associated with he object. You can think of this is
+Fedora light<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>. The dataset tool provides some basic CRUD[^4]
+operations as well as a few extended concepts like key lists
+and data frames. And/Or is inteneded to be a light weight
+web service on top of dataset's collection(s). Where the
+dataset tool is single user And/Or provides multi-user support
+because it is a web service and can use the simpler dataset
+package as if it was a single user. In effect it is a proxy
+of many users behaving as a single coordated users from the
+point of view of the dataset collection.</p>
+<h1 id="footnote-section">Footnotes</h1>
+
+<div class="footnotes">
+
+<hr>
+
+<ol>
+<li id="fn:1">Semver is short for semantic versioning, see <a href="https://semver.org/">https://semver.org/</a></li>
+
+<li id="fn:2">Pairtrees are a way of organizing files on disc by mapping a key to a directory path that avoids too many files in the file directory, see <a href="https://confluence.ucop.edu/display/Curation/PairTree">https://confluence.ucop.edu/display/Curation/PairTree</a></li>
+
+<li id="fn:3">Fedora (not to be confused with RedHat), is an enterprise repository services offered by Duraspace, see <a href="https://duraspace.org/fedora/">https://duraspace.org/fedora/</a></li>
+</ol>
+
+</div>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>

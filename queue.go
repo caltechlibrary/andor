@@ -13,20 +13,20 @@ import (
 )
 
 // Queue describes a queue's state, the object ideas and
-// and sorted id lists and workflows associated with the queue.
+// and sorted id lists and roles associated with the queue.
 type Queue struct {
 	// Key holds the id of the queue
 	Key string `json:"queue_id"`
-	// Workflows thats operating on this queue
-	Workflows []string `json:"workflows"`
+	// Roles thats operating on this queue
+	Roles []string `json:"roles"`
 }
 
-// AddWorkflow associates a workflow with the queue.
-func (q *Queue) AddWorkflow(workflow string) {
-	for _, key := range q.Workflows {
-		if strings.Compare(key, workflow) == 0 {
+// AddRole associates a role with the queue.
+func (q *Queue) AddRole(role string) {
+	for _, key := range q.Roles {
+		if strings.Compare(key, role) == 0 {
 			return
 		}
 	}
-	q.Workflows = append(q.Workflows, workflow)
+	q.Roles = append(q.Roles, role)
 }

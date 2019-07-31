@@ -14,7 +14,7 @@ import (
 	"path"
 
 	// AndOr package
-	"github.com/caltechlibrary/AndOr"
+	"github.com/caltechlibrary/andor"
 )
 
 var (
@@ -36,22 +36,20 @@ you don't need to provide them.
 Actions:
 
   init
-            will create a dataset collection.
-            three are needed to host AndOr.
-            Typically these are repository.ds,
-            workflows.ds and users.ds.
+            will create a dataset collection(s)
+            and configuration filesneeded to host 
+			AndOr. By default that is repository.ds,
+            andor.toml, roles.toml and users.toml.
 
-  create-user    
-            create a new user for AndOr
+  check [FILENAME]
+            Check a configuration file to make
+            sure it parses.
 
-  create-workflow    
-            will create a new workflow
-
-  host
+  start
             will run the AndOr web service, if
             a configuration file is not found
-            it will prompt for the values to
-            create one.
+            it look for "andor.toml" in the 
+			current directory.
 
 %s %s
 `

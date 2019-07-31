@@ -24,19 +24,19 @@ func TestApplication(t *testing.T) {
 	Stderr := bytes.NewBuffer(errorOut)
 
 	appName := "ApplicationTest"
-	andorTOML := path.Join("testdata", "andor.toml")
+	andorFile := path.Join("testdata", "andor.toml")
 	args := []string{}
 
 	// Testing init without parameters, then with
 	args = append(args, "init")
-	if r := Application(appName, andorTOML, args, Stdin, Stdout, Stderr); r != 0 {
+	if r := Application(appName, andorFile, args, Stdin, Stdout, Stderr); r != 0 {
 		t.Errorf("expected 0, got %d for %s %s", r, appName, strings.Join(args, " "))
 	}
 
 	// Now envoke with repository names
 	args = []string{}
 	args = append(args, "test_repo1.ds", "test_repo2.ds", "test_repo3.ds")
-	if r := Application(appName, andorTOML, args, Stdin, Stdout, Stderr); r != 1 {
+	if r := Application(appName, andorFile, args, Stdin, Stdout, Stderr); r != 1 {
 		t.Errorf("expected 1, got %d for %s %s", r, appName, strings.Join(args, " "))
 	}
 }

@@ -3,7 +3,7 @@
 
 ## Bugs
 
-+ [ ] init should generate a workflows.toml and users.toml for editing if non exist
++ [x] init should generate a roles.toml and users.toml for editing if non exist
 
 ## Address Missing features
 
@@ -21,13 +21,13 @@
 + [x] Write up basic approach
 + [x] Write up use cases demonstrating how we address minimal requirements
 + [x] Write up some use cases based on existing EPrints usage
-+ [x] Document proposed schema (e.g. workflow, AndOr user)
++ [x] Document proposed schema (e.g. role, AndOr user)
 + [x] Pick a simple auth mechanism for use in proof of concept
 + [ ] Read up on headers passed from BasicAUTH so we can use that for Oral Histories authentication and user id mapping
 + [x] Evaluate using diff to created versioned metadata
     + https://github.com/sergi/go-diff
     + https://godoc.org/golang.org/x/perf/internal/diff
-+ [ ] Implement a proof of concept web service (AndOr) supporting crud operations on collection objects, listing objects and user/workflow rule enforcement
++ [ ] Implement a proof of concept web service (AndOr) supporting crud operations on collection objects, listing objects and user/role rule enforcement
 + [ ] Implement search with Lunr for prototype
 + [ ] Design basic UI in HTML and JavaScript
 
