@@ -36,9 +36,9 @@ type AndOrService struct {
 	// KeyPEM if running under TLS this is the key file
 	KeyPEM string `json:"key_pem": toml:"key_pem"`
 	// RolesFile
-	RolesFile string `json:"roles_file" toml:"roles_file"`
+	RolesFile string `json:"roles_file,omitempty" toml:"roles_file,omitempty"`
 	// UsersFile
-	UsersFile string `json:"users_file" toml:"users_file"`
+	UsersFile string `json:"users_file,omitempty" toml:"users_file,omitempty"`
 	// Scheme is usually either "https" or "http"
 	Scheme string `json:"scheme" toml:"scheme"`
 	// Port is the port to listen on, usually 8246

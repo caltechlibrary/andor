@@ -1,24 +1,30 @@
 #
 # This is an example roles.toml. 
-#
-[draft]
-role_name = "Draft"
-queue = "draft"
+# It defines three roles writer, editor, public
+# 
+# The roles describe objects in one of three
+# states - draft, review, published.
+# 
+[writer]
+role_id = "writer"
+role_name = "Writer"
+queues = [ "draft" ]
 create = true
-read = false
-update = false
+read = true
+update = true
 delete = false
 assign_to = [ "review" ]
 
-[review]
-role_name = "Review"
-queue = "review"
+[editor]
+role_name = "editor"
+queues = [ "review" ]
 read = true
+update = true
 delete = true
 assign_to = [ "draft", "published" ]
 
-[published]
-role_name = "Published"
-queue = "published"
+[public]
+role_name = "Public"
+queues = [ "published" ]
 read = true
 

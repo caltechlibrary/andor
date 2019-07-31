@@ -31,19 +31,19 @@ type Role struct {
 	Key string `json:"role_id" toml:"role_id"`
 	// Name, the display name, e.g. "Editor", "Curator", "Public View"
 	Name string `json:"role_name" toml:"role_name"`
-	// Queues hold name of the queue this role can operating on.
-	Queue string `json:"queue" toml:"queue"`
-	// Create permissions in .Queue
+	// Queues holds the queue names this role can operating on.
+	Queues []string `json:"queues,omitempty" toml:"queues,omitempty"`
+	// Create permissions for queues
 	Create bool `json:"create" toml:"create"`
-	// Read permissions in .Queue
+	// Read permissions for queues
 	Read bool `json:"read" toml:"read"`
-	// Update permissions in .Queue
+	// Update permissions for queues
 	Update bool `json:"update" toml:"update"`
-	// Delete permissions in .Queue
+	// Delete permissions for queues
 	Delete bool `json:"delete" toml:"delete"`
 	// AssignTo defines a list of queues that this role
 	// can send objects to.
-	AssignTo []string `json:"assign_to" toml:"assign_to"`
+	AssignTo []string `json:"assign_to,omitempty" toml:"assign_to,omitempty"`
 }
 
 // GenerateRoles generates the role.toml file
@@ -55,7 +55,7 @@ func GenerateRoles(fName string) error {
 #
 [admin]
 role_name = "Administrator"
-queue = "*"
+queues = [ "*" ]
 create = true
 read = true
 update = true
@@ -64,7 +64,7 @@ assign_to = [ "*" ]
 
 [depositor]
 role_name = "Depositor"
-queue = "review"
+queues = [ "review" ]
 create = true
 read = false
 update = false
@@ -73,21 +73,21 @@ assign_to = [ ]
 
 [reviewer]
 role_name = "Reviewer"
-queue = "review"
+queues = [ "review", "embargoed" ]
 create = false
 read = true
 update = true
 delete = true
-assign_to = [ "published" ]
+assign_to = [ "review", "embargoed", "published" ]
 
-[published]
-role_name = "Published"
-queue = "published"
-create = false
+[curator]
+role_name = "curator"
+queues = [ "review", "embargoed", "published" ]
+create = true
 read = true
-update = false
-delete = false
-assign_to = [ ]
+update = true
+delete = true
+assign_to = [ "*" ]
 
 `, fName))
 	return ioutil.WriteFile(fName, src, 0666)
@@ -101,12 +101,12 @@ func makeQueues(roles map[string]*Role) map[string]*Queue {
 		role.Key = key
 		// For each queue mentioned in role, check if it
 		// exists and update it with the role information.
-		queueList := append([]string{role.Queue}, role.AssignTo...)
+		queueList := append(role.Queues, role.AssignTo...)
 		for _, queue := range queueList {
 			q, ok := queues[queue]
 			if ok == false {
 				q = new(Queue)
-				q.Key = role.Queue
+				q.Key = queue
 			}
 			q.AddRole(role.Key)
 			queues[queue] = q
@@ -120,7 +120,7 @@ func makeQueues(roles map[string]*Role) map[string]*Queue {
 // queues. It returns a map[string]*Role,
 // a map[string]*Queue and an error
 func LoadRoles(fName string) (map[string]*Role, map[string]*Queue, error) {
-	roles := map[string]*Role{}
+	roles := make(map[string]*Role)
 
 	// Parse our roles
 	src, err := ioutil.ReadFile(fName)
@@ -145,20 +145,23 @@ func LoadRoles(fName string) (map[string]*Role, map[string]*Queue, error) {
 
 // Bytes() outputs a role to []bytes in TOML.
 func (role *Role) Bytes() []byte {
+	if role == nil {
+		return []byte{}
+	}
 	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(role); err != nil {
-		src, _ := json.MarshalIndent(role, "", "    ")
-		return src
+	encoder := toml.NewEncoder(buf)
+	if err := encoder.Encode(role); err != nil {
+		fmt.Printf("DEBUG encoder.Encode(role) error in Bytes() -> %s\n", err)
+		return []byte{}
 	}
 	return buf.Bytes()
 }
 
 // String() outputs a role to a string TOML.
 func (role *Role) String() string {
-	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(role); err != nil {
-		src, _ := json.MarshalIndent(role, "", "    ")
-		return string(src)
+	if role == nil {
+		return ""
 	}
-	return buf.String()
+	src := role.Bytes()
+	return string(src)
 }

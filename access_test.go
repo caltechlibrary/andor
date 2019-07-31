@@ -22,7 +22,7 @@ var (
 	draftRole = &Role{
 		Key:    "draft",
 		Name:   "Draft",
-		Queue:  "draft",
+		Queues: []string{"draft"},
 		Create: true,
 		Read:   true,
 		Update: true,
@@ -35,7 +35,7 @@ var (
 	reviewRole = &Role{
 		Key:    "review",
 		Name:   "Review",
-		Queue:  "review",
+		Queues: []string{"review"},
 		Read:   true,
 		Update: true,
 		AssignTo: []string{
@@ -47,7 +47,7 @@ var (
 	publishedRole = &Role{
 		Key:      "published",
 		Name:     "Published",
-		Queue:    "published",
+		Queues:   []string{"published"},
 		Read:     true,
 		AssignTo: []string{},
 	}

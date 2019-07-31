@@ -4,8 +4,8 @@
 
 port = "8246"
 host = "localhost"
-protocol = "http"
-users_toml = "testdata/users.toml"
-roles_toml = "testdata/roles.toml"
-repository = [ "repository.ds" ]
+scheme = "http"
+users_file = "testdata/users.toml"
+roles_file = "testdata/roles.toml"
+collections = [ "repository.ds" ]
 
