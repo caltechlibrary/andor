@@ -8,7 +8,7 @@
 [writer]
 role_id = "writer"
 role_name = "Writer"
-queues = [ "draft" ]
+states = [ "draft" ]
 create = true
 read = true
 update = true
@@ -17,7 +17,7 @@ assign_to = [ "review" ]
 
 [editor]
 role_name = "editor"
-queues = [ "review" ]
+states = [ "review" ]
 read = true
 update = true
 delete = true
@@ -25,6 +25,6 @@ assign_to = [ "draft", "published" ]
 
 [public]
 role_name = "Public"
-queues = [ "published" ]
+states = [ "published" ]
 read = true
 

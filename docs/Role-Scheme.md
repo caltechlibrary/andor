@@ -5,13 +5,17 @@ markup = "mmark"
 # Role Scheme
 
 A role encapsulates three things. Permissions,
-states[^1] and state assignments (workflows). A user
-has one or more roles the roles given the permissions
-for objects in the applicable states and allow the
-objects to be reassigned to other states (which are
-independent of the permissions).  A set of roles 
-describe how objects can move through the repository 
-system.
+object states[^1] and state assignments. A user
+has one or more roles the roles give them permissions
+to act on objecets in the states assocaited with the role.
+It also defines what states objects can be assigned into.
+This is what gives us workflows.  Objects state assignment
+is independent of the permissions.  In this way a role
+might define creation of an object but also the assignment
+to a new state that is not covered by the role. E.g. A
+writer might create an object in draft state, then when ready
+assign it to "review" state where an editor continues working
+on it. 
 
 Each role specifies the operations that can be
 performed on a list of states. These include basic
@@ -22,16 +26,16 @@ objects to other states.
 An addition state exists without definition. That queue
 is "deleted". Like EPrints[^3] **And/Or** doesn't delete
 objects from disc. They continue to exist in a trashbin
-like state.  They can be truely deleted by writing
-a trivial garbage collection script using dataset.
+like state.  They could be truely deleted by writing
+a garbage collection script using dataset.
 
-Here's an example object of defining a "deposit" role
-associated with a "deposit" state. A user working in 
-the "deposit" role create objects but can not read them. 
-When an object created it s assigned the `._State`
-value "review". So our depository user can create objects 
-in the "review" state but they have no other rights 
-beyond that.
+Here's an example object  defining a "depositor" role
+associated with a "review" state. A user working in 
+the "depositor" role can create an objects but can 
+not read them.  When an object created it s assigned 
+the `._State` value "review". So our depository user can 
+create objects in the "review" state but they have no 
+other rights beyond that.
 
 ```json
     {
@@ -47,17 +51,17 @@ beyond that.
 
 ```
 
-Next is an example of a "review" role. A
+Next is an example of a "reviewer" role. A
 reviewer can read, update, and delete objects 
 but not create them. They can also move the 
 objects into review, published, and embargoed
-queues. Once an object is "published" they would
+states. Once an object is "published" they would
 not be able to update or re-assign the object.
 
 ```json
     {
-        "role_name": "Review",
-        "role_id": "review"
+        "role_name": "Reviewer",
+        "role_id": "reviewer"
         "states": [ "review", "embargoed" ],
         "create": false,
         "read" : true,
@@ -69,7 +73,8 @@ not be able to update or re-assign the object.
 
 Finally our "publisher" role would have the ability
 to perform all operations on all states.  Note how
-we specifify "states" and "assign\_to" values.
+we specifify "states" and "assign\_to" values using
+the name "*". "*" is a wild card meaning all states.
 
 ```json
     {

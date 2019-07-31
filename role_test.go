@@ -20,7 +20,7 @@ import (
 // TestLoadRoles ...
 func TestLoadRoles(t *testing.T) {
 	roleFile := path.Join("testdata", "roles.toml")
-	roles, queues, err := LoadRoles(roleFile)
+	roles, states, err := LoadRoles(roleFile)
 	if err != nil {
 		t.Errorf("Failed to load %q, %s", roleFile, err)
 		t.FailNow()
@@ -29,18 +29,18 @@ func TestLoadRoles(t *testing.T) {
 		t.Errorf("expected 3 roles, got %d", len(roles))
 		t.FailNow()
 	}
-	if queues == nil || len(queues) != 3 {
-		t.Errorf("expected 3 queues, got %d", len(queues))
+	if states == nil || len(states) != 3 {
+		t.Errorf("expected 3 states, got %d", len(states))
 		t.FailNow()
 	}
-	// Check for roles, then check queues
-	//queues := []string{"draft", "review", "published"}
+	// Check for roles, then check states
+	//states := []string{"draft", "review", "published"}
 	for _, roleName := range []string{"writer", "editor", "public"} {
 		if role, ok := roles[roleName]; ok == false || role == nil {
 			t.Errorf("expected %q, not found in %q", roleName, roleFile)
 		} else {
-			if role.Queues == nil || len(role.Queues) == 0 {
-				t.Errorf("expected at least one state in queue, %s %s", roleName, roleFile)
+			if role.States == nil || len(role.States) == 0 {
+				t.Errorf("expected at least one state in state, %s %s", roleName, roleFile)
 				t.FailNow()
 			}
 		}

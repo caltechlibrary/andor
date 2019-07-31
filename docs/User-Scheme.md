@@ -33,7 +33,7 @@ Here's an example of expressing that user in TOML.
     ["jane.doe@example.edu"]
     # Display Name
     display_name = "Jane Doe"
-    # The queues/roles this user can see.
+    # The roles this user can assume.
     roles = [ "publisher", "editor", "writer" ]
 ```
 

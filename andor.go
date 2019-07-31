@@ -60,8 +60,8 @@ type AndOrService struct {
 	Users map[string]*User
 	// Roles holds the role map for the service
 	Roles map[string]*Role
-	// Queues holds teh queue map for the service
-	Queues map[string]*Queue
+	// States holds teh state map for the service
+	States map[string]*State
 	// Collections holds a map of collection name to dataset collection pointer
 	Collections map[string]*dataset.Collection
 
@@ -122,7 +122,7 @@ func GenerateAndOr(fName string, collections []string) error {
 # collections holds a list of dataset collections
 #collections = ["repository.ds"]
 
-# roles holds the roles and queue definitions for this And/Or
+# roles holds the roles and state definitions for this And/Or
 #roles = "roles.toml"
 
 # users holds user role assignments
@@ -225,7 +225,7 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 	var (
 		err error
 	)
-	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
+	s.Roles, s.States, err = LoadRoles(s.RolesFile)
 	if err != nil {
 		return fmt.Errorf("%q, %s", s.RolesFile, err)
 	}
@@ -251,7 +251,7 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 func (s *AndOrService) Start() error {
 	var err error
 	// Load an roles.toml
-	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
+	s.Roles, s.States, err = LoadRoles(s.RolesFile)
 	if err != nil {
 		log.Printf("Failed to load %q, %s", s.RolesFile, err)
 		return err
@@ -278,8 +278,8 @@ func (s *AndOrService) Start() error {
 	if len(s.Roles) == 0 {
 		return fmt.Errorf("No roles defined, no one can access service")
 	}
-	if len(s.Queues) == 0 {
-		return fmt.Errorf("No object queues defined, nothing to access")
+	if len(s.States) == 0 {
+		return fmt.Errorf("No object states defined, nothing to access")
 	}
 	if len(s.CollectionNames) == 0 {
 		return fmt.Errorf("No collections defined, nothing to access")

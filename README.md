@@ -55,11 +55,11 @@ as elaborate as a server with attached NAS[^4].
 
 + [dataset](https://github.com/caltechlibrary/dataset) collections are sufficient to hold metadata and media
 + UI can be implemented using HTML 5 elements, minimal JavaScript and CSS
-+ Small number of curatorial users, larger number of readers
-+ Configurable roles are a requirement
-    + roles describe capabilities (permissions)
-    + roles describe one or more work queues 
-    + queues are an object state
++ Small number of curatorial [users](docs/User-Scheme.html), larger number of readers
++ Configurable [roles](docs/Roles-Scheme.html) are a requirement
+    + roles describes capabilities (permissions)
+    + roles describes object states for the capabilities
+    + roles describes states an object can be put in
 + Use existing object scheme (e.g. EPrints XML in Oral Histories)
 + Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)
 + Search and query are handle independent of API
@@ -107,7 +107,7 @@ reduce the lines of code written and maintained.
 + `/COLLECTION_NAME/update/OBJECT_ID` (POST) to update an object
 + `/COLLECTION_NAME/delete/OBJECT_ID` (POST) to delete an object
 
-"keys" can be filtered by role's queue name. Paging can be implemented
+"keys" can be filtered by role's state name. Paging can be implemented
 client side by segmenting the key list returned.
 All other end points are static resources (e.g. HTML files, 
 CSS, JavaScript and Lunrjs indexes, a public faces website).  
@@ -123,7 +123,7 @@ Five pages would need to be designed and implemented in HTML, CSS and
 JavaScript for our proof of concept.
 
 1. Login and landing page 
-2. Display List records (filterable by work queue)
+2. Display List records (filterable by work state)
 3. Display Object details 
 4. Create/edit Object details
 5. Search UI
@@ -139,8 +139,8 @@ This also keeps **And/Or** simple with fewer requirements.
 An authenticated user exposes their user id to 
 **And/Or**'s web service (e.g. via a JSON Web Token or 
 Basic Auth header).  A user's id maps to membership in roles. 
-The role defines access to queues, queues are list objects
-with a matching value of `._Queue`.
+The role defines access to states, states are list objects
+with a matching value of `._State`.
 
 Unauthenticated users are treated as the "anonymous" user and
 are restricted by roles available for the "anonymous" user. 
@@ -162,23 +162,8 @@ can be extended to store diffs as well as the JSON documents.
 
 Like EPrints **And/Or** does not directly support deleting objects.
 Instead it can create the illusion of deleting objects by putting
-objects into a "deleted" queue which you can exclude from your
+objects into a "deleted" state which you can exclude from your
 roles or garbage collection through a separate process.
-
-
-## Additional ideas
-
-+ Use cases
-    + [Users, Roles and Queues](docs/Role-Use-Cases.html)
-+ Concept proofs
-    + [People and Groups](docs/people-groups.html)
-    + [Migrating an EPrints Repository](docs/migrating-eprints.html) 
-    + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
-+ Scheme walk through
-    + [User Scheme](docs/User-Scheme.html)
-    + [Role Scheme](docs/Role-Scheme.html)
-    + [Queue Scheme](docs/Queue-Scheme.html)
-    + [Object Scheme](docs/Object-Scheme.html)
 
 
 

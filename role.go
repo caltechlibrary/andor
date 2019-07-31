@@ -22,7 +22,7 @@ import (
 )
 
 // Role holds a single role description.
-// Role defines both role queue name and
+// Role defines both role state name and
 // the permissions about what can be viewed and
 // what additional roles can be assigned to.
 type Role struct {
@@ -31,17 +31,17 @@ type Role struct {
 	Key string `json:"role_id" toml:"role_id"`
 	// Name, the display name, e.g. "Editor", "Curator", "Public View"
 	Name string `json:"role_name" toml:"role_name"`
-	// Queues holds the queue names this role can operating on.
-	Queues []string `json:"queues,omitempty" toml:"queues,omitempty"`
-	// Create permissions for queues
+	// States holds the state names this role can operating on.
+	States []string `json:"states,omitempty" toml:"states,omitempty"`
+	// Create permissions for states
 	Create bool `json:"create" toml:"create"`
-	// Read permissions for queues
+	// Read permissions for states
 	Read bool `json:"read" toml:"read"`
-	// Update permissions for queues
+	// Update permissions for states
 	Update bool `json:"update" toml:"update"`
-	// Delete permissions for queues
+	// Delete permissions for states
 	Delete bool `json:"delete" toml:"delete"`
-	// AssignTo defines a list of queues that this role
+	// AssignTo defines a list of states that this role
 	// can send objects to.
 	AssignTo []string `json:"assign_to,omitempty" toml:"assign_to,omitempty"`
 }
@@ -55,7 +55,7 @@ func GenerateRoles(fName string) error {
 #
 [admin]
 role_name = "Administrator"
-queues = [ "*" ]
+states = [ "*" ]
 create = true
 read = true
 update = true
@@ -64,7 +64,7 @@ assign_to = [ "*" ]
 
 [depositor]
 role_name = "Depositor"
-queues = [ "review" ]
+states = [ "review" ]
 create = true
 read = false
 update = false
@@ -73,7 +73,7 @@ assign_to = [ ]
 
 [reviewer]
 role_name = "Reviewer"
-queues = [ "review", "embargoed" ]
+states = [ "review", "embargoed" ]
 create = false
 read = true
 update = true
@@ -82,7 +82,7 @@ assign_to = [ "review", "embargoed", "published" ]
 
 [curator]
 role_name = "curator"
-queues = [ "review", "embargoed", "published" ]
+states = [ "review", "embargoed", "published" ]
 create = true
 read = true
 update = true
@@ -93,33 +93,33 @@ assign_to = [ "*" ]
 	return ioutil.WriteFile(fName, src, 0666)
 }
 
-// makeQueues() takes a set of roles and returns a list of queues.
-func makeQueues(roles map[string]*Role) map[string]*Queue {
-	queues := map[string]*Queue{}
-	// Create Queues from roles.Queue and roles.AssignTo
+// makeStates() takes a set of roles and returns a list of states.
+func makeStates(roles map[string]*Role) map[string]*State {
+	states := map[string]*State{}
+	// Create States from roles.State and roles.AssignTo
 	for key, role := range roles {
 		role.Key = key
-		// For each queue mentioned in role, check if it
+		// For each state mentioned in role, check if it
 		// exists and update it with the role information.
-		queueList := append(role.Queues, role.AssignTo...)
-		for _, queue := range queueList {
-			q, ok := queues[queue]
+		stateList := append(role.States, role.AssignTo...)
+		for _, state := range stateList {
+			q, ok := states[state]
 			if ok == false {
-				q = new(Queue)
-				q.Key = queue
+				q = new(State)
+				q.Key = state
 			}
 			q.AddRole(role.Key)
-			queues[queue] = q
+			states[state] = q
 		}
 	}
-	return queues
+	return states
 }
 
 // LoadRoles reads a file (either JSON or TOML) at
 // start up of AndOr web service and sets up roles and
-// queues. It returns a map[string]*Role,
-// a map[string]*Queue and an error
-func LoadRoles(fName string) (map[string]*Role, map[string]*Queue, error) {
+// states. It returns a map[string]*Role,
+// a map[string]*State and an error
+func LoadRoles(fName string) (map[string]*Role, map[string]*State, error) {
 	roles := make(map[string]*Role)
 
 	// Parse our roles
@@ -139,8 +139,8 @@ func LoadRoles(fName string) (map[string]*Role, map[string]*Queue, error) {
 	default:
 		return nil, nil, fmt.Errorf("role must be either a .json or .toml file")
 	}
-	queues := makeQueues(roles)
-	return roles, queues, nil
+	states := makeStates(roles)
+	return roles, states, nil
 }
 
 // Bytes() outputs a role to []bytes in TOML.

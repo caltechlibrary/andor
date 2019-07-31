@@ -17,35 +17,35 @@ import (
 // and returns the `._Key` value if it is set. An empty
 // string is return if it is not set.
 func ObjectKey(obj map[string]interface{}) string {
-	if queue, ok := obj["_Key"]; ok == true {
-		switch queue.(type) {
+	if state, ok := obj["_Key"]; ok == true {
+		switch state.(type) {
 		case json.Number:
-			j := queue.(json.Number)
+			j := state.(json.Number)
 			return j.String()
 		case int:
-			i := queue.(int)
+			i := state.(int)
 			return fmt.Sprintf("%d", i)
 		case int64:
-			i := queue.(int64)
+			i := state.(int64)
 			return fmt.Sprintf("%d", i)
 		case float64:
-			f := queue.(float64)
+			f := state.(float64)
 			return fmt.Sprintf("%f", f)
 		case string:
-			return queue.(string)
+			return state.(string)
 		}
 	}
 	return ""
 }
 
-// ObjectQueue inspects a map[string]inteface{} (an object)
-// and returns the `._Queue` value if it is set. An empty
+// ObjectState inspects a map[string]inteface{} (an object)
+// and returns the `._State` value if it is set. An empty
 // string is returned if it is not set.
-func ObjectQueue(obj map[string]interface{}) string {
-	if queue, ok := obj["_Queue"]; ok == true {
-		switch queue.(type) {
+func ObjectState(obj map[string]interface{}) string {
+	if state, ok := obj["_State"]; ok == true {
+		switch state.(type) {
 		case string:
-			return queue.(string)
+			return state.(string)
 		}
 	}
 	return ""
