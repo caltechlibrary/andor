@@ -20,27 +20,27 @@
 </nav>
 
 <section>
-<h1>Queues Scheme</h1>
+<h1>Queues</h1>
 
 <p>A Queue is a list of objects associated with a
-given state. Queues have names and a retrieved
+given state. Queues have names and are retrieved
 by their names. Queues also are associated with
-roles what define the actions available in
+roles that define the actions available in
 the queue by users associated with those roles.</p>
 
 <p>When you &ldquo;add&rdquo; an object to a queue you are changing
-the internal <code>._Queue</code> value in the object after
+the internal <code>._State</code> value in the object after
 verifying that a given user and the roles allow
 the addition.</p>
 
 <p>The queues are created when <strong>AndOr</strong> is started
 and it loads &ldquo;roles.toml&rdquo;. The queue lasts
 as long as <strong>AndOr</strong> remains running. If an object
-has a <code>._Queue</code> value that is no longer defined in
+has a <code>._State</code> value that is no longer defined in
 any role the object will be invisible to the
 <strong>AndOr</strong> web API. If that happens you well need
 to write a script or use the <strong>dataset</strong>[^1] command
-to update the <code>._Queue</code> value to something
+to update the <code>._State</code> value to something
 specified in a role.</p>
 
 <p>[^1]: dataset is a command line role for managing JSON objects in collections, see <a href="https://github.com/caltechlibrary/dataset">https://github.com/caltechlibrary/dataset</a></p>

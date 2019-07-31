@@ -78,13 +78,13 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
 <li>UI can be implemented using HTML 5 elements, minimal JavaScript and CSS</li>
-<li>Small number of curatorial users, larger number of readers</li>
-<li>Configurable roles are a requirement
+<li>Small number of curatorial <a href="docs/User-Scheme.html">users</a>, larger number of readers</li>
+<li>Configurable <a href="docs/Roles-Scheme.html">roles</a> are a requirement
 
 <ul>
-<li>roles describe capabilities (permissions)</li>
-<li>roles describe one or more work queues</li>
-<li>queues are an object state</li>
+<li>roles describes capabilities (permissions)</li>
+<li>roles describes object states for the capabilities</li>
+<li>roles describes states an object can be put in</li>
 </ul></li>
 <li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
 <li>Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)</li>
@@ -140,7 +140,7 @@ reduce the lines of code written and maintained.</p>
 <li><code>/COLLECTION_NAME/delete/OBJECT_ID</code> (POST) to delete an object</li>
 </ul>
 
-<p>&quot;keys&quot; can be filtered by role's queue name. Paging can be implemented
+<p>&quot;keys&quot; can be filtered by role's state name. Paging can be implemented
 client side by segmenting the key list returned.
 All other end points are static resources (e.g. HTML files,
 CSS, JavaScript and Lunrjs indexes, a public faces website).<br>
@@ -156,7 +156,7 @@ JavaScript for our proof of concept.</p>
 
 <ol>
 <li>Login and landing page</li>
-<li>Display List records (filterable by work queue)</li>
+<li>Display List records (filterable by work state)</li>
 <li>Display Object details</li>
 <li>Create/edit Object details</li>
 <li>Search UI</li>
@@ -172,8 +172,8 @@ This also keeps <strong>And/Or</strong> simple with fewer requirements.</p>
 <p>An authenticated user exposes their user id to
 <strong>And/Or</strong>'s web service (e.g. via a JSON Web Token or
 Basic Auth header).  A user's id maps to membership in roles.
-The role defines access to queues, queues are list objects
-with a matching value of <code>._Queue</code>.</p>
+The role defines access to states, states are list objects
+with a matching value of <code>._State</code>.</p>
 
 <p>Unauthenticated users are treated as the &quot;anonymous&quot; user and
 are restricted by roles available for the &quot;anonymous&quot; user.
@@ -194,33 +194,8 @@ can be extended to store diffs as well as the JSON documents.</p>
 
 <p>Like EPrints <strong>And/Or</strong> does not directly support deleting objects.
 Instead it can create the illusion of deleting objects by putting
-objects into a &quot;deleted&quot; queue which you can exclude from your
+objects into a &quot;deleted&quot; state which you can exclude from your
 roles or garbage collection through a separate process.</p>
-
-<h2 id="additional-ideas">Additional ideas</h2>
-
-<ul>
-<li>Use cases
-
-<ul>
-<li><a href="docs/Role-Use-Cases.html">Users, Roles and Queues</a></li>
-</ul></li>
-<li>Concept proofs
-
-<ul>
-<li><a href="docs/people-groups.html">People and Groups</a></li>
-<li><a href="docs/migrating-eprints.html">Migrating an EPrints Repository</a></li>
-<li><a href="Oral-Histories-as-Proof-of-Concept.html">Oral Histories</a></li>
-</ul></li>
-<li>Scheme walk through
-
-<ul>
-<li><a href="docs/User-Scheme.html">User Scheme</a></li>
-<li><a href="docs/Role-Scheme.html">Role Scheme</a></li>
-<li><a href="docs/Queue-Scheme.html">Queue Scheme</a></li>
-<li><a href="docs/Object-Scheme.html">Object Scheme</a></li>
-</ul></li>
-</ul>
 <h1 id="footnote-section">Footnotes</h1>
 
 <div class="footnotes">

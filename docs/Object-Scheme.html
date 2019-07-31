@@ -24,15 +24,15 @@
 
 <p><strong>AndOr</strong> does NOT enforce scheme shape for the JSON it stores.
 If does add two specific attributes to the objects for management.
-<code>._Key</code> and <code>._Queue</code>. The key holds the objects unique identifier
+<code>._Key</code> and <code>._State</code>. The key holds the objects unique identifier
 used in <strong>AndOr</strong> and queue holds the state of an object. E.g.
-if an object is in a &ldquo;published&rdquo; state the value of <code>._Queue</code> would
+if an object is in a &ldquo;published&rdquo; state the value of <code>._State</code> would
 be &ldquo;published&rdquo;.</p>
 
 <pre><code class="language-json">    {
         ... /* object's scheme here */
         &quot;_Key&quot;: &quot;SOME_KEY_VALUE_HERE&quot;,
-        &quot;_Queue&quot;: &quot;published&quot;
+        &quot;_State&quot;: &quot;published&quot;
     }       
 </code></pre>
 

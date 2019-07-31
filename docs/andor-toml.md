@@ -16,10 +16,10 @@ run the `AndOr init` command. Here's an example.
     # Lines starting with "#" are comments.
     # This file configuration the AndOr web service.
     #
-    roles_toml = "roles.toml"
-    users_toml = "users.toml"
-    repositories = [ "repository.ds" ]
-    protocol = "http"
+    roles_file = "roles.toml"
+    users_file = "users.toml"
+    collections = [ "repository.ds" ]
+    scheme = "http"
     port = "8246"
     host = "localhost"
 ```
