@@ -25,7 +25,8 @@ import (
 
 var webService *wsfn.WebService
 
-func writeResponse(w http.ResponseWriter, r *http.Request, src []byte) {
+// writeJSON
+func writeJSON(w http.ResponseWriter, r *http.Request, src []byte) {
 	w.Header().Add("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	if _, err := w.Write(src); err != nil {
@@ -61,7 +62,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
 		}
 		// return payload appropriately
-		writeResponse(w, r, src)
+		writeJSON(w, r, src)
 		return
 	}
 	// Otherwise return 404, Not Found
@@ -70,7 +71,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
 // We only support GET on keys.
-func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	keys := c.Keys()
 	sort.Strings(keys)
@@ -80,22 +81,31 @@ func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *
 		http.Error(w, "Internal Server error", http.StatusInternalServerError)
 		return
 	}
-	writeResponse(w, r, src)
+	writeJSON(w, r, src)
 }
+
+//FIXME: Need hasPermission(object, roles, action) and returns true
+// if action is allowed, false otherwise
 
 // requestCreate is the API version of
 //	`dataset create COLLECTION_NAME OBJECT_ID OBJECT_JSON`
-func requestCreate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	username, err := s.Access.GetUsername(r)
+	if err != nil {
+		//FIXME: handler unknown user error ...
+		username = "anonymous"
+	}
+	log.Printf("DEBUG username: %q\n", username)
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
-	log.Printf("requestCreate(%q, ...) not implemented", cName)
+	log.Printf("s.requestCreate(%q, ...) not implemented", cName)
 	http.Error(w, "Internal Server error", http.StatusInternalServerError)
 }
 
 // requestRead is the API version of
 //     `dataset read -c -p COLLECTION_NAME KEY`
-func requestRead(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply user/role/queue rules.
 	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/")
 	if c.HasKey(key) == false {
@@ -109,12 +119,12 @@ func requestRead(cName string, c *dataset.Collection, w http.ResponseWriter, r *
 		http.Error(w, "Internal Server error", http.StatusInternalServerError)
 		return
 	}
-	writeResponse(w, r, src)
+	writeJSON(w, r, src)
 }
 
 // requestUpdate is the API version of
 //	`dataset update COLLECTION_NAME OBJECT_ID OBJECT_JSON`
-func requestUpdate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
@@ -126,7 +136,7 @@ func requestUpdate(cName string, c *dataset.Collection, w http.ResponseWriter, r
 //	`dataset Delete COLLECTION_NAME OBJECT_ID`
 // except is doesn't actually delete the object. It changes the
 // object's `._State` value.
-func requestDelete(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestDelete(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
@@ -136,7 +146,7 @@ func requestDelete(cName string, c *dataset.Collection, w http.ResponseWriter, r
 
 // requestAttach is the API version of
 //	`dataset attach COLLECTION_NAME OBJECT_ID FILENAMES`
-func requestAttach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestAttach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
@@ -146,7 +156,7 @@ func requestAttach(cName string, c *dataset.Collection, w http.ResponseWriter, r
 
 // requestAttachments is the API version of
 //	`dataset attachments COLLECTION_NAME OBJECT_ID`
-func requestAttachments(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestAttachments(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
@@ -156,7 +166,7 @@ func requestAttachments(cName string, c *dataset.Collection, w http.ResponseWrit
 
 // requestDetach is the API version of
 //	`dataset detach COLLECTION_NAME OBJECT_ID FILENAME`
-func requestDetach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestDetach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	log.Printf("requestDetach(%q, ...) not implemented", cName)
 	http.Error(w, "Internal Server error", http.StatusInternalServerError)
@@ -164,7 +174,7 @@ func requestDetach(cName string, c *dataset.Collection, w http.ResponseWriter, r
 
 // requestPrune is the API version of
 //	`dataset prune COLLECTION_NAME OBJECT_ID`
-func requestPrune(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func (s *AndOrService) requestPrune(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply users/roles/states rules.
 	//FIXME: Need to make sure this part of the service is behind
 	// muxtex.
@@ -199,41 +209,41 @@ func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection)
 	p := base + "/keys"
 	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestKeys(cName, c, w, r)
+		s.requestKeys(cName, c, w, r)
 	})
 	// dataset object handling
 	p = base + "/create"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestCreate(cName, c, w, r)
+		s.requestCreate(cName, c, w, r)
 	})
 	p = base + "/read"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestRead(cName, c, w, r)
+		s.requestRead(cName, c, w, r)
 	})
 	p = base + "/update"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestUpdate(cName, c, w, r)
+		s.requestUpdate(cName, c, w, r)
 	})
 	p = base + "/delete"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestDelete(cName, c, w, r)
+		s.requestDelete(cName, c, w, r)
 	})
 	// dataset attachment handling
 	p = base + "/attach"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestAttach(cName, c, w, r)
+		s.requestAttach(cName, c, w, r)
 	})
 	p = base + "/attachments"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestAttachments(cName, c, w, r)
+		s.requestAttachments(cName, c, w, r)
 	})
 	p = base + "/detach"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestDetach(cName, c, w, r)
+		s.requestDetach(cName, c, w, r)
 	})
 	p = base + "/prune"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		requestPrune(cName, c, w, r)
+		s.requestPrune(cName, c, w, r)
 	})
 
 	// Additional And/Or specific end points
