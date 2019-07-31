@@ -1,6 +1,6 @@
 [draft]
-workflow_id = "draft"
-workflow_name = "Draft"
+role_id = "draft"
+role_name = "Draft"
 queue = "draft"
 create = true
 read = false
@@ -9,8 +9,8 @@ delete = false
 assign_to = ["review"]
 
 [review]
-workflow_id = "review"
-workflow_name = "Review"
+role_id = "review"
+role_name = "Review"
 queue = "review"
 create = false
 read = true
@@ -19,8 +19,8 @@ delete = true
 assign_to = ["draft", "published"]
 
 [published]
-workflow_id = "published"
-workflow_name = "Published"
+role_id = "published"
+role_name = "Published"
 queue = "published"
 create = false
 read = true

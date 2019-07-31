@@ -16,10 +16,10 @@ import (
 	"github.com/caltechlibrary/dataset"
 )
 
-// Test data for workflows
+// Test data for roles
 var (
-	// Three basic workflows for queues draft, review and published
-	draftWorkflow = &Workflow{
+	// Three basic roles for queues draft, review and published
+	draftRole = &Role{
 		Key:    "draft",
 		Name:   "Draft",
 		Queue:  "draft",
@@ -32,7 +32,7 @@ var (
 		},
 	}
 
-	reviewWorkflow = &Workflow{
+	reviewRole = &Role{
 		Key:    "review",
 		Name:   "Review",
 		Queue:  "review",
@@ -44,7 +44,7 @@ var (
 		},
 	}
 
-	publishedWorkflow = &Workflow{
+	publishedRole = &Role{
 		Key:      "published",
 		Name:     "Published",
 		Queue:    "published",
@@ -85,7 +85,7 @@ var (
 	}
 )
 
-// TestIsAllowed tests if user, workflow, permission, and object
+// TestIsAllowed tests if user, role, permission, and object
 // are accessible
 func TestIsAllowed(t *testing.T) {
 	cName := path.Join("testout", "is_allowed.ds")
@@ -116,12 +116,12 @@ func TestIsAllowed(t *testing.T) {
 	// Now start testing service IsAllowed()
 	s := new(AndOrService)
 	s.CollectionNames = []string{cName}
-	s.Workflows = map[string]*Workflow{
-		"draft":     draftWorkflow,
-		"review":    reviewWorkflow,
-		"published": publishedWorkflow,
+	s.Roles = map[string]*Role{
+		"draft":     draftRole,
+		"review":    reviewRole,
+		"published": publishedRole,
 	}
-	s.Queues = makeQueues(s.Workflows)
+	s.Queues = makeQueues(s.Roles)
 	s.Users = map[string]*User{
 		"writer":   writer,
 		"reviewer": reviewer,
@@ -155,7 +155,7 @@ func TestIsAllowed(t *testing.T) {
 	}
 }
 
-// TestCanAssign tests a user, workflow, queue name and object
+// TestCanAssign tests a user, role, queue name and object
 // is assignable.
 func TestCanAssign(t *testing.T) {
 	cName := path.Join("testout", "is_allowed.ds")
@@ -186,12 +186,12 @@ func TestCanAssign(t *testing.T) {
 	// Now start testing service IsAllowed()
 	s := new(AndOrService)
 	s.CollectionNames = []string{cName}
-	s.Workflows = map[string]*Workflow{
-		"draft":     draftWorkflow,
-		"review":    reviewWorkflow,
-		"published": publishedWorkflow,
+	s.Roles = map[string]*Role{
+		"draft":     draftRole,
+		"review":    reviewRole,
+		"published": publishedRole,
 	}
-	s.Queues = makeQueues(s.Workflows)
+	s.Queues = makeQueues(s.Roles)
 	s.Users = map[string]*User{
 		"writer":   writer,
 		"reviewer": reviewer,

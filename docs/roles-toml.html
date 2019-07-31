@@ -20,54 +20,59 @@
 </nav>
 
 <section>
-<h1>workflows.toml</h1>
+<h1>roles.toml</h1>
 
-<p>The &ldquo;workflows.toml&rdquo; defines two relation ships. First is the
-capabilities of users assigned to the workflow. The second
-is the <strong>queue</strong> of objects the workflow can workflow. A &ldquo;queue&rdquo;
-represents an objects&rsquo; state. Below is a set of example workflows
-define queues of &ldquo;review&rdquo; and &ldquo;publish&rdquo; as well as the workflows
-of &ldquo;admin&rdquo;, &ldquo;depositor&rdquo;, &ldquo;reviewer&rdquo;, and &ldquo;published&rdquo;.</p>
+<p>The &ldquo;roles.toml&rdquo; defines three relationships.</p>
+
+<ol>
+<li>Permissions associated with the role</li>
+<li>The queue(s) subject to the role&rsquo;s permissions</li>
+<li>The queues which a role can assign objects into (e.g. workflow)</li>
+</ol>
+
+<p>Permissions are create, read, update, delete (CRUD). A &ldquo;queue&rdquo;
+is one or more objects with a <code>._Queue</code> value with the same name.
+E.g. A &ldquo;published&rdquo; queue would be objects containing
+<code>._Queue</code> value equal to &ldquo;published&rdquo;.</p>
+
+<p>Both queues and assign to queues can be listed explicitly
+or the <code>&quot;*&quot;</code> value can be used. The latter means all objects
+regardless of the <code>._Queue</code> value.</p>
 
 <pre><code class="language-toml">    #
-    # Example &quot;workflows.toml&quot;. Lines starting with &quot;#&quot; are comments.
-    # This file setups up the workflows used by AndOr.
+    # Example &quot;roles.toml&quot;. Lines starting with &quot;#&quot; are comments.
+    # This file setups up the roles used by AndOr.
     #
     [admin]
-    workflow_name = &quot;Administrator&quot;
-    queue = &quot;*&quot;
+    role_name = &quot;Administrator&quot;
+    queues = [ &quot;*&quot; ]
     create = true
     read = true
     update = true
     delete = true
     assign_to = [ &quot;*&quot; ]
     
+    # A depository can create an object in the review queue and
+    # nothing else. E.g. a one time blind deposit.
     [depositor]
-    workflow_name = &quot;Depositor&quot;
-    queue = &quot;review&quot;
+    role_name = &quot;Depositor&quot;
+    queues = [ &quot;review&quot; ]
     create = true
     read = false
     update = false
     delete = false
     assign_to = [ ]
     
+    # A reviewer can pub a published item in review, 
+    # In &quot;published&quot; and in embargoed.
     [reviewer]
-    workflow_name = &quot;Reviewer&quot;
-    queue = &quot;review&quot;
+    role_name = &quot;Reviewer&quot;
+    queues = [ &quot;review&quot; ]
     create = false
     read = true
     update = true
     delete = true
-    assign_to = [ &quot;published&quot; ]
-    
-    [published]
-    workflow_name = &quot;Published&quot;
-    queue = &quot;published&quot;
-    create = false
-    read = true
-    update = false
-    delete = false
-    assign_to = [ ]
+    assign_to = [ &quot;review&quot;, &quot;published&quot;, &quot;embargoed&quot; ]
 </code></pre>
 
 </section>

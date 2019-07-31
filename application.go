@@ -23,10 +23,10 @@ import (
 // if everything is OK, non-zero for error).
 func Application(appName, andorFile string, args []string, in io.Reader, out io.Writer, eOut io.Writer) int {
 	var (
-		collections   []string
-		workflowsFile string
-		usersFile     string
-		verb          string
+		collections []string
+		rolesFile   string
+		usersFile   string
+		verb        string
 	)
 	if len(args) == 0 {
 		fmt.Fprintf(eOut, "Expecting either 'init' or 'start' action\n")
@@ -57,7 +57,7 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 				collections = append(collections, cName)
 			}
 		}
-		// NOTE: We should generate example andor.toml, workflows.toml,
+		// NOTE: We should generate example andor.toml, roles.toml,
 		// and users.toml so it is easy to finish setting AndOr.
 		if _, err := os.Stat(andorFile); os.IsNotExist(err) {
 			err = GenerateAndOr(andorFile, collections)
@@ -65,7 +65,7 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 				fmt.Fprintf(eOut, "generating %q, %s\n", andorFile, err)
 				os.Exit(1)
 			}
-			workflowsFile = "workflows.toml"
+			rolesFile = "roles.toml"
 			usersFile = "users.toml"
 		} else {
 			fmt.Fprintf(eOut, "Using existing %q\n", andorFile)
@@ -73,18 +73,18 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 				fmt.Fprintf(eOut, "Found invalid %q, %s\n", andorFile, err)
 				os.Exit(0)
 			} else {
-				workflowsFile = s.WorkflowsFile
+				rolesFile = s.RolesFile
 				usersFile = s.UsersFile
 			}
 		}
-		if _, err := os.Stat(workflowsFile); os.IsNotExist(err) {
-			err = GenerateWorkflows(workflowsFile)
+		if _, err := os.Stat(rolesFile); os.IsNotExist(err) {
+			err = GenerateRoles(rolesFile)
 			if err != nil {
-				fmt.Fprintf(eOut, "generating %q, %s\n", workflowsFile, err)
+				fmt.Fprintf(eOut, "generating %q, %s\n", rolesFile, err)
 				os.Exit(1)
 			}
 		} else {
-			fmt.Fprintf(eOut, "Using existing %q\n", workflowsFile)
+			fmt.Fprintf(eOut, "Using existing %q\n", rolesFile)
 		}
 		if _, err := os.Stat(usersFile); os.IsNotExist(err) {
 			err = GenerateUsers(usersFile)
@@ -101,8 +101,8 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 			fmt.Fprintf(eOut, "WARNING (1) %q, invalid, %s\n", andorFile, err)
 			return 1
 		}
-		if _, _, err := LoadWorkflows(s.WorkflowsFile); err != nil {
-			fmt.Fprintf(eOut, "WARNING (2) %q, invalid, %s\n", s.WorkflowsFile, err)
+		if _, _, err := LoadRoles(s.RolesFile); err != nil {
+			fmt.Fprintf(eOut, "WARNING (2) %q, invalid, %s\n", s.RolesFile, err)
 			return 1
 		}
 		if _, err := LoadUsers(s.UsersFile); err != nil {
@@ -117,7 +117,7 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 			fmt.Fprintf(eOut, "Problem with %s\n", err)
 			return 1
 		}
-		if _, _, err := LoadWorkflows(s.WorkflowsFile); err != nil {
+		if _, _, err := LoadRoles(s.RolesFile); err != nil {
 			fmt.Fprintf(eOut, "Problem with %s\n", err)
 			return 1
 		}

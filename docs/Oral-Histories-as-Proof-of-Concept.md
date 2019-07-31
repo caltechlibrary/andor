@@ -98,7 +98,7 @@ with allot of flexibility in picking the minimum feature set needed to
 curate the objects and media files.
 
 
-## Curating workflow based on existing EPrints implementation
+## Curating role based on existing EPrints implementation
 
 We already have the majority of the software for creating a light weight
 EPrints like system. What is lacking is a web service that functions
@@ -116,7 +116,7 @@ task would be the customization of the object edit and input forms
 to support each specific implementation. A secondary task would
 be to identify and implement if necessary any micro services needed to 
 replicate specific repositories' specialized features (e.g. 
-workflow processes outside like the ETD application for CaltechTHESIS)
+role processes outside like the ETD application for CaltechTHESIS)
 In this way **AndOr** could serve as an __interim solution__ while 
 we wait for systems like
 [Zenodo](https://zenodo.org/ "An Object Repository System used in conjunction with CERN") or
@@ -136,10 +136,10 @@ a type, add general metadata (e.g. description/abstract, title).
 Upload media files. Add any more internal data and then "deposit".
 Once deposited the object is available for processing in EPrints.
 
-EPrints uses a queue system for implementing a workflow. A user's
-abilities are matched to the workflows they have access to. In effect
-their set of workflows defines their permissions. This relationship
-can be modeled as a User Object and Workflow Objects.
+EPrints uses a queue system for implementing a role. A user's
+abilities are matched to the roles they have access to. In effect
+their set of roles defines their permissions. This relationship
+can be modeled as a User Object and Role Objects.
 
 ### Decomposing the EPrints Admin functionality for Oral Histories
 
@@ -184,14 +184,14 @@ This can be boiled down to the following functions
 6. Search for objects
 7. Support "deleting" objects, EPrints never deletes, it just hides the object in a "delete" queue.
 
-The above suggests we need to know who our user is and what workflows
-they are allowed to access. A workflow identifies a queue of objects, the
+The above suggests we need to know who our user is and what roles
+they are allowed to access. A role identifies a queue of objects, the
 permissions to act on those objects (e.g. create, read, update) and the
 next queue they will be passed to.
 
-A workflow might be "deposit", "review", "publish" or "delete". The 
+A role might be "deposit", "review", "publish" or "delete". The 
 user info is a display name, a user id, what queue they create 
-objects in (e.g. "deposit") and what workflows they have access 
+objects in (e.g. "deposit") and what roles they have access 
 to (what queues they can review and what queues they can place 
 objects into).
 
@@ -232,8 +232,8 @@ how it should work and have implemented things like this in the past[^9].
 We don't need to develop scheme, we can use what EPrints XML provides.
 EPrints shows the API we need because we already use EPrints REST API
 to drive feeds.library.caltech.edu. EPrints also shows us the model
-for users and workflows. Users are affiliated with workflows. Workflows
-are a queue of objects (objects hold a single value for workflow state).
+for users and roles. Users are affiliated with roles. Roles
+are a queue of objects (objects hold a single value for role state).
 Works define what actions can be performed on an object (e.g. "published"
 objects are read only for the public while an "editor" can see a link
 to edit the object).
@@ -242,10 +242,10 @@ to edit the object).
 
 + EPrints is complicated because it allows complete customization. Each
 customization becomes technical debt because it complicates upgrades.
-+ EPrints is complicated because it must define and manage workflows. In
++ EPrints is complicated because it must define and manage roles. In
 a large library where administration is distributed across many staff
 or campuses this make sense. We're a small library (a tiny archive) 
-which could make due with workflows defined in a simple configuration file.
+which could make due with roles defined in a simple configuration file.
 + EPrints is complicated because it needs to support hosting MANY 
 collections independently behind the same Apache web server. This is a 
 historical approach and not a requirement today. 

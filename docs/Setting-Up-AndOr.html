@@ -31,13 +31,13 @@ to setup and run it.</p>
 <ol>
 <li>Clone the AndOr repository</li>
 <li>Run Make to compile it</li>
-<li>Initialize dataset collections for user, workflows and repository
+<li>Initialize dataset collections for user, roles and repository
 
 <ul>
-<li>also creates an example workflows.toml and users.toml you can edit</li>
+<li>also creates an example roles.toml and users.toml you can edit</li>
 </ul></li>
 <li>Harvest content from EPrints repository being migrated</li>
-<li>Add workflow(s)</li>
+<li>Add role(s)</li>
 <li>Add user(s)</li>
 <li>Start up AndOr and view with your web browser</li>
 </ol>
@@ -49,15 +49,15 @@ to setup and run it.</p>
     make
     # repository.ds can be named something else if you like
     # the name/path to look for is set in the configuration.
-    # the init command will create users.toml, workflows.toml
+    # the init command will create users.toml, roles.toml
     # and andor.toml if they don't exist.
     bin/andor init repository.ds 
 
-    # We need some workflows. We create them in a TOML file
-    # called &quot;workflows.toml&quot;.
+    # We need some roles. We create them in a TOML file
+    # called &quot;roles.toml&quot;.
     # When we start AndOr it &quot;loads&quot; three files --
-    # users.toml, workflows.toml and andor.toml.
-    $EDITOR workflows.toml
+    # users.toml, roles.toml and andor.toml.
+    $EDITOR roles.toml
 
     # AndOr creating/managing users is done first by editing 
     # a TOML file called &quot;users.toml&quot;. It will get &quot;loaded&quot; when

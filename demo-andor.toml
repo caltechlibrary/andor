@@ -11,7 +11,7 @@ port = "8246"
 host = "localhost"
 htdocs = "demoroot"
 collections = ["repository.ds"]
-workflows_file = "demo-workflows.toml"
+roles_file = "demo-roles.toml"
 users_file = "demo-users.toml"
 access_file = "demo-access.toml"
 

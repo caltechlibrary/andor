@@ -24,7 +24,7 @@
 
 <p>The &ldquo;andor.toml&rdquo; file is responsible for configuring the
 <strong>AndOr</strong> web service and specifiying the location of
-&ldquo;users.toml&rdquo;, &ldquo;workflows.toml&rdquo; and any dataset collections
+&ldquo;users.toml&rdquo;, &ldquo;roles.toml&rdquo; and any dataset collections
 being serviced by the service.</p>
 
 <p>The &ldquo;andor.toml&rdquo; gets generated if none exist in when you
@@ -36,7 +36,7 @@ run the <code>AndOr init</code> command. Here&rsquo;s an example.</p>
     # Lines starting with &quot;#&quot; are comments.
     # This file configuration the AndOr web service.
     #
-    workflows_toml = &quot;workflows.toml&quot;
+    roles_toml = &quot;roles.toml&quot;
     users_toml = &quot;users.toml&quot;
     repositories = [ &quot;repository.ds&quot; ]
     protocol = &quot;http&quot;

@@ -24,14 +24,14 @@
 
 <p>While <strong>AndOr</strong> manages users outside the web UI it still
 needs to keep track of basic user information such as the
-workflows they have access to.</p>
+roles they have access to.</p>
 
 <p>Below is an example JSON document describing the user Jane Doe.</p>
 
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;jane.doe@example.edu&quot;,
         &quot;display_name&quot;: &quot;Jane Doe&quot;,
-        &quot;member_of&quot;: [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+        &quot;roles&quot;: [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
     }
 </code></pre>
 
@@ -39,11 +39,11 @@ workflows they have access to.</p>
 
 <dl>
 <dt>user_id</dt>
-<dd>(string, required) in this case an email address is a unique string used to map a user to their assigned workflows</dd>
+<dd>(string, required) in this case an email address is a unique string used to map a user to their assigned roles</dd>
 <dt>display_name</dt>
 <dd>(string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious</dd>
-<dt>member_of</dt>
-<dd>(list of strings, defaults to empty list) this lists the workflows available to this user. If workflow specified is &ldquo;*&rdquo; it means the user is a member of all workflows, this is useful for repository administrators</dd>
+<dt>roles</dt>
+<dd>(list of strings, defaults to empty list) this lists the roles available to this user. If role specified is &ldquo;*&rdquo; it means the user is a member of all roles, this is useful for repository administrators</dd>
 </dl>
 
 <p>Here&rsquo;s an example of expressing that user in TOML.</p>
@@ -52,31 +52,31 @@ workflows they have access to.</p>
     [&quot;jane.doe@example.edu&quot;]
     # Display Name
     display_name = &quot;Jane Doe&quot;
-    # The queues/workflows this user can see.
-    member_of = [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+    # The queues/roles this user can see.
+    roles = [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
 </code></pre>
 
 <h2>How the user object is used</h2>
 
 <p>When Jane authenticates with the system she goes from being
 &ldquo;anonymous&rdquo; to &ldquo;jane@example.edu&rdquo; user.  This means she now has the
-permissions associated with &ldquo;publisher&rdquo;, &ldquo;editor&rdquo; and &ldquo;writer&rdquo; workflows.
-If the &ldquo;writer&rdquo; workflow allows object creation Jane can create
+permissions associated with &ldquo;publisher&rdquo;, &ldquo;editor&rdquo; and &ldquo;writer&rdquo; roles.
+If the &ldquo;writer&rdquo; role allows object creation Jane can create
 objects as a &ldquo;writer&rdquo;.
-Note if Jane doesn&rsquo;t have an have any workflows defined she would
-have zero permissions to access any objects. Each workflow list in
-&ldquo;member_of&rdquo; establishes her capabilities to interact with
+Note if Jane doesn&rsquo;t have an have any roles defined she would
+have zero permissions to access any objects. Each role list in
+&ldquo;roles&rdquo; establishes her capabilities to interact with
 objects in the collection(s) of the <strong>AndOr</strong> running.</p>
 
 <h2>anonymous, the default user</h2>
 
 <p>There is always a &ldquo;anonymous&rdquo; user defined. It is used for anyone who
 has not authenticated.  While the &ldquo;anonymous&rdquo; user is assumed to always
-exist it is not provided with any workflows. If you want to allow
+exist it is not provided with any roles. If you want to allow
 anonymous access to a collection (e.g. the general public can see
 &ldquo;published&rdquo; objects) then you should create a JSON record for the
-&ldquo;anonymous&rdquo; user and explicitly put them in a single workflow that
-only has read permissions for &ldquo;published&rdquo; objects. See <a href="Workflow-Use-Cases.html">Workflow Use Cases</a> for example.</p>
+&ldquo;anonymous&rdquo; user and explicitly put them in a single role that
+only has read permissions for &ldquo;published&rdquo; objects. See <a href="Role-Use-Cases.html">Role Use Cases</a> for example.</p>
 
 <h2>Picking IDs</h2>
 

@@ -34,23 +34,22 @@ metadata objects and attachments outside the scope of
 our existing repositories.</p>
 
 <p><strong>And/Or</strong> is based on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
-It will provide a semi-RESTful JSON API and use
-HTML, CSS and JavaScript to provide a GUI interface for curating.
-A minimum running system would consist of only two or three
-pieces of software. The minimum would be a web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>
-plus the <strong>And/Or</strong> service supporting multi-user interaction with
-dataset collections.  Depending on size you could create
-a micro service providing search via Python and Lunr<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> or generate
-Lunrjs indexes to run browser side.  This arrangement has the
-advantage of limiting the code to be written to the <strong>AndOr</strong>
-web service plus the HTML, CSS and JavaScript needed to create
-an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
+It is a JSON API plus HTML, CSS and JavaScript to provide a web
+GUI interface for curating objects.  A minimum running system
+would consist of only two or three pieces of software. The minimum
+would be a web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> plus the <strong>And/Or</strong> service supporting
+multi-user interaction with dataset collections.  Depending on size
+you could create a micro service providing search via Python and
+Lunr<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> or generate Lunrjs indexes to run browser side.  This
+arrangement has the advantage of limiting development of new
+code to be written to the <strong>And/Or</strong> web service plus the HTML,
+CSS and JavaScript needed for an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
 
 <p>This particular architecture aligns with small machine hosting
 and cloud hosting keeping recurring costs to a minimum.
 In the cloud it should work on a small to medium EC2 instance.
-A more elaborate version be using Cloud Front, S3, and running
-the API service in an AWS container or via the AWS Lambda.
+A more elaborate version could be implemented using Cloud Front,
+S3, and running the API service in an AWS container.
 In house hosting could as light weight as Raspberry Pi 4 or
 as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>.</p>
 
@@ -62,12 +61,13 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <li>Thin stack
 
 <ul>
-<li>No RDMS requirement (only AndOr and a web server)</li>
+<li>No RDMS requirement (only And/Or and a web server)</li>
 <li>Be easier than migrating our EPrints</li>
 <li>Be faster than EPrints under load</li>
 <li>Be simpler than EPrints, Invenio, Drupal/Islandora</li>
 </ul></li>
 <li>Use existing schema</li>
+<li>Support role based workflows</li>
 <li>Support versioned attached media files</li>
 <li>Support continuous migration</li>
 <li>Support alternative front ends (e.g. Drupal)</li>
@@ -79,14 +79,15 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
 <li>UI can be implemented using HTML 5 elements, minimal JavaScript and CSS</li>
 <li>Small number of curatorial users, larger number of readers</li>
-<li>Configurable workflows are a requirement
+<li>Configurable roles are a requirement
 
 <ul>
-<li>workflows describe capabilities (permissions)</li>
-<li>workflows describe a work queue (object state)</li>
+<li>roles describe capabilities (permissions)</li>
+<li>roles describe one or more work queues</li>
+<li>queues are an object state</li>
 </ul></li>
 <li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
-<li>Authentication is external (e.g. Shibboleth, OAuth 2)</li>
+<li>Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)</li>
 <li>Search and query are handle independent of API
 
 <ul>
@@ -97,19 +98,19 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <h2 id="limiting-features-and-complexity">Limiting features and complexity</h2>
 
 <p>Some of the most complicated parts of digital object repositories
-are managing customization, managing users, manage workflows,
-manage permissions and enforcing storage scheme.  <strong>AndOr</strong>'s
+are managing customization, managing users, manage roles,
+manage permissions and enforcing storage scheme.  <strong>And/Or</strong>'s
 simplification involves either avoiding the requirements or relocating
 them to an appropriate external system.</p>
 
 <p>Examples--</p>
 
 <ul>
-<li>Authentication is handle externally. That means we don't need to worry about managing passwords, the volatile and sensitive data is outside of our system</li>
-<li><strong>AndOr</strong> itself is a simple web API that accepts URL requests
+<li>Authentication is handle externally. That means we don't need to create UI to manage passwords, the volatile and sensitive data is outside of <strong>And/Or</strong></li>
+<li><strong>And/Or</strong> itself is a simple web API that accepts URL requests
 and hands back JSON. The shape of the JSON is determined at time of
-migrating into <strong>AndOr</strong>. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.</li>
-<li>If you need additional end points beyond what <strong>AndOr</strong> provides (e.g. a search engine service) you supply those as micro services behind the same web server</li>
+migrating into <strong>And/Or</strong>. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.</li>
+<li>If you need additional end points beyond what <strong>And/Or</strong> provides (e.g. a search engine service) you supply those as micro services behind the same web server</li>
 </ul>
 
 <p>The web browser itself creates the illusion of a unified software system
@@ -119,8 +120,8 @@ or even external systems (e.g. looking up something at datacite.org or
 orcid.org).</p>
 
 <p>Some features are unavoidable. The repository problem requires managing
-users and workflows. It doesn't require users and workflows
-be manage through the web. Setting up users and workflows can be
+users and roles. It doesn't require users and roles
+be manage through the web. Setting up users and roles can be
 managed through simpler command line tools and configuration files.
 The is reasonable in large part because you've off loaded
 identify management already.</p>
@@ -129,22 +130,24 @@ identify management already.</p>
 opportunities that already exist we can radically
 reduce the lines of code written and maintained.</p>
 
-<h3 id="two-end-points-for-our-api">Two end points for our API</h3>
+<h3 id="end-points-for-our-api-map-to-dataset-operations">End points for our API map to dataset operations</h3>
 
-<p>Two web API end points would be required</p>
+<ul>
+<li><code>/COLLECTION_NAME/keys/</code> (GET) to list objects keys</li>
+<li><code>/COLLECTION_NAME/create/OBJECT_ID</code> (GET) to provide an Object's creates a new object, OBJECT_ID must be unique to succeed</li>
+<li><code>/COLLECTION_NAME/read/OBJECT_IDS</code> (GET) if single object_id return record otherwise a list of objects is returned</li>
+<li><code>/COLLECTION_NAME/update/OBJECT_ID</code> (POST) to update an object</li>
+<li><code>/COLLECTION_NAME/delete/OBJECT_ID</code> (POST) to delete an object</li>
+</ul>
 
-<ol>
-<li><code>/COLLECTION_NAME/objects/</code> to list objects keys</li>
-<li><code>/COLLECTION_NAME/objects/OBJECT_ID</code> to provide an Object's details</li>
-</ol>
-
-<p>Lists can be filtered by workflow's queue name
+<p>&quot;keys&quot; can be filtered by role's queue name. Paging can be implemented
+client side by segmenting the key list returned.
 All other end points are static resources (e.g. HTML files,
 CSS, JavaScript and Lunrjs indexes, a public faces website).<br>
 We can reducing our requirements to two end points because
 we've discovered that is all we needed based on our work
-with <a href="https://www.eprints.org" title="A repository system developed at University of South Hampton">EPrints</a>.
-Everything else can be synthesized from a simple key list and object access.</p>
+with <a href="https://www.eprints.org" title="A repository system developed at University of South Hampton">EPrints</a>. Everything else can be synthesized
+from a simple key list and object access.</p>
 
 <h3 id="building-a-ui">Building a UI</h3>
 
@@ -162,37 +165,37 @@ JavaScript for our proof of concept.</p>
 <p>For public facing content (e.g. things Google, Bing, et el.
 should find and index) can be deployed separately by
 process similar to how feeds.library.caltech.edu works.
-This also keeps <strong>AndOr</strong> simple with fewer requirements.</p>
+This also keeps <strong>And/Or</strong> simple with fewer requirements.</p>
 
-<h3 id="user-plus-workflow-a-simple-model">user plus workflow, a simple model</h3>
+<h3 id="user-plus-role-a-simple-model">user plus role, a simple model</h3>
 
-<p>An authenticated user exposes their user id to <strong>AndOr</strong>'s
-web service. A user's id maps to membership in workflows.
-The workflow defines access to queues to list objects.</p>
+<p>An authenticated user exposes their user id to
+<strong>And/Or</strong>'s web service (e.g. via a JSON Web Token or
+Basic Auth header).  A user's id maps to membership in roles.
+The role defines access to queues, queues are list objects
+with a matching value of <code>._Queue</code>.</p>
 
 <p>Unauthenticated users are treated as the &quot;anonymous&quot; user and
-are restricted by workflows available for the &quot;anonymous&quot; user.
-This is how you would control having a dark versus publicly
-visible repository.</p>
+are restricted by roles available for the &quot;anonymous&quot; user.
+This is how you could implement both dark and public
+repositories.</p>
 
 <p>Complicated use cases like electronic thesis deposits
 or faculty self deposit of articles could be implemented as
-separate specialized micro services that interacts with
-external authentication then implements a specialized
-workflow interacting with the API via a service account
-an appropriate workflow associated with it.</p>
+separate specialized micro services that interact with
+<strong>And/Or</strong> via proxy service accounts.</p>
 
 <h3 id="under-the-hood">Under the hood</h3>
 
-<p><strong>AndOr</strong> is built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
+<p><strong>And/Or</strong> is built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
 Objects may include attached documents which can be versioned
 automatically. If metadata versioning becomes required dataset
 can be extended to store diffs as well as the JSON documents.</p>
 
-<p>Like EPrints <strong>AndOr</strong> does not directly support deleting objects.
+<p>Like EPrints <strong>And/Or</strong> does not directly support deleting objects.
 Instead it can create the illusion of deleting objects by putting
 objects into a &quot;deleted&quot; queue which you can exclude from your
-workflows.</p>
+roles or garbage collection through a separate process.</p>
 
 <h2 id="additional-ideas">Additional ideas</h2>
 
@@ -200,7 +203,7 @@ workflows.</p>
 <li>Use cases
 
 <ul>
-<li><a href="docs/Workflow-Use-Cases.html">Users, Workflows and Queues</a></li>
+<li><a href="docs/Role-Use-Cases.html">Users, Roles and Queues</a></li>
 </ul></li>
 <li>Concept proofs
 
@@ -213,7 +216,7 @@ workflows.</p>
 
 <ul>
 <li><a href="docs/User-Scheme.html">User Scheme</a></li>
-<li><a href="docs/Workflow-Scheme.html">Workflow Scheme</a></li>
+<li><a href="docs/Role-Scheme.html">Role Scheme</a></li>
 <li><a href="docs/Queue-Scheme.html">Queue Scheme</a></li>
 <li><a href="docs/Object-Scheme.html">Object Scheme</a></li>
 </ul></li>

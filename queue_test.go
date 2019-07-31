@@ -13,16 +13,16 @@ import (
 	"testing"
 )
 
-func TestAddWorkflow(t *testing.T) {
+func TestAddRole(t *testing.T) {
 	q := new(Queue)
-	if len(q.Workflows) != 0 {
-		t.Errorf("Should have an empty q.Workflows -> %+v", q)
+	if len(q.Roles) != 0 {
+		t.Errorf("Should have an empty q.Roles -> %+v", q)
 	}
-	q.AddWorkflow("draft")
-	if len(q.Workflows) != 1 {
-		t.Errorf("Should have a single workflow -> %+v", q)
+	q.AddRole("draft")
+	if len(q.Roles) != 1 {
+		t.Errorf("Should have a single role -> %+v", q)
 	}
-	if strings.Compare(q.Workflows[0], "draft") != 0 {
-		t.Errorf("Should have draft in q.Workflows[0] -> %+v", q)
+	if strings.Compare(q.Roles[0], "draft") != 0 {
+		t.Errorf("Should have draft in q.Roles[0] -> %+v", q)
 	}
 }

@@ -35,8 +35,8 @@ type AndOrService struct {
 	CertPEM string `json:"cert_pem" toml:"cert_pem"`
 	// KeyPEM if running under TLS this is the key file
 	KeyPEM string `json:"key_pem": toml:"key_pem"`
-	// WorkflowsFile
-	WorkflowsFile string `json:"workflows_file" toml:"workflows_file"`
+	// RolesFile
+	RolesFile string `json:"roles_file" toml:"roles_file"`
 	// UsersFile
 	UsersFile string `json:"users_file" toml:"users_file"`
 	// Scheme is usually either "https" or "http"
@@ -58,8 +58,8 @@ type AndOrService struct {
 
 	// Users holds the user map for the service
 	Users map[string]*User
-	// Workflows holds the workflow map for the service
-	Workflows map[string]*Workflow
+	// Roles holds the role map for the service
+	Roles map[string]*Role
 	// Queues holds teh queue map for the service
 	Queues map[string]*Queue
 	// Collections holds a map of collection name to dataset collection pointer
@@ -78,7 +78,7 @@ type AndOrService struct {
 	accessRestricted bool
 }
 
-// IsAccessRestricted() return true if .Users, .Workflows, .Access policies are
+// IsAccessRestricted() return true if .Users, .Roles, .Access policies are
 // being enforced, otherwise false.
 func (s *AndOrService) IsAccessRestricted() bool {
 	return s.accessRestricted
@@ -122,10 +122,10 @@ func GenerateAndOr(fName string, collections []string) error {
 # collections holds a list of dataset collections
 #collections = ["repository.ds"]
 
-# workflows holds the workflows and queue definitions for this And/Or
-#workflows = "workflows.toml"
+# roles holds the roles and queue definitions for this And/Or
+#roles = "roles.toml"
 
-# users holds user workflow assignments
+# users holds user role assignments
 #users = "users.toml"
 
 # If using basic auth create this file with "webaccess" tool from
@@ -153,7 +153,7 @@ func GenerateAndOr(fName string, collections []string) error {
 
 // LoadAndOr reads a file, parses it and returns
 // an AndOrService object or error. It calls
-// LoadWorkflows and LoadUsers internally.
+// LoadRoles and LoadUsers internally.
 func LoadAndOr(fName string) (*AndOrService, error) {
 	service := new(AndOrService)
 	src, err := ioutil.ReadFile(fName)
@@ -179,8 +179,8 @@ func LoadAndOr(fName string) (*AndOrService, error) {
 	}
 
 	// Check required values
-	if service.WorkflowsFile == "" {
-		return nil, fmt.Errorf("%q, missing workflows file", fName)
+	if service.RolesFile == "" {
+		return nil, fmt.Errorf("%q, missing roles file", fName)
 	}
 	if service.UsersFile == "" {
 		return nil, fmt.Errorf("%q, missing users file", fName)
@@ -217,17 +217,17 @@ func LoadAndOr(fName string) (*AndOrService, error) {
 	return service, nil
 }
 
-// LoadWorksAndUsers envokes LoadWorkflows() and LoadUsers() for
+// LoadWorksAndUsers envokes LoadRoles() and LoadUsers() for
 // a service instance. This is separate from LoadAndOr() because you
-// may want to support HUP to reload workflows and users as well as
+// may want to support HUP to reload roles and users as well as
 // support independent validation and testing.
 func (s *AndOrService) LoadWorkersAndUsers() error {
 	var (
 		err error
 	)
-	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsFile)
+	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
 	if err != nil {
-		return fmt.Errorf("%q, %s", s.WorkflowsFile, err)
+		return fmt.Errorf("%q, %s", s.RolesFile, err)
 	}
 	s.Users, err = LoadUsers(s.UsersFile)
 	if err != nil {
@@ -237,9 +237,9 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 	// Finally check to make sure all the users MemberOf fields
 	// are accounted for.
 	for _, user := range s.Users {
-		for _, workflow := range user.MemberOf {
-			if _, ok := s.Workflows[workflow]; ok == false {
-				return fmt.Errorf("%s not defined, referenced by %s", workflow, user.Key)
+		for _, role := range user.MemberOf {
+			if _, ok := s.Roles[role]; ok == false {
+				return fmt.Errorf("%s not defined, referenced by %s", role, user.Key)
 			}
 		}
 	}
@@ -250,10 +250,10 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 // of the service struct.
 func (s *AndOrService) Start() error {
 	var err error
-	// Load an workflows.toml
-	s.Workflows, s.Queues, err = LoadWorkflows(s.WorkflowsFile)
+	// Load an roles.toml
+	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
 	if err != nil {
-		log.Printf("Failed to load %q, %s", s.WorkflowsFile, err)
+		log.Printf("Failed to load %q, %s", s.RolesFile, err)
 		return err
 	}
 	// Load an users.toml
@@ -275,8 +275,8 @@ func (s *AndOrService) Start() error {
 	if len(s.Users) == 0 {
 		return fmt.Errorf("No users configured, no one can access service")
 	}
-	if len(s.Workflows) == 0 {
-		return fmt.Errorf("No workflows defined, no one can access service")
+	if len(s.Roles) == 0 {
+		return fmt.Errorf("No roles defined, no one can access service")
 	}
 	if len(s.Queues) == 0 {
 		return fmt.Errorf("No object queues defined, nothing to access")

@@ -114,7 +114,7 @@ a much better Oral Histories site for public viewing. This leaves us
 with allot of flexibility in picking the minimum feature set needed to
 curate the objects and media files.</p>
 
-<h2 id="curating-workflow-based-on-existing-eprints-implementation">Curating workflow based on existing EPrints implementation</h2>
+<h2 id="curating-role-based-on-existing-eprints-implementation">Curating role based on existing EPrints implementation</h2>
 
 <p>We already have the majority of the software for creating a light weight
 EPrints like system. What is lacking is a web service that functions
@@ -132,7 +132,7 @@ task would be the customization of the object edit and input forms
 to support each specific implementation. A secondary task would
 be to identify and implement if necessary any micro services needed to
 replicate specific repositories' specialized features (e.g.
-workflow processes outside like the ETD application for CaltechTHESIS)
+role processes outside like the ETD application for CaltechTHESIS)
 In this way <strong>AndOr</strong> could serve as an <strong>interim solution</strong> while
 we wait for systems like
 <a href="https://zenodo.org/" title="An Object Repository System used in conjunction with CERN">Zenodo</a> or
@@ -151,10 +151,10 @@ a type, add general metadata (e.g. description/abstract, title).
 Upload media files. Add any more internal data and then &quot;deposit&quot;.
 Once deposited the object is available for processing in EPrints.</p>
 
-<p>EPrints uses a queue system for implementing a workflow. A user's
-abilities are matched to the workflows they have access to. In effect
-their set of workflows defines their permissions. This relationship
-can be modeled as a User Object and Workflow Objects.</p>
+<p>EPrints uses a queue system for implementing a role. A user's
+abilities are matched to the roles they have access to. In effect
+their set of roles defines their permissions. This relationship
+can be modeled as a User Object and Role Objects.</p>
 
 <h3 id="decomposing-the-eprints-admin-functionality-for-oral-histories">Decomposing the EPrints Admin functionality for Oral Histories</h3>
 
@@ -197,14 +197,14 @@ system. What you really need is &quot;Manage Deposits&quot;, &quot;Review&quot; 
 <li>Support &quot;deleting&quot; objects, EPrints never deletes, it just hides the object in a &quot;delete&quot; queue.</li>
 </ol>
 
-<p>The above suggests we need to know who our user is and what workflows
-they are allowed to access. A workflow identifies a queue of objects, the
+<p>The above suggests we need to know who our user is and what roles
+they are allowed to access. A role identifies a queue of objects, the
 permissions to act on those objects (e.g. create, read, update) and the
 next queue they will be passed to.</p>
 
-<p>A workflow might be &quot;deposit&quot;, &quot;review&quot;, &quot;publish&quot; or &quot;delete&quot;. The
+<p>A role might be &quot;deposit&quot;, &quot;review&quot;, &quot;publish&quot; or &quot;delete&quot;. The
 user info is a display name, a user id, what queue they create
-objects in (e.g. &quot;deposit&quot;) and what workflows they have access
+objects in (e.g. &quot;deposit&quot;) and what roles they have access
 to (what queues they can review and what queues they can place
 objects into).</p>
 
@@ -245,8 +245,8 @@ how it should work and have implemented things like this in the past<sup class="
 <p>We don't need to develop scheme, we can use what EPrints XML provides.
 EPrints shows the API we need because we already use EPrints REST API
 to drive feeds.library.caltech.edu. EPrints also shows us the model
-for users and workflows. Users are affiliated with workflows. Workflows
-are a queue of objects (objects hold a single value for workflow state).
+for users and roles. Users are affiliated with roles. Roles
+are a queue of objects (objects hold a single value for role state).
 Works define what actions can be performed on an object (e.g. &quot;published&quot;
 objects are read only for the public while an &quot;editor&quot; can see a link
 to edit the object).</p>
@@ -256,10 +256,10 @@ to edit the object).</p>
 <ul>
 <li>EPrints is complicated because it allows complete customization. Each
 customization becomes technical debt because it complicates upgrades.</li>
-<li>EPrints is complicated because it must define and manage workflows. In
+<li>EPrints is complicated because it must define and manage roles. In
 a large library where administration is distributed across many staff
 or campuses this make sense. We're a small library (a tiny archive)
-which could make due with workflows defined in a simple configuration file.</li>
+which could make due with roles defined in a simple configuration file.</li>
 <li>EPrints is complicated because it needs to support hosting MANY
 collections independently behind the same Apache web server. This is a
 historical approach and not a requirement today.</li>

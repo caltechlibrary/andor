@@ -17,40 +17,40 @@ import (
 	"testing"
 )
 
-// TestLoadWorkflows ...
-func TestLoadWorkflows(t *testing.T) {
-	workflowFile := path.Join("testdata", "workflows.toml")
-	w, q, err := LoadWorkflows(workflowFile)
+// TestLoadRoles ...
+func TestLoadRoles(t *testing.T) {
+	roleFile := path.Join("testdata", "roles.toml")
+	w, q, err := LoadRoles(roleFile)
 	if err != nil {
-		t.Errorf("Failed to load %q, %s", workflowFile, err)
+		t.Errorf("Failed to load %q, %s", roleFile, err)
 	}
 	if len(w) != 3 {
-		t.Errorf("expected 3 workflows, got %d", len(w))
+		t.Errorf("expected 3 roles, got %d", len(w))
 	}
 	if len(q) != 3 {
 		t.Errorf("expected 3 queues, got %d", len(q))
 	}
 	for _, wName := range []string{"draft", "review", "published"} {
-		if workflow, ok := w[wName]; ok == false {
+		if role, ok := w[wName]; ok == false {
 			t.Errorf("expected %q, not found -> %+v", wName, w)
-			if strings.Compare(workflow.Queue, wName) != 0 {
-				t.Errorf("expected %q, got %q for Queue", wName, workflow.Queue)
+			if strings.Compare(role.Queue, wName) != 0 {
+				t.Errorf("expected %q, got %q for Queue", wName, role.Queue)
 			}
 		}
 	}
 }
 
-// TestBytes for workflow structs
+// TestBytes for role structs
 func TestBytes(t *testing.T) {
-	workflowFile := path.Join("testdata", "workflows2.toml")
-	workflowSrc, err := ioutil.ReadFile(workflowFile)
+	roleFile := path.Join("testdata", "roles2.toml")
+	roleSrc, err := ioutil.ReadFile(roleFile)
 	if err != nil {
-		t.Errorf("expected to read %s, %s", workflowFile, err)
+		t.Errorf("expected to read %s, %s", roleFile, err)
 		t.FailNow()
 	}
-	w, _, err := LoadWorkflows(workflowFile)
+	w, _, err := LoadRoles(roleFile)
 	if err != nil {
-		t.Errorf("expected to load %q, got %s", workflowFile, err)
+		t.Errorf("expected to load %q, got %s", roleFile, err)
 	}
 	src := []byte{}
 	for _, k := range []string{"draft", "review", "published"} {
@@ -62,22 +62,22 @@ func TestBytes(t *testing.T) {
 	if len(src) == 0 {
 		t.Errorf("expected a []byte with data for %+v", w)
 	}
-	if bytes.Compare(workflowSrc, src) != 0 {
+	if bytes.Compare(roleSrc, src) != 0 {
 		t.Errorf("expected sources to match, got\n%s\n", src)
 	}
 }
 
-// TestString for workflow structs
+// TestString for role structs
 func TestString(t *testing.T) {
-	workflowFile := path.Join("testdata", "workflows2.toml")
-	workflowSrc, err := ioutil.ReadFile(workflowFile)
+	roleFile := path.Join("testdata", "roles2.toml")
+	roleSrc, err := ioutil.ReadFile(roleFile)
 	if err != nil {
-		t.Errorf("expected to read %s, %s", workflowFile, err)
+		t.Errorf("expected to read %s, %s", roleFile, err)
 		t.FailNow()
 	}
-	w, _, err := LoadWorkflows(workflowFile)
+	w, _, err := LoadRoles(roleFile)
 	if err != nil {
-		t.Errorf("expected to load %q, got %s", workflowFile, err)
+		t.Errorf("expected to load %q, got %s", roleFile, err)
 	}
 	s := []string{}
 	for _, k := range []string{"draft", "review", "published"} {
@@ -90,7 +90,7 @@ func TestString(t *testing.T) {
 	if len(src) == 0 {
 		t.Errorf("expected a string with data for %+v", w)
 	}
-	if strings.Compare(string(workflowSrc), src) != 0 {
+	if strings.Compare(string(roleSrc), src) != 0 {
 		t.Errorf("expected sources to match, got\n%s\n", src)
 	}
 }

@@ -45,16 +45,16 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 	log.Printf("DEBUG username %q", username)
 	// Are we logged in?
 	if u, ok := s.Users[username]; ok == true {
-		workflowMap := make(map[string]*Workflow)
-		// Is user member of workflow?
+		roleMap := make(map[string]*Role)
+		// Is user member of role?
 		for _, key := range u.MemberOf {
-			if workflow, ok := s.Workflows[key]; ok == true {
-				workflowMap[key] = workflow
+			if role, ok := s.Roles[key]; ok == true {
+				roleMap[key] = role
 			}
 		}
 		src, err := json.MarshalIndent(map[string]interface{}{
-			"user":      u,
-			"workflows": workflowMap,
+			"user":  u,
+			"roles": roleMap,
 		}, "", "    ")
 		if err != nil {
 			log.Printf("Failed to marshal %q, %s", username, err)
@@ -71,7 +71,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
 // We only support GET on keys.
 func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply user/workflow/queue rules.
+	//FIXME: Need to apply user/role/queue rules.
 	keys := c.Keys()
 	sort.Strings(keys)
 	src, err := json.MarshalIndent(keys, "", "    ")
@@ -86,7 +86,7 @@ func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *
 // requestObject is the API version of
 //     `dataset read -c -p COLLECTION_NAME KEY`
 func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply user/workflow/queue rules.
+	//FIXME: Need to apply user/role/queue rules.
 	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/objects/")
 	if c.HasKey(key) == false {
 		log.Printf("%s, %s, unknown key", cName, r.URL.Path)

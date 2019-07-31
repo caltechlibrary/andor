@@ -23,7 +23,7 @@
 <h1>init</h1>
 
 <p>The <code>init</code> verb creates empty dataset collections and also
-&ldquo;users.toml&rdquo;, &ldquo;workflows.toml&rdquo;, and &ldquo;andor.toml&rdquo; TOML
+&ldquo;users.toml&rdquo;, &ldquo;roles.toml&rdquo;, and &ldquo;andor.toml&rdquo; TOML
 files if they did not already exist.  You can list as many
 dataset collections as you want and the init command will
 attempt to initialize them one after the other.  If an error
@@ -44,15 +44,15 @@ collections. A typical use case would look like the following.</p>
 <li>MyRepoisotory.ds, the collection holding repository data</li>
 <li>andor.toml, the web service configuration use by <code>AndOr start</code></li>
 <li>users.toml, the users file by <code>AndOr start</code></li>
-<li>workflows.toml, the workflows file use by <code>AndOr start</code></li>
+<li>roles.toml, the roles file use by <code>AndOr start</code></li>
 </ol>
 
 <p><strong>AndOr</strong> uses the three TOML files to configure how the web
-service works, known users and the workflows and capabilities
+service works, known users and the roles and capabilities
 available to them.  Repository collections holds the content
 the API will provide. An <strong>AndOr</strong> provides access to
 the repositories listed in the &ldquo;andor.toml&rdquo; file. The users
-workflows apply across repositories listed the &ldquo;andor.toml&rdquo; file..</p>
+roles apply across repositories listed the &ldquo;andor.toml&rdquo; file..</p>
 
 </section>
 

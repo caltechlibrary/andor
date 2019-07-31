@@ -25,25 +25,25 @@
 <p>A Queue is a list of objects associated with a
 given state. Queues have names and a retrieved
 by their names. Queues also are associated with
-workflows what define the actions available in
-the queue by users associated with those workflows.</p>
+roles what define the actions available in
+the queue by users associated with those roles.</p>
 
 <p>When you &ldquo;add&rdquo; an object to a queue you are changing
 the internal <code>._Queue</code> value in the object after
-verifying that a given user and the workflows allow
+verifying that a given user and the roles allow
 the addition.</p>
 
 <p>The queues are created when <strong>AndOr</strong> is started
-and it loads &ldquo;workflows.toml&rdquo;. The queue lasts
+and it loads &ldquo;roles.toml&rdquo;. The queue lasts
 as long as <strong>AndOr</strong> remains running. If an object
 has a <code>._Queue</code> value that is no longer defined in
-any workflow the object will be invisible to the
+any role the object will be invisible to the
 <strong>AndOr</strong> web API. If that happens you well need
 to write a script or use the <strong>dataset</strong>[^1] command
 to update the <code>._Queue</code> value to something
-specified in a workflow.</p>
+specified in a role.</p>
 
-<p>[^1]: dataset is a command line workflow for managing JSON objects in collections, see <a href="https://github.com/caltechlibrary/dataset">https://github.com/caltechlibrary/dataset</a></p>
+<p>[^1]: dataset is a command line role for managing JSON objects in collections, see <a href="https://github.com/caltechlibrary/dataset">https://github.com/caltechlibrary/dataset</a></p>
 
 </section>
 

@@ -42,7 +42,7 @@ func TestGenerateAndOr(t *testing.T) {
 	}
 	src, err := ioutil.ReadFile(andorFile)
 	if err != nil {
-		t.Errorf("Can't read back %q, %s", andorFilen, err)
+		t.Errorf("Can't read back %q, %s", andorFile, err)
 		t.FailNow()
 	}
 	if bytes.Contains(src, []byte(collection)) == false {
