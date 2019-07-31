@@ -71,7 +71,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
 // We only support GET on keys.
 func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply user/role/queue rules.
+	//FIXME: Need to apply users/roles/states rules.
 	keys := c.Keys()
 	sort.Strings(keys)
 	src, err := json.MarshalIndent(keys, "", "    ")
@@ -83,11 +83,21 @@ func requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *
 	writeResponse(w, r, src)
 }
 
-// requestObject is the API version of
+// requestCreate is the API version of
+//	`dataset create COLLECTION_NAME OBJECT_ID OBJECT_JSON`
+func requestCreate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestCreate(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestRead is the API version of
 //     `dataset read -c -p COLLECTION_NAME KEY`
-func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+func requestRead(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
 	//FIXME: Need to apply user/role/queue rules.
-	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/objects/")
+	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/")
 	if c.HasKey(key) == false {
 		log.Printf("%s, %s, unknown key", cName, r.URL.Path)
 		http.NotFound(w, r)
@@ -102,6 +112,66 @@ func requestObject(cName string, c *dataset.Collection, w http.ResponseWriter, r
 	writeResponse(w, r, src)
 }
 
+// requestUpdate is the API version of
+//	`dataset update COLLECTION_NAME OBJECT_ID OBJECT_JSON`
+func requestUpdate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestUpdate(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestDelete is the API version of
+//	`dataset Delete COLLECTION_NAME OBJECT_ID`
+// except is doesn't actually delete the object. It changes the
+// object's `._State` value.
+func requestDelete(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestDelete(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestAttach is the API version of
+//	`dataset attach COLLECTION_NAME OBJECT_ID FILENAMES`
+func requestAttach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestAttach(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestAttachments is the API version of
+//	`dataset attachments COLLECTION_NAME OBJECT_ID`
+func requestAttachments(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestAttachments(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestDetach is the API version of
+//	`dataset detach COLLECTION_NAME OBJECT_ID FILENAME`
+func requestDetach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	log.Printf("requestDetach(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
+// requestPrune is the API version of
+//	`dataset prune COLLECTION_NAME OBJECT_ID`
+func requestPrune(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
+	//FIXME: Need to apply users/roles/states rules.
+	//FIXME: Need to make sure this part of the service is behind
+	// muxtex.
+	log.Printf("requestPrune(%q, ...) not implemented", cName)
+	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+}
+
 func addAccessRoute(a *wsfn.Access, p string) {
 	log.Printf("DEBUG a -> %+v", a)
 	if a != nil {
@@ -110,6 +180,66 @@ func addAccessRoute(a *wsfn.Access, p string) {
 		}
 		a.Routes = append(a.Routes, p)
 	}
+}
+
+// assignHandlers generates the /keys, /create, /read, /delete
+// end points for accessing a collection in And/Or.
+func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection) {
+	cName := c.Name
+	access := s.Access
+	//NOTE: We create a function handler based on on the
+	// current collection being processed.
+	log.Printf("Adding collection %q", cName)
+	base := "/" + path.Base(cName)
+	log.Printf("Adding access route %q", base)
+	if s.IsAccessRestricted() {
+		addAccessRoute(access, base)
+	}
+	// End points based on dataset
+	p := base + "/keys"
+	log.Printf("Adding handler %s", p)
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestKeys(cName, c, w, r)
+	})
+	// dataset object handling
+	p = base + "/create"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestCreate(cName, c, w, r)
+	})
+	p = base + "/read"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestRead(cName, c, w, r)
+	})
+	p = base + "/update"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestUpdate(cName, c, w, r)
+	})
+	p = base + "/delete"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestDelete(cName, c, w, r)
+	})
+	// dataset attachment handling
+	p = base + "/attach"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestAttach(cName, c, w, r)
+	})
+	p = base + "/attachments"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestAttachments(cName, c, w, r)
+	})
+	p = base + "/detach"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestDetach(cName, c, w, r)
+	})
+	p = base + "/prune"
+	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
+		requestPrune(cName, c, w, r)
+	})
+
+	// Additional And/Or specific end points
+	p = "/" + path.Base(cName) + "/access/"
+	log.Printf("Adding handler %s", p)
+	mux.HandleFunc(p, s.requestAccessInfo)
 }
 
 // RunService runs the http/https web service of AndOr.
@@ -131,32 +261,9 @@ func RunService(s *AndOrService) error {
 	mux := http.NewServeMux()
 
 	log.Printf("Have %d collection(s)", len(s.Collections))
-
-	for cName, c := range s.Collections {
-		//NOTE: We create a function handler based on on the
-		// current collection being processed.
-		log.Printf("Adding collection %q", cName)
-		p := "/" + path.Base(cName)
-		log.Printf("Adding access route %q", p)
-		if s.IsAccessRestricted() {
-			addAccessRoute(access, p)
-		}
-		p += "/objects/"
-		log.Printf("Adding handler %s", p)
-		mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-			log.Printf("DEBUG r.URL.Path %q", r.URL.Path)
-			// Do we have an object request or keys request?
-			if strings.HasSuffix(r.URL.Path, "/objects/") {
-				log.Printf("DEBUG requestKeys() %q", r.URL.Path)
-				requestKeys(cName, c, w, r)
-				return
-			}
-			log.Printf("DEBUG requestObjects() %q", r.URL.Path)
-			requestObject(cName, c, w, r)
-		})
-		p = "/" + path.Base(cName) + "/access/"
-		log.Printf("Adding handler %s", p)
-		mux.HandleFunc(p, s.requestAccessInfo)
+	// NOTE: For each collection we assign our set of end points.
+	for _, c := range s.Collections {
+		s.assignHandlers(mux, c)
 	}
 	if s.Htdocs != "" {
 		fs, err := wsfn.MakeSafeFileSystem(s.Htdocs)
