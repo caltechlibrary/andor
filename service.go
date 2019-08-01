@@ -111,7 +111,11 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 		err error
 	)
 	//FIXME: need to apply state filtering to keys requested
-	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/")
+	key := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/"))
+	if key == "" {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
 	if strings.Contains(key, ",") {
 		keys := strings.Split(key, ",")
 		objects := []map[string]interface{}{}
@@ -119,12 +123,17 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 			key = strings.TrimSpace(key)
 			if key != "" {
 				object := make(map[string]interface{})
-				if err = c.Read(strings.TrimSpace(key), object, false); err != nil {
+				if err = c.Read(strings.TrimSpace(key), object, true); err != nil {
+					//FIXME: what do we do if one of a list of keys not found?
 					log.Printf("Error reading key %q from %q, %s", key, c.Name, err)
 				} else {
 					objects = append(objects, object)
 				}
 			}
+		}
+		if len(objects) == 0 {
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
 		}
 		src, err = json.Marshal(objects)
 		if err != nil {
@@ -135,6 +144,11 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 	} else {
 		src, err = c.ReadJSON(key)
 		if err != nil {
+			if c.IsKeyNotFound(err) {
+				log.Printf("Error reading key %q from %q, %s", key, cName, err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
 			log.Printf("Error reading key %q from %q, %s", key, cName, err)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
 			return

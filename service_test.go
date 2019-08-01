@@ -119,7 +119,7 @@ func TestMain(m *testing.M) {
 			"_State":  "draft",
 		},
 		map[string]interface{}{
-			"title":       "The Adventures of Chet Blacke -- Plastic Man",
+			"title":       "The Adventures of Chet Blake -- Plastic Man",
 			"description": "Comic story about expectations and adventures",
 			"creators": []map[string]interface{}{
 				map[string]interface{}{
