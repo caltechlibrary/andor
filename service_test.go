@@ -20,55 +20,72 @@ import (
 	"github.com/caltechlibrary/wsfn"
 )
 
+var (
+	service *AndOrService
+)
+
 // TestRunService creates an *AndOrService and runs both
 // it and an http client to test functionality.
 func TestRunService(t *testing.T) {
+	// start service
+	log.Println("Starting service for testing")
+	if err := service.Start(); err != nil {
+		log.Fatalf("service.Start() failed, %s", err)
+	}
+
+	// create client
+	t.Errorf("FIXME: need to create client and run tests")
+
+	// now run some tests.
+	t.Errorf("FIXME: TestRun(t *testing.T) not implemented.")
+}
+
+// TestMain creates an *AndOrService and populates with a test
+// dataset for testing.
+func TestMain(m *testing.M) {
 	testFolder := path.Join("testout", "runservice")
 
 	if _, err := os.Stat(testFolder); os.IsNotExist(err) {
 		if err := os.MkdirAll(testFolder, 0777); err != nil {
-			t.Errorf("Could not recreate %s, %s", testFolder, err)
-			t.FailNow()
+			log.Fatalf("Could not recreate %s, %s", testFolder, err)
 		}
 	} else {
 		log.Printf("Recreating %s", testFolder)
 		if err := os.RemoveAll(testFolder); err != nil {
-			t.Errorf("Could not remove %s, %s", testFolder, err)
-			t.FailNow()
+			log.Fatalf("Could not remove %s, %s", testFolder, err)
 		}
 		if err := os.MkdirAll(testFolder, 0777); err != nil {
-			t.Errorf("Could not recreate %s, %s", testFolder, err)
-			t.FailNow()
+			log.Fatalf("Could not recreate %s, %s", testFolder, err)
 		}
 	}
 
 	andorFile := path.Join(testFolder, "andor.toml")
 	cName := path.Join(testFolder, "collection.ds")
 
-	service := new(AndOrService)
-	service.CollectionNames = []string{cName}
+	service = new(AndOrService)
+	service.Scheme = "http"
+	service.Host = "localhost"
+	service.Port = "8000"
 	service.Htdocs = path.Join(testFolder, "htdocs")
+	service.CollectionNames = []string{cName}
 	service.RolesFile = path.Join(testFolder, "roles.toml")
 	service.UsersFile = path.Join(testFolder, "users.toml")
 	service.AccessFile = path.Join(testFolder, "access.toml")
 
 	// Dump our configured service
 	if err := service.DumpAndOr(andorFile); err != nil {
-		t.Errorf("Cound not create %s, %s", cName, err)
-		t.FailNow()
+		log.Fatalf("Cound not create %s, %s", cName, err)
 	}
 
 	// Create our test htdocs folder
 	if err := os.MkdirAll(service.Htdocs, 0777); err != nil {
-		t.Errorf("Cound not create %s, %s", service.Htdocs, err)
-		t.FailNow()
+		log.Fatalf("Cound not create %s, %s", service.Htdocs, err)
 	}
 
 	// Create an empty collection then populate it
 	c, err := dataset.InitCollection(cName)
 	if err != nil {
-		t.Errorf("Cound not create %s, %s", cName, err)
-		t.FailNow()
+		log.Fatalf("Cound not create %s, %s", cName, err)
 	}
 	defer c.Close()
 
@@ -131,8 +148,7 @@ func TestRunService(t *testing.T) {
 	for i, object := range objects {
 		key := fmt.Sprintf("%d", i+100)
 		if err := c.Create(key, object); err != nil {
-			t.Errorf("could not create object %q, in %q, %s", key, cName, err)
-			t.FailNow()
+			log.Fatalf("could not create object %q, in %q, %s", key, cName, err)
 		}
 	}
 
@@ -181,8 +197,7 @@ func TestRunService(t *testing.T) {
 	}
 	service.Roles = roles
 	if err = service.DumpRoles(service.RolesFile); err != nil {
-		t.Errorf("could not create %q, %s", path.Base(service.RolesFile), err)
-		t.FailNow()
+		log.Fatalf("could not create %q, %s", path.Base(service.RolesFile), err)
 	}
 
 	// Create our test users.toml
@@ -215,8 +230,7 @@ func TestRunService(t *testing.T) {
 	}
 	service.Users = users
 	if err = service.DumpUsers(service.UsersFile); err != nil {
-		t.Errorf("could not create %q, %s", path.Base(service.UsersFile), err)
-		t.FailNow()
+		log.Fatalf("could not create %q, %s", path.Base(service.UsersFile), err)
 	}
 
 	// Create our test access.toml
@@ -226,13 +240,9 @@ func TestRunService(t *testing.T) {
 		service.Access.UpdateAccess(user.Key, "Hello.1")
 	}
 	if err = service.DumpAccess(service.AccessFile); err != nil {
-		t.Errorf("could not create %q, %s", path.Base(service.AccessFile), err)
-		t.FailNow()
+		log.Fatalf("could not create %q, %s", path.Base(service.AccessFile), err)
 	}
 
-	// start service
-	t.Errorf("FIXME: need to start service in a Go routine")
-
-	// start client and run tests
-	t.Errorf("FIXME: need to start client and run tests")
+	// call flag.Parse() here if TestMain uses flags.
+	os.Exit(m.Run())
 }

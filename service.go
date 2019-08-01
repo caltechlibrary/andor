@@ -106,18 +106,39 @@ func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http
 // requestRead is the API version of
 //     `dataset read -c -p COLLECTION_NAME KEY`
 func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply user/role/queue rules.
+	var (
+		src []byte
+		err error
+	)
+	//FIXME: need to apply state filtering to keys requested
 	key := strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/")
-	if c.HasKey(key) == false {
-		log.Printf("%s, %s, unknown key", cName, r.URL.Path)
-		http.NotFound(w, r)
-		return
-	}
-	src, err := c.ReadJSON(key)
-	if err != nil {
-		log.Printf("Error reading key %q from %q, %s", key, cName, err)
-		http.Error(w, "Internal Server error", http.StatusInternalServerError)
-		return
+	if strings.Contains(key, ",") {
+		keys := strings.Split(key, ",")
+		objects := []map[string]interface{}{}
+		for _, key = range keys {
+			key = strings.TrimSpace(key)
+			if key != "" {
+				object := make(map[string]interface{})
+				if err = c.Read(strings.TrimSpace(key), object, false); err != nil {
+					log.Printf("Error reading key %q from %q, %s", key, c.Name, err)
+				} else {
+					objects = append(objects, object)
+				}
+			}
+		}
+		src, err = json.Marshal(objects)
+		if err != nil {
+			log.Printf("Error reading key %q from %q, %s", key, cName, err)
+			http.Error(w, "Internal Server error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		src, err = c.ReadJSON(key)
+		if err != nil {
+			log.Printf("Error reading key %q from %q, %s", key, cName, err)
+			http.Error(w, "Internal Server error", http.StatusInternalServerError)
+			return
+		}
 	}
 	writeJSON(w, r, src)
 }
@@ -183,7 +204,6 @@ func (s *AndOrService) requestPrune(cName string, c *dataset.Collection, w http.
 }
 
 func addAccessRoute(a *wsfn.Access, p string) {
-	log.Printf("DEBUG a -> %+v", a)
 	if a != nil {
 		if a.Routes == nil {
 			a.Routes = []string{}
@@ -195,11 +215,11 @@ func addAccessRoute(a *wsfn.Access, p string) {
 // assignHandlers generates the /keys, /create, /read, /delete
 // end points for accessing a collection in And/Or.
 func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection) {
-	cName := c.Name
+	cName := strings.TrimSuffix(c.Name, ".ds")
 	access := s.Access
 	//NOTE: We create a function handler based on on the
 	// current collection being processed.
-	log.Printf("Adding collection %q", cName)
+	log.Printf("Adding collection %q", c.Name)
 	base := "/" + path.Base(cName)
 	log.Printf("Adding access route %q", base)
 	if s.IsAccessRestricted() {
@@ -212,36 +232,38 @@ func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection)
 		s.requestKeys(cName, c, w, r)
 	})
 	// dataset object handling
-	p = base + "/create"
+	p = base + "/create/"
+	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestCreate(cName, c, w, r)
 	})
-	p = base + "/read"
+	p = base + "/read/"
+	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestRead(cName, c, w, r)
 	})
-	p = base + "/update"
+	p = base + "/update/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestUpdate(cName, c, w, r)
 	})
-	p = base + "/delete"
+	p = base + "/delete/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestDelete(cName, c, w, r)
 	})
 	// dataset attachment handling
-	p = base + "/attach"
+	p = base + "/attach/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestAttach(cName, c, w, r)
 	})
-	p = base + "/attachments"
+	p = base + "/attachments/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestAttachments(cName, c, w, r)
 	})
-	p = base + "/detach"
+	p = base + "/detach/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestDetach(cName, c, w, r)
 	})
-	p = base + "/prune"
+	p = base + "/prune/"
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestPrune(cName, c, w, r)
 	})

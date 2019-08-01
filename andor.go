@@ -290,17 +290,24 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 // of the service struct.
 func (s *AndOrService) Start() error {
 	var err error
+	if s == nil || s.Scheme == "" || s.Host == "" {
+		return fmt.Errorf("And/Or service not configured")
+	}
 	// Load an roles.toml
-	s.Roles, s.States, err = LoadRoles(s.RolesFile)
-	if err != nil {
-		log.Printf("Failed to load %q, %s", s.RolesFile, err)
-		return err
+	if s.RolesFile != "" {
+		s.Roles, s.States, err = LoadRoles(s.RolesFile)
+		if err != nil {
+			log.Printf("Failed to load %q, %s", s.RolesFile, err)
+			return err
+		}
 	}
 	// Load an users.toml
-	s.Users, err = LoadUsers(s.UsersFile)
-	if err != nil {
-		log.Printf("Failed to load %q, %s", s.UsersFile, err)
-		return err
+	if s.UsersFile != "" {
+		s.Users, err = LoadUsers(s.UsersFile)
+		if err != nil {
+			log.Printf("Failed to load %q, %s", s.UsersFile, err)
+			return err
+		}
 	}
 
 	// Load an access.toml
