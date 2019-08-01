@@ -30,7 +30,7 @@ func (s *AndOrService) IsAllowed(user *User, object map[string]interface{}, perm
 		// Get the state's associated role(s)
 		for _, roleName := range q.Roles {
 			// Check if user is in a role associated with state
-			if user.IsMemberOf(roleName) {
+			if user.HasRole(roleName) {
 				// Get role
 				if role, ok := s.Roles[roleName]; ok {
 					// Check role permission requested
@@ -61,7 +61,7 @@ func (s *AndOrService) CanAssign(user *User, object map[string]interface{}, targ
 		// Get the state's associated role(s)
 		for _, roleName := range q.Roles {
 			// Check if user is in a role associated with state
-			if user.IsMemberOf(roleName) {
+			if user.HasRole(roleName) {
 				// Check what role assignments are allowed.
 				if role, ok := s.Roles[roleName]; ok {
 					for _, stateName := range role.AssignTo {

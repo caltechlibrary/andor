@@ -17,8 +17,10 @@ import (
 
 	// Caltech Library Packages
 
-	// Toml package
-	"github.com/BurntSushi/toml"
+	// Toml package,
+	//"github.com/BurntSushi/toml"
+	// forked version to CaltechLibrary so we have json dropin interfaces.
+	"github.com/caltechlibrary/toml"
 )
 
 // Role holds a single role description.

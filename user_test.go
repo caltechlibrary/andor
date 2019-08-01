@@ -45,31 +45,33 @@ member_of = ["deposit"]
 }
 
 func TestUserBytes(t *testing.T) {
-	expected := []byte(`user_id = "jane.doe@example.edu"
+	expected := []byte(`
+user_id = "jane.doe@example.edu"
 display_name = "Jane Doe"
-member_of = ["deposit"]
+roles = ["deposit"]
 `)
 	u := new(User)
 	u.Key = "jane.doe@example.edu"
 	u.DisplayName = "Jane Doe"
-	u.MemberOf = []string{"deposit"}
+	u.Roles = []string{"deposit"}
 	got := u.Bytes()
-	if bytes.Compare(expected, got) != 0 {
-		t.Errorf("expected\n%s\n\ngot\n\n%s\n", expected, got)
+	if bytes.Compare(bytes.TrimSpace(expected), bytes.TrimSpace(got)) != 0 {
+		t.Errorf("expected\n---%s\n---\ngot\n---\n%s\n---", expected, got)
 	}
 }
 
 func TestUserString(t *testing.T) {
-	expected := `user_id = "jane.doe@example.edu"
+	expected := `
+user_id = "jane.doe@example.edu"
 display_name = "Jane Doe"
-member_of = ["deposit"]
+roles = ["deposit"]
 `
 	u := new(User)
 	u.Key = "jane.doe@example.edu"
 	u.DisplayName = "Jane Doe"
-	u.MemberOf = []string{"deposit"}
+	u.Roles = []string{"deposit"}
 	got := u.String()
-	if strings.Compare(expected, got) != 0 {
-		t.Errorf("expected\n%s\n\ngot\n\n%s\n", expected, got)
+	if strings.Compare(strings.TrimSpace(expected), strings.TrimSpace(got)) != 0 {
+		t.Errorf("expected\n---%s\n---\ngot\n---\n%s\n---", expected, got)
 	}
 }

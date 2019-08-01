@@ -17,8 +17,10 @@ import (
 	"path"
 	"strings"
 
-	// 3rd Party
-	"github.com/BurntSushi/toml"
+	// 3rd Party Toml package,
+	//"github.com/BurntSushi/toml"
+	// forked version to CaltechLibrary so we have json dropin interfaces.
+	"github.com/caltechlibrary/toml"
 
 	// Caltech Library
 	"github.com/caltechlibrary/dataset"
@@ -94,26 +96,38 @@ func GenerateAndOr(fName string, collections []string) error {
 	if len(collections) > 0 {
 		s.CollectionNames = collections
 	}
-	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(s); err != nil {
-		return err
-	}
+
 	//  Now write out our default config.
 	var (
 		src []byte
 		err error
 	)
 
-	src = []byte(fmt.Sprintf(`#
+	// Handle the simple case of generating a JSON version.
+	if strings.HasSuffix(fName, ".json") {
+		if src, err = json.MarshalIndent(s, "", "    "); err != nil {
+			return err
+		}
+		return ioutil.WriteFile(fName, src, 0666)
+	}
+
+	// Handle the case of create a TOML file with comments
+	// explaining configuration.
+	buf, err := toml.Marshal(s)
+	if err != nil {
+		return err
+	}
+	src = append([]byte(fmt.Sprintf(`#
 # Example %q 
 #
 # Lines starting with "#" are comments.
 # This file configuration the AndOr web service.
 #
-%s
 
 #
-# You should uncomment these after editing them appropriately
+# These are examples of setting various key/values
+# used to configure And/Or.
+# You should edit or uncomment these appropriately.
 #
 
 # htdocs holds your web document root, e.g. /var/www/htdocs
@@ -137,17 +151,13 @@ func GenerateAndOr(fName string, collections []string) error {
 #protocol = "https"
 #cert_pem = "/etc/ssl/certs/cert.pem"
 #key_pem = "/etc/ssl/certs/key.pem"
-`, fName, buf.String()))
-	switch {
-	case strings.HasSuffix(fName, ".json"):
-		o := new(AndOrService)
-		if _, err = toml.Decode(string(src), &o); err != nil {
-			return err
-		}
-		if src, err = json.MarshalIndent(o, "", "    "); err != nil {
-			return err
-		}
-	}
+#
+
+#
+# Example configuration without workflows_file, users_file,
+# and access_file being set being.
+#
+`, fName)), buf...)
 	return ioutil.WriteFile(fName, src, 0666)
 }
 
@@ -217,6 +227,36 @@ func LoadAndOr(fName string) (*AndOrService, error) {
 	return service, nil
 }
 
+// DumpAndOr takes a filename and writes out the configuration
+// of an AndOrService to disc returns an error.
+func (s *AndOrService) DumpAndOr(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil {
+		return fmt.Errorf("service not configured")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".toml"):
+		buf := new(bytes.Buffer)
+		encoder := toml.NewEncoder(buf)
+		err = encoder.Encode(s)
+		if err != nil {
+			return err
+		}
+		src = buf.Bytes()
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.MarshalIndent(s, "", "    ")
+	default:
+		return fmt.Errorf("Unknown format, %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
+}
+
 // LoadWorksAndUsers envokes LoadRoles() and LoadUsers() for
 // a service instance. This is separate from LoadAndOr() because you
 // may want to support HUP to reload roles and users as well as
@@ -234,10 +274,10 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 		return fmt.Errorf("%q, %s", s.UsersFile, err)
 	}
 
-	// Finally check to make sure all the users MemberOf fields
+	// Finally check to make sure all the users Roles fields
 	// are accounted for.
 	for _, user := range s.Users {
-		for _, role := range user.MemberOf {
+		for _, role := range user.Roles {
 			if _, ok := s.Roles[role]; ok == false {
 				return fmt.Errorf("%s not defined, referenced by %s", role, user.Key)
 			}
@@ -312,4 +352,50 @@ func (s *AndOrService) Start() error {
 	// See https://golang.org/pkg/os/signal/
 	// See https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	return nil
+}
+
+// DumpRoles writes a map of roles to filename
+func (s *AndOrService) DumpRoles(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil || s.Roles == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.Marshal(s.Roles)
+	case strings.HasSuffix(fName, ".toml"):
+		src, err = toml.Marshal(s.Roles)
+	default:
+		return fmt.Errorf("format not support for %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
+}
+
+// DumpUsers writes a map of users to filename
+func (s *AndOrService) DumpUsers(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil || s.Users == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.Marshal(s.Users)
+	case strings.HasSuffix(fName, ".toml"):
+		src, err = toml.Marshal(s.Users)
+	default:
+		return fmt.Errorf("format not support for %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
 }

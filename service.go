@@ -48,7 +48,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 	if u, ok := s.Users[username]; ok == true {
 		roleMap := make(map[string]*Role)
 		// Is user member of role?
-		for _, key := range u.MemberOf {
+		for _, key := range u.Roles {
 			if role, ok := s.Roles[key]; ok == true {
 				roleMap[key] = role
 			}

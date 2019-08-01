@@ -55,7 +55,7 @@ var (
 	writer = &User{
 		Key:         "writer",
 		DisplayName: "Writer One",
-		MemberOf: []string{
+		Roles: []string{
 			"draft",
 		},
 	}
@@ -63,7 +63,7 @@ var (
 	reviewer = &User{
 		Key:         "reviewer",
 		DisplayName: "Reviewer Two",
-		MemberOf: []string{
+		Roles: []string{
 			"review",
 			"published",
 		},

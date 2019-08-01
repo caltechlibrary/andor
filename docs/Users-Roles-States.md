@@ -233,23 +233,42 @@ Let's create user objects for Innez, Jane, Millie and Bea.
     {
         "user_id": "jane",
         "display_name": "Jane",
-        "roles": [ "curator" ]
+        "roles": [ "depositor", "curator" ]
     }
 ```
+
+Since all authenticated users can deposit, we add
+deposit for Millie, we also add public for Millie
+so she can read the things she has reviewed and 
+assigned to published state.
 
 ```json
     {
         "user_id": "millie",
         "display_name": "Millie",
-        "roles": [ "reviewer" ]
+        "roles": [ "depositor", "reviewer", "public" ]
     }
 ```
+
+Bea can deposit items but she'll want to be able
+to read the public site too. We add "public" for her.
 
 ```json
     {
         "user_id": "bea",
         "display_name": "Bea",
-        "roles": [ "depositor" ]
+        "roles": [ "depositor", "public" ]
+    }
+```
+
+Anonymous is an unauthenticated user, we only want Anonymous
+to browser public content.
+
+```json
+    {
+        "user_id": "anonymous",
+        "display_name": "Ananymous",
+        "roles": [ "public" ]
     }
 ```
 

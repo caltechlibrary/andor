@@ -51,6 +51,7 @@ func TestGenerateAndOr(t *testing.T) {
 	fp.Write([]byte(`
 		users_file = "testout/users.toml"
 		roles_file = "testout/roles.toml"
+		access_file = "testout/access.toml"
 		`))
 	fp.Close()
 
