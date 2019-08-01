@@ -17,6 +17,7 @@ import (
 
 	// Caltech Library Packages
 	"github.com/caltechlibrary/dataset"
+	"github.com/caltechlibrary/wsfn"
 )
 
 // TestRunService creates an *AndOrService and runs both
@@ -219,14 +220,19 @@ func TestRunService(t *testing.T) {
 	}
 
 	// Create our test access.toml
-	t.Errorf("FIXME: create test access.toml")
+	service.Access = new(wsfn.Access)
+	for _, user := range service.Users {
+		// Create our access accounts with common password for testing.
+		service.Access.UpdateAccess(user.Key, "Hello.1")
+	}
+	if err = service.DumpAccess(service.AccessFile); err != nil {
+		t.Errorf("could not create %q, %s", path.Base(service.AccessFile), err)
+		t.FailNow()
+	}
 
 	// start service
 	t.Errorf("FIXME: need to start service in a Go routine")
 
 	// start client and run tests
 	t.Errorf("FIXME: need to start client and run tests")
-
-	// cleanup stop service and clean
-	t.Errorf("FIXME: need to stop service and cleanup after tests")
 }

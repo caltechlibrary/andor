@@ -399,3 +399,11 @@ func (s *AndOrService) DumpUsers(fName string) error {
 	}
 	return ioutil.WriteFile(fName, src, 0666)
 }
+
+// DumpAccess if *Access is not nil, dump to a file.
+func (s *AndOrService) DumpAccess(fName string) error {
+	if s == nil || s.Access == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	return s.Access.DumpAccess(fName)
+}
