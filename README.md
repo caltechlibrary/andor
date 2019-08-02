@@ -1,6 +1,6 @@
-{
-    "markup": "mmark"
-}
++++
+markup = "mmark"
++++
 
 
 # And/Or
