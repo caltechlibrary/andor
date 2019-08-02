@@ -26,18 +26,18 @@
 
 <ol>
 <li>Permissions associated with the role</li>
-<li>The queue(s) subject to the role&rsquo;s permissions</li>
-<li>The queues which a role can assign objects into (e.g. workflow)</li>
+<li>The state(s) subject to the role&rsquo;s permissions</li>
+<li>The states which a role can assign objects into (e.g. workflow)</li>
 </ol>
 
-<p>Permissions are create, read, update, delete (CRUD). A &ldquo;queue&rdquo;
-is one or more objects with a <code>._Queue</code> value with the same name.
-E.g. A &ldquo;published&rdquo; queue would be objects containing
-<code>._Queue</code> value equal to &ldquo;published&rdquo;.</p>
+<p>Permissions are create, read, update, delete (CRUD). A &ldquo;state&rdquo;
+is one or more objects with a <code>._State</code> value with the same name.
+E.g. A &ldquo;published&rdquo; state would be objects containing
+<code>._State</code> value equal to &ldquo;published&rdquo;.</p>
 
-<p>Both queues and assign to queues can be listed explicitly
+<p>Both states and assign to states can be listed explicitly
 or the <code>&quot;*&quot;</code> value can be used. The latter means all objects
-regardless of the <code>._Queue</code> value.</p>
+regardless of the <code>._State</code> value.</p>
 
 <pre><code class="language-toml">    #
     # Example &quot;roles.toml&quot;. Lines starting with &quot;#&quot; are comments.
@@ -45,18 +45,18 @@ regardless of the <code>._Queue</code> value.</p>
     #
     [admin]
     role_name = &quot;Administrator&quot;
-    queues = [ &quot;*&quot; ]
+    states = [ &quot;*&quot; ]
     create = true
     read = true
     update = true
     delete = true
     assign_to = [ &quot;*&quot; ]
     
-    # A depository can create an object in the review queue and
+    # A depository can create an object in the review state and
     # nothing else. E.g. a one time blind deposit.
     [depositor]
     role_name = &quot;Depositor&quot;
-    queues = [ &quot;review&quot; ]
+    states = [ &quot;review&quot; ]
     create = true
     read = false
     update = false
@@ -67,7 +67,7 @@ regardless of the <code>._Queue</code> value.</p>
     # In &quot;published&quot; and in embargoed.
     [reviewer]
     role_name = &quot;Reviewer&quot;
-    queues = [ &quot;review&quot; ]
+    states = [ &quot;review&quot; ]
     create = false
     read = true
     update = true

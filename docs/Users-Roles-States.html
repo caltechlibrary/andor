@@ -251,21 +251,39 @@ d. Assign Bea the role of &ldquo;depositor&rdquo;</li>
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;jane&quot;,
         &quot;display_name&quot;: &quot;Jane&quot;,
-        &quot;roles&quot;: [ &quot;curator&quot; ]
+        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;curator&quot; ]
     }
 </code></pre>
+
+<p>Since all authenticated users can deposit, we add
+deposit for Millie, we also add public for Millie
+so she can read the things she has reviewed and
+assigned to published state.</p>
 
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;millie&quot;,
         &quot;display_name&quot;: &quot;Millie&quot;,
-        &quot;roles&quot;: [ &quot;reviewer&quot; ]
+        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;reviewer&quot;, &quot;public&quot; ]
     }
 </code></pre>
+
+<p>Bea can deposit items but she&rsquo;ll want to be able
+to read the public site too. We add &ldquo;public&rdquo; for her.</p>
 
 <pre><code class="language-json">    {
         &quot;user_id&quot;: &quot;bea&quot;,
         &quot;display_name&quot;: &quot;Bea&quot;,
-        &quot;roles&quot;: [ &quot;depositor&quot; ]
+        &quot;roles&quot;: [ &quot;depositor&quot;, &quot;public&quot; ]
+    }
+</code></pre>
+
+<p>Anonymous is an unauthenticated user, we only want Anonymous
+to browser public content.</p>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;anonymous&quot;,
+        &quot;display_name&quot;: &quot;Ananymous&quot;,
+        &quot;roles&quot;: [ &quot;public&quot; ]
     }
 </code></pre>
 

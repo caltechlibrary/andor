@@ -14,7 +14,7 @@ import (
 )
 
 func TestAddRole(t *testing.T) {
-	q := new(Queue)
+	q := new(State)
 	if len(q.Roles) != 0 {
 		t.Errorf("Should have an empty q.Roles -> %+v", q)
 	}

@@ -9,7 +9,6 @@
 package andor
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -18,27 +17,27 @@ import (
 	"strings"
 
 	// Toml package
-	"github.com/BurntSushi/toml"
+	//"github.com/BurntSushi/toml"
+	// forked version to CaltechLibrary so we have json dropin interfaces.
+	"github.com/caltechlibrary/toml"
 )
 
 // User holds the minimal user information for AndOr.
 // It DOESN'T hold any secret information, e.g. passwords.
 type User struct {
-	// Key holds the user id associated with a user.
-	// This is how we map into available workflows with
-	// MemberOf
+	// Key holds the user id associated with a user
 	Key string `json:"user_id" toml:"user_id"`
 	// DisplayName holds the display name when a user is authenticated.
 	DisplayName string `json:"display_name" toml:"display_name"`
-	// MemberOf holds a list of workflow names the user is a member of.
-	MemberOf []string `json:"member_of" toml:"member_of"`
+	// Role holds a list of role names the user is a member of.
+	Roles []string `json:"roles" toml:"roles"`
 }
 
-// IsMemberOf takes a workflow name and returns true if it
+// HasRole takes a role name and returns true if it
 // is in the list, false otherwise.
-func (u *User) IsMemberOf(workflowName string) bool {
-	for _, name := range u.MemberOf {
-		if strings.Compare(name, workflowName) == 0 {
+func (u *User) HasRole(roleName string) bool {
+	for _, name := range u.Roles {
+		if strings.Compare(name, roleName) == 0 {
 			return true
 		}
 	}
@@ -86,26 +85,27 @@ func LoadUsers(fName string) (map[string]*User, error) {
 		return nil, fmt.Errorf("user must be either a .json or .toml file")
 	}
 	for key, user := range users {
-		user.Key = key
+		if user.Key == "" {
+			user.Key = key
+		}
 	}
-
 	return users, nil
 }
 
 // Bytes() outputs a user to []bytes in file..
 func (u *User) Bytes() []byte {
-	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(u); err != nil {
+	if src, err := toml.MarshalIndent(u, "", "    "); err != nil {
 		return []byte("")
+	} else {
+		return src
 	}
-	return buf.Bytes()
 }
 
 // String() outputs a user to a string file..
 func (user *User) String() string {
-	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(user); err != nil {
+	if src, err := toml.MarshalIndent(user, "", "    "); err != nil {
 		return ""
+	} else {
+		return string(src)
 	}
-	return buf.String()
 }

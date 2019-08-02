@@ -20,21 +20,28 @@ import (
 // TestLoadRoles ...
 func TestLoadRoles(t *testing.T) {
 	roleFile := path.Join("testdata", "roles.toml")
-	w, q, err := LoadRoles(roleFile)
+	roles, states, err := LoadRoles(roleFile)
 	if err != nil {
 		t.Errorf("Failed to load %q, %s", roleFile, err)
+		t.FailNow()
 	}
-	if len(w) != 3 {
-		t.Errorf("expected 3 roles, got %d", len(w))
+	if roles == nil || len(roles) != 3 {
+		t.Errorf("expected 3 roles, got %d", len(roles))
+		t.FailNow()
 	}
-	if len(q) != 3 {
-		t.Errorf("expected 3 queues, got %d", len(q))
+	if states == nil || len(states) != 3 {
+		t.Errorf("expected 3 states, got %d", len(states))
+		t.FailNow()
 	}
-	for _, wName := range []string{"draft", "review", "published"} {
-		if role, ok := w[wName]; ok == false {
-			t.Errorf("expected %q, not found -> %+v", wName, w)
-			if strings.Compare(role.Queue, wName) != 0 {
-				t.Errorf("expected %q, got %q for Queue", wName, role.Queue)
+	// Check for roles, then check states
+	//states := []string{"draft", "review", "published"}
+	for _, roleName := range []string{"writer", "editor", "public"} {
+		if role, ok := roles[roleName]; ok == false || role == nil {
+			t.Errorf("expected %q, not found in %q", roleName, roleFile)
+		} else {
+			if role.States == nil || len(role.States) == 0 {
+				t.Errorf("expected at least one state in state, %s %s", roleName, roleFile)
+				t.FailNow()
 			}
 		}
 	}
@@ -53,14 +60,19 @@ func TestBytes(t *testing.T) {
 		t.Errorf("expected to load %q, got %s", roleFile, err)
 	}
 	src := []byte{}
-	for _, k := range []string{"draft", "review", "published"} {
-		v, _ := w[k]
-		src = append(src, []byte(fmt.Sprintf("[%s]\n", k))...)
-		src = append(src, v.Bytes()...)
-		src = append(src, []byte("\n")...)
+	for _, k := range []string{"writer", "reviewer", "public"} {
+		v, ok := w[k]
+		if ok {
+			src = append(src, []byte(fmt.Sprintf("[%s]\n", k))...)
+			src = append(src, v.Bytes()...)
+			src = append(src, []byte("\n")...)
+		} else {
+			t.Errorf("Missing %s in test data, test is in error for %s", k, roleFile)
+			t.FailNow()
+		}
 	}
 	if len(src) == 0 {
-		t.Errorf("expected a []byte with data for %+v", w)
+		t.Errorf("expected a []byte with data for file %s", roleFile)
 	}
 	if bytes.Compare(roleSrc, src) != 0 {
 		t.Errorf("expected sources to match, got\n%s\n", src)
@@ -80,7 +92,7 @@ func TestString(t *testing.T) {
 		t.Errorf("expected to load %q, got %s", roleFile, err)
 	}
 	s := []string{}
-	for _, k := range []string{"draft", "review", "published"} {
+	for _, k := range []string{"writer", "reviewer", "public"} {
 		v, _ := w[k]
 		s = append(s, fmt.Sprintf("[%s]\n", k))
 		s = append(s, v.String())
@@ -91,6 +103,6 @@ func TestString(t *testing.T) {
 		t.Errorf("expected a string with data for %+v", w)
 	}
 	if strings.Compare(string(roleSrc), src) != 0 {
-		t.Errorf("expected sources to match, got\n%s\n", src)
+		t.Errorf("expected sources to match, got\n%s\n------\n%s", src, roleSrc)
 	}
 }

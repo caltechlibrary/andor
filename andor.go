@@ -17,8 +17,10 @@ import (
 	"path"
 	"strings"
 
-	// 3rd Party
-	"github.com/BurntSushi/toml"
+	// 3rd Party Toml package,
+	//"github.com/BurntSushi/toml"
+	// forked version to CaltechLibrary so we have json dropin interfaces.
+	"github.com/caltechlibrary/toml"
 
 	// Caltech Library
 	"github.com/caltechlibrary/dataset"
@@ -36,9 +38,9 @@ type AndOrService struct {
 	// KeyPEM if running under TLS this is the key file
 	KeyPEM string `json:"key_pem": toml:"key_pem"`
 	// RolesFile
-	RolesFile string `json:"roles_file" toml:"roles_file"`
+	RolesFile string `json:"roles_file,omitempty" toml:"roles_file,omitempty"`
 	// UsersFile
-	UsersFile string `json:"users_file" toml:"users_file"`
+	UsersFile string `json:"users_file,omitempty" toml:"users_file,omitempty"`
 	// Scheme is usually either "https" or "http"
 	Scheme string `json:"scheme" toml:"scheme"`
 	// Port is the port to listen on, usually 8246
@@ -60,8 +62,8 @@ type AndOrService struct {
 	Users map[string]*User
 	// Roles holds the role map for the service
 	Roles map[string]*Role
-	// Queues holds teh queue map for the service
-	Queues map[string]*Queue
+	// States holds teh state map for the service
+	States map[string]*State
 	// Collections holds a map of collection name to dataset collection pointer
 	Collections map[string]*dataset.Collection
 
@@ -94,26 +96,38 @@ func GenerateAndOr(fName string, collections []string) error {
 	if len(collections) > 0 {
 		s.CollectionNames = collections
 	}
-	buf := new(bytes.Buffer)
-	if err := toml.NewEncoder(buf).Encode(s); err != nil {
-		return err
-	}
+
 	//  Now write out our default config.
 	var (
 		src []byte
 		err error
 	)
 
-	src = []byte(fmt.Sprintf(`#
+	// Handle the simple case of generating a JSON version.
+	if strings.HasSuffix(fName, ".json") {
+		if src, err = json.MarshalIndent(s, "", "    "); err != nil {
+			return err
+		}
+		return ioutil.WriteFile(fName, src, 0666)
+	}
+
+	// Handle the case of create a TOML file with comments
+	// explaining configuration.
+	buf, err := toml.Marshal(s)
+	if err != nil {
+		return err
+	}
+	src = append([]byte(fmt.Sprintf(`#
 # Example %q 
 #
 # Lines starting with "#" are comments.
 # This file configuration the AndOr web service.
 #
-%s
 
 #
-# You should uncomment these after editing them appropriately
+# These are examples of setting various key/values
+# used to configure And/Or.
+# You should edit or uncomment these appropriately.
 #
 
 # htdocs holds your web document root, e.g. /var/www/htdocs
@@ -122,7 +136,7 @@ func GenerateAndOr(fName string, collections []string) error {
 # collections holds a list of dataset collections
 #collections = ["repository.ds"]
 
-# roles holds the roles and queue definitions for this And/Or
+# roles holds the roles and state definitions for this And/Or
 #roles = "roles.toml"
 
 # users holds user role assignments
@@ -137,17 +151,13 @@ func GenerateAndOr(fName string, collections []string) error {
 #protocol = "https"
 #cert_pem = "/etc/ssl/certs/cert.pem"
 #key_pem = "/etc/ssl/certs/key.pem"
-`, fName, buf.String()))
-	switch {
-	case strings.HasSuffix(fName, ".json"):
-		o := new(AndOrService)
-		if _, err = toml.Decode(string(src), &o); err != nil {
-			return err
-		}
-		if src, err = json.MarshalIndent(o, "", "    "); err != nil {
-			return err
-		}
-	}
+#
+
+#
+# Example configuration without workflows_file, users_file,
+# and access_file being set being.
+#
+`, fName)), buf...)
 	return ioutil.WriteFile(fName, src, 0666)
 }
 
@@ -217,6 +227,36 @@ func LoadAndOr(fName string) (*AndOrService, error) {
 	return service, nil
 }
 
+// DumpAndOr takes a filename and writes out the configuration
+// of an AndOrService to disc returns an error.
+func (s *AndOrService) DumpAndOr(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil {
+		return fmt.Errorf("service not configured")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".toml"):
+		buf := new(bytes.Buffer)
+		encoder := toml.NewEncoder(buf)
+		err = encoder.Encode(s)
+		if err != nil {
+			return err
+		}
+		src = buf.Bytes()
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.MarshalIndent(s, "", "    ")
+	default:
+		return fmt.Errorf("Unknown format, %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
+}
+
 // LoadWorksAndUsers envokes LoadRoles() and LoadUsers() for
 // a service instance. This is separate from LoadAndOr() because you
 // may want to support HUP to reload roles and users as well as
@@ -225,7 +265,7 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 	var (
 		err error
 	)
-	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
+	s.Roles, s.States, err = LoadRoles(s.RolesFile)
 	if err != nil {
 		return fmt.Errorf("%q, %s", s.RolesFile, err)
 	}
@@ -234,10 +274,10 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 		return fmt.Errorf("%q, %s", s.UsersFile, err)
 	}
 
-	// Finally check to make sure all the users MemberOf fields
+	// Finally check to make sure all the users Roles fields
 	// are accounted for.
 	for _, user := range s.Users {
-		for _, role := range user.MemberOf {
+		for _, role := range user.Roles {
 			if _, ok := s.Roles[role]; ok == false {
 				return fmt.Errorf("%s not defined, referenced by %s", role, user.Key)
 			}
@@ -250,17 +290,24 @@ func (s *AndOrService) LoadWorkersAndUsers() error {
 // of the service struct.
 func (s *AndOrService) Start() error {
 	var err error
+	if s == nil || s.Scheme == "" || s.Host == "" {
+		return fmt.Errorf("And/Or service not configured")
+	}
 	// Load an roles.toml
-	s.Roles, s.Queues, err = LoadRoles(s.RolesFile)
-	if err != nil {
-		log.Printf("Failed to load %q, %s", s.RolesFile, err)
-		return err
+	if s.RolesFile != "" {
+		s.Roles, s.States, err = LoadRoles(s.RolesFile)
+		if err != nil {
+			log.Printf("Failed to load %q, %s", s.RolesFile, err)
+			return err
+		}
 	}
 	// Load an users.toml
-	s.Users, err = LoadUsers(s.UsersFile)
-	if err != nil {
-		log.Printf("Failed to load %q, %s", s.UsersFile, err)
-		return err
+	if s.UsersFile != "" {
+		s.Users, err = LoadUsers(s.UsersFile)
+		if err != nil {
+			log.Printf("Failed to load %q, %s", s.UsersFile, err)
+			return err
+		}
 	}
 
 	// Load an access.toml
@@ -278,8 +325,8 @@ func (s *AndOrService) Start() error {
 	if len(s.Roles) == 0 {
 		return fmt.Errorf("No roles defined, no one can access service")
 	}
-	if len(s.Queues) == 0 {
-		return fmt.Errorf("No object queues defined, nothing to access")
+	if len(s.States) == 0 {
+		return fmt.Errorf("No object states defined, nothing to access")
 	}
 	if len(s.CollectionNames) == 0 {
 		return fmt.Errorf("No collections defined, nothing to access")
@@ -312,4 +359,58 @@ func (s *AndOrService) Start() error {
 	// See https://golang.org/pkg/os/signal/
 	// See https://gist.github.com/reiki4040/be3705f307d3cd136e85
 	return nil
+}
+
+// DumpRoles writes a map of roles to filename
+func (s *AndOrService) DumpRoles(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil || s.Roles == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.Marshal(s.Roles)
+	case strings.HasSuffix(fName, ".toml"):
+		src, err = toml.Marshal(s.Roles)
+	default:
+		return fmt.Errorf("format not support for %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
+}
+
+// DumpUsers writes a map of users to filename
+func (s *AndOrService) DumpUsers(fName string) error {
+	var (
+		src []byte
+		err error
+	)
+	if s == nil || s.Users == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	switch {
+	case strings.HasSuffix(fName, ".json"):
+		src, err = json.Marshal(s.Users)
+	case strings.HasSuffix(fName, ".toml"):
+		src, err = toml.Marshal(s.Users)
+	default:
+		return fmt.Errorf("format not support for %q", path.Base(fName))
+	}
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(fName, src, 0666)
+}
+
+// DumpAccess if *Access is not nil, dump to a file.
+func (s *AndOrService) DumpAccess(fName string) error {
+	if s == nil || s.Access == nil {
+		return fmt.Errorf("Nothing to dump")
+	}
+	return s.Access.DumpAccess(fName)
 }

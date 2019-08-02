@@ -1,30 +1,29 @@
-[draft]
-role_id = "draft"
-role_name = "Draft"
-queue = "draft"
+[writer]
+role_id = "writer"
+role_name = "Writer"
+states = ["draft"]
 create = true
-read = false
-update = false
-delete = false
+read = true
+update = true
+delete = true
 assign_to = ["review"]
 
-[review]
-role_id = "review"
-role_name = "Review"
-queue = "review"
+[reviewer]
+role_id = "reviewer"
+role_name = "Reviewer"
+states = ["review"]
 create = false
 read = true
 update = false
 delete = true
 assign_to = ["draft", "published"]
 
-[published]
-role_id = "published"
-role_name = "Published"
-queue = "published"
+[public]
+role_id = "public"
+role_name = "Public"
+states = ["published"]
 create = false
 read = true
 update = false
 delete = false
-assign_to = []
 

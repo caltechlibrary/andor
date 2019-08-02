@@ -18,11 +18,11 @@ import (
 
 // Test data for roles
 var (
-	// Three basic roles for queues draft, review and published
+	// Three basic roles for states draft, review and published
 	draftRole = &Role{
 		Key:    "draft",
 		Name:   "Draft",
-		Queue:  "draft",
+		States: []string{"draft"},
 		Create: true,
 		Read:   true,
 		Update: true,
@@ -35,7 +35,7 @@ var (
 	reviewRole = &Role{
 		Key:    "review",
 		Name:   "Review",
-		Queue:  "review",
+		States: []string{"review"},
 		Read:   true,
 		Update: true,
 		AssignTo: []string{
@@ -47,7 +47,7 @@ var (
 	publishedRole = &Role{
 		Key:      "published",
 		Name:     "Published",
-		Queue:    "published",
+		States:   []string{"published"},
 		Read:     true,
 		AssignTo: []string{},
 	}
@@ -55,7 +55,7 @@ var (
 	writer = &User{
 		Key:         "writer",
 		DisplayName: "Writer One",
-		MemberOf: []string{
+		Roles: []string{
 			"draft",
 		},
 	}
@@ -63,7 +63,7 @@ var (
 	reviewer = &User{
 		Key:         "reviewer",
 		DisplayName: "Reviewer Two",
-		MemberOf: []string{
+		Roles: []string{
 			"review",
 			"published",
 		},
@@ -71,17 +71,17 @@ var (
 
 	draftObject = map[string]interface{}{
 		"_Key":   "1",
-		"_Queue": "draft",
+		"_State": "draft",
 	}
 
 	reviewObject = map[string]interface{}{
 		"_Key":   "2",
-		"_Queue": "review",
+		"_State": "review",
 	}
 
 	publishedObject = map[string]interface{}{
 		"_Key":   "3",
-		"_Queue": "published",
+		"_State": "published",
 	}
 )
 
@@ -121,7 +121,7 @@ func TestIsAllowed(t *testing.T) {
 		"review":    reviewRole,
 		"published": publishedRole,
 	}
-	s.Queues = makeQueues(s.Roles)
+	s.States = makeStates(s.Roles)
 	s.Users = map[string]*User{
 		"writer":   writer,
 		"reviewer": reviewer,
@@ -155,7 +155,7 @@ func TestIsAllowed(t *testing.T) {
 	}
 }
 
-// TestCanAssign tests a user, role, queue name and object
+// TestCanAssign tests a user, role, state name and object
 // is assignable.
 func TestCanAssign(t *testing.T) {
 	cName := path.Join("testout", "is_allowed.ds")
@@ -191,7 +191,7 @@ func TestCanAssign(t *testing.T) {
 		"review":    reviewRole,
 		"published": publishedRole,
 	}
-	s.Queues = makeQueues(s.Roles)
+	s.States = makeStates(s.Roles)
 	s.Users = map[string]*User{
 		"writer":   writer,
 		"reviewer": reviewer,

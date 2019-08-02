@@ -40,6 +40,22 @@ func TestGenerateAndOr(t *testing.T) {
 		t.Errorf("Expected success, got %s", err)
 		t.FailNow()
 	}
+	//NOTE: At this stage reading the file back in should fail as
+	// roles and users hasn't been uncommented. We need to append them.
+	fp, err := os.OpenFile(andorFile, os.O_RDWR|os.O_APPEND, 0660)
+	if err != nil {
+		t.Errorf("need to append roles_files and users_file to test output")
+		t.Errorf("got %s", err)
+		t.FailNow()
+	}
+	fp.Write([]byte(`
+		users_file = "testout/users.toml"
+		roles_file = "testout/roles.toml"
+		access_file = "testout/access.toml"
+		`))
+	fp.Close()
+
+	// Now we can test reading back our generated file.
 	src, err := ioutil.ReadFile(andorFile)
 	if err != nil {
 		t.Errorf("Can't read back %q, %s", andorFile, err)
@@ -51,6 +67,7 @@ func TestGenerateAndOr(t *testing.T) {
 	s, err := LoadAndOr(andorFile)
 	if err != nil {
 		t.Errorf("problem loading %q, %s", andorFile, err)
+		t.FailNow()
 	}
 	if len(s.CollectionNames) != 1 {
 		t.Errorf("expected one collection name got %d", len(s.CollectionNames))

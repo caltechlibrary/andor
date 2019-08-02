@@ -7,11 +7,10 @@ markup = "mmark"
 | Week No. | Proposed start date | Activity |
 |:--------- |:-------- | :-------- |
 | 1 | 2019-07-22 | Model users and roles |
-| 1 - 2 | 2019-07-22 | Write **AndOr** web service and testing |
-| 2 - 3 | 2019-07-29 | Implement Basic UI in HTML and JavaScript plus more testing |
-| 3 | 2019-08-05 | Lunr integration and NginX configuration for Authentication |
+| 2 | 2019-07-29 | Write **AndOr** web service and testing |
+| 3 | 2019-08-05 | Implement Basic UI in HTML and JavaScript plus more testing |
 | 4 | 2019-08-12 | Implement demo UIs for demo collections |
-| 5 | 2019-08-19 | Ready to demo of **AndOr** |
+| 5 | 2019-08-19 | Ready to demo **AndOr** |
 Table: Proposed schedule assumes full time effort, dates subject to change
 
 ## People and Groups as Proof of concept
