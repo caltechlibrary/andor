@@ -40,7 +40,7 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 	// Who am I?
 	username := s.getUsername(r)
 	// What roles do I have?
-	if roles, ok := getUserRoles(username); ok == true {
+	if roles, ok := s.getUserRoles(username); ok == true {
 		src, err := json.MarshalIndent(roles, "", "    ")
 		if err != nil {
 			log.Printf("Failed to marshal %q, %s", username, err)
@@ -75,15 +75,16 @@ func (s *AndOrService) requestKeys(cName string, c *dataset.Collection, w http.R
 // requestCreate is the API version of
 //	`dataset create COLLECTION_NAME OBJECT_ID OBJECT_JSON`
 func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	username, err := s.Access.GetUsername(r)
-	if err != nil {
-		//FIXME: handler unknown user error ...
-		username = "anonymous"
-	}
-	log.Printf("DEBUG username: %q\n", username)
-	//FIXME: Need to apply users/roles/states rules.
-	//FIXME: Need to make sure this part of the service is behind
-	// muxtex.
+	/*
+		username, err := s.Access.GetUsername(r)
+		if err != nil {
+			//FIXME: handler unknown user error ...
+			username = "anonymous"
+		}
+		//FIXME: Need to apply users/roles/states rules.
+		//FIXME: Need to make sure this part of the service is behind
+		// muxtex.
+	*/
 	log.Printf("s.requestCreate(%q, ...) not implemented", cName)
 	http.Error(w, "Internal Server error", http.StatusInternalServerError)
 }
@@ -95,12 +96,24 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 		src []byte
 		err error
 	)
+	username := s.getUsername(r)
+	if username == "" {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	roles, ok := s.getUserRoles(username)
+	if ok == false {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	//FIXME: need to apply state filtering to keys requested
 	key := strings.TrimSpace(strings.TrimPrefix(r.URL.Path, "/"+cName+"/read/"))
 	if key == "" {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 		return
 	}
+	unauthorized := false
 	if strings.Contains(key, ",") {
 		keys := strings.Split(key, ",")
 		objects := []map[string]interface{}{}
@@ -108,15 +121,25 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 			key = strings.TrimSpace(key)
 			if key != "" {
 				object := make(map[string]interface{})
-				if err = c.Read(strings.TrimSpace(key), object, true); err != nil {
+				if err = c.Read(strings.TrimSpace(key), object, false); err != nil {
 					//FIXME: what do we do if one of a list of keys not found?
 					log.Printf("Error reading key %q from %q, %s", key, c.Name, err)
 				} else {
-					objects = append(objects, object)
+					state := getState(object)
+					if s.isAllowed(roles, state, READ) {
+						objects = append(objects, object)
+					} else {
+						unauthorized = true
+						log.Printf("%q not allowed to read %q from %q", username, key, c.Name)
+					}
 				}
 			}
 		}
 		if len(objects) == 0 {
+			if unauthorized {
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
 			http.Error(w, "Not found", http.StatusNotFound)
 			return
 		}
@@ -127,7 +150,8 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 			return
 		}
 	} else {
-		src, err = c.ReadJSON(key)
+		object := make(map[string]interface{})
+		err := c.Read(key, object, false)
 		if err != nil {
 			if c.IsKeyNotFound(err) {
 				log.Printf("Error reading key %q from %q, %s", key, cName, err)
@@ -136,6 +160,11 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 			}
 			log.Printf("Error reading key %q from %q, %s", key, cName, err)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
+			return
+		}
+		state := getState(object)
+		if s.isAllowed(roles, state, READ) == false {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 	}

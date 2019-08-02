@@ -9,10 +9,12 @@
 package andor
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"path"
+	"strings"
 	"testing"
 
 	// Caltech Library Packages
@@ -21,23 +23,87 @@ import (
 )
 
 var (
-	service *AndOrService
+	runWebService bool
+	service       *AndOrService
 )
 
 // TestRunService creates an *AndOrService and runs both
 // it and an http client to test functionality.
 func TestRunService(t *testing.T) {
-	// start service
-	log.Println("Starting service for testing")
-	if err := service.Start(); err != nil {
-		log.Fatalf("service.Start() failed, %s", err)
+	username := "bea"
+	roles, ok := service.getUserRoles(username)
+	if ok == false {
+		t.Errorf("Expected user bea to have roles")
+		t.FailNow()
+	}
+	for rName, role := range roles {
+		switch rName {
+		case "depositor":
+			if (len(role.States) == 1 &&
+				role.States[0] == "review" &&
+				role.Create == true &&
+				role.Read == false &&
+				role.Update == false &&
+				role.Delete == false &&
+				len(role.AssignTo) == 0) == false {
+				t.Errorf("%s's role %q has unexpected permissions, %s", username, rName, role)
+				t.FailNow()
+
+			}
+		case "public":
+			if (len(role.States) == 1 &&
+				role.States[0] == "published" &&
+				role.Create == false &&
+				role.Read == true &&
+				role.Update == false &&
+				role.Delete == false &&
+				len(role.AssignTo) == 0) == false {
+				t.Errorf("%s's role %q has unexpected permissions, %s", username, rName, role)
+				t.FailNow()
+
+			}
+		default:
+			t.Errorf("%s's role %q is not depositor or public", username, rName)
+		}
 	}
 
-	// create client
-	t.Errorf("FIXME: need to create client and run tests")
+	cName := service.CollectionNames[0]
+	c, err := dataset.Open(cName)
+	if err != nil {
+		t.Errorf("Could note open %q, %s", cName, err)
+		t.FailNow()
+	}
+	defer c.Close()
+	key := "101"
+	object := make(map[string]interface{})
 
-	// now run some tests.
-	t.Errorf("FIXME: TestRun(t *testing.T) not implemented.")
+	if err = c.Read(key, object, false); err != nil {
+		t.Errorf("Expected to read object %q from %q, %s", key, c.Name, err)
+		t.FailNow()
+	}
+	state := getState(object)
+	if strings.Compare(state, "draft") != 0 {
+		t.Errorf("Expected object (%q) in draft, got %q", key, state)
+		t.FailNow()
+	}
+	if service.isAllowed(roles, "draft", READ) == true {
+		t.Errorf("bea should not be able to read drafts")
+		t.FailNow()
+	}
+
+	// start service
+	if runWebService {
+		log.Println("Starting service for testing")
+		if err := service.Start(); err != nil {
+			log.Fatalf("service.Start() failed, %s", err)
+		}
+
+		// create client
+		t.Errorf("FIXME: need to create client and run tests")
+
+		// now run some tests.
+		t.Errorf("FIXME: TestRun(t *testing.T) not implemented.")
+	}
 }
 
 // TestMain creates an *AndOrService and populates with a test
@@ -65,7 +131,7 @@ func TestMain(m *testing.M) {
 	service = new(AndOrService)
 	service.Scheme = "http"
 	service.Host = "localhost"
-	service.Port = "8000"
+	service.Port = "8246"
 	service.Htdocs = path.Join(testFolder, "htdocs")
 	service.CollectionNames = []string{cName}
 	service.RolesFile = path.Join(testFolder, "roles.toml")
@@ -154,6 +220,16 @@ func TestMain(m *testing.M) {
 
 	// Create our test roles.toml
 	roles := map[string]*Role{
+		"publisher": &Role{
+			Key:      "publisher",
+			Name:     "Publisher",
+			States:   []string{"*"},
+			Create:   false,
+			Read:     true,
+			Update:   true,
+			Delete:   true,
+			AssignTo: []string{"*"},
+		},
 		"curator": &Role{
 			Key:      "curator",
 			Name:     "Curator",
@@ -202,6 +278,11 @@ func TestMain(m *testing.M) {
 
 	// Create our test users.toml
 	users := map[string]*User{
+		"ester": &User{
+			Key:         "ester",
+			DisplayName: "Ester",
+			Roles:       []string{"publisher"},
+		},
 		"innez": &User{
 			Key:         "innez",
 			DisplayName: "Innez",
@@ -235,14 +316,21 @@ func TestMain(m *testing.M) {
 
 	// Create our test access.toml
 	service.Access = new(wsfn.Access)
+	service.Access.AuthType = "basic"
+	service.Access.AuthName = "Testing RunService()"
+	if service.IsAccessRestricted() == false {
+		log.Fatalf("service should be access restricted!")
+	}
 	for _, user := range service.Users {
 		// Create our access accounts with common password for testing.
-		service.Access.UpdateAccess(user.Key, "Hello.1")
+		service.Access.UpdateAccess(user.Key, "hello")
 	}
 	if err = service.DumpAccess(service.AccessFile); err != nil {
 		log.Fatalf("could not create %q, %s", path.Base(service.AccessFile), err)
 	}
 
 	// call flag.Parse() here if TestMain uses flags.
+	flag.BoolVar(&runWebService, "web", false, "run web service")
+	flag.Parse()
 	os.Exit(m.Run())
 }

@@ -74,16 +74,15 @@ type AndOrService struct {
 
 	// Access holds an *wsfn.Access object
 	Access *wsfn.Access
-
-	// accessRestricted means the .Access policies are
-	// being enforced.
-	accessRestricted bool
 }
 
 // IsAccessRestricted() return true if .Users, .Roles, .Access policies are
 // being enforced, otherwise false.
 func (s *AndOrService) IsAccessRestricted() bool {
-	return s.accessRestricted
+	if len(s.AccessFile) > 0 || s.Access != nil {
+		return true
+	}
+	return false
 }
 
 // GenerateAndOr generates an example AndOr TOML or JSON file
@@ -181,11 +180,6 @@ func LoadAndOr(fName string) (*AndOrService, error) {
 		}
 	default:
 		return nil, fmt.Errorf("service must be either a .json or .toml file")
-	}
-
-	// See if we're using wsfn.Access policies (e.g. Basic Auth)
-	if service.AccessFile != "" {
-		service.accessRestricted = true
 	}
 
 	// Check required values

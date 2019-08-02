@@ -9,6 +9,7 @@
 package andor
 
 import (
+	"net/http"
 	"strings"
 )
 
@@ -28,6 +29,18 @@ const (
 	// ASSIGN an object to the requested next state
 	ASSIGN
 )
+
+// getState takes a map[string]interface{} and returns the
+// ._State value as a string or an empty string if not found.
+func getState(object map[string]interface{}) string {
+	if state, ok := object["_State"]; ok == true {
+		switch state.(type) {
+		case string:
+			return state.(string)
+		}
+	}
+	return ""
+}
 
 // getOp looks at q request and returns the operation (CRUD)
 // requested.
@@ -61,10 +74,10 @@ func (s *AndOrService) getUsername(r *http.Request) string {
 	//FIXME: This should should also handle JSON Web Token based
 	// authentication/assertions ...
 	username, _, ok := r.BasicAuth()
-	if ok == false || username == "" {
-		username = "anonymous"
+	if ok == false {
+		username = ""
 	}
-	return username
+	return strings.TrimSpace(username)
 }
 
 // getUserRoles looks at a request and determines who the
@@ -80,12 +93,14 @@ func (s *AndOrService) getUserRoles(username string) (map[string]*Role, bool) {
 				roleMap[key] = role
 			}
 		}
-		return roleMap, ok
+		if len(roleMap) > 0 {
+			return roleMap, true
+		}
 	}
-	return nil, ok
+	return nil, false
 }
 
-// IsAllowed applies the policies defined in user's roles,
+// isAllowed applies the policies defined in user's roles,
 // object state and operation requested.  NOTE: if the operation
 // is ASSIGN then an additional check is needed with
 // CanAssign which takes roles, current object state, next object
@@ -96,28 +111,54 @@ func (s *AndOrService) getUserRoles(username string) (map[string]*Role, bool) {
 //         ... user allowed to create object in review. ...
 //     }
 // }
-func (s *AndOrService) IsAllowed(roles map[string]*Role, state string, op int) bool {
+func (s *AndOrService) isAllowed(roles map[string]*Role, state string, op int) bool {
 	for _, role := range roles {
-		switch op {
-		case CREATE:
-			if role.Create {
-				return true
+		for _, rState := range role.States {
+			if strings.Compare(state, rState) == 0 || strings.Compare(rState, "*") == 0 {
+				switch op {
+				case CREATE:
+					if role.Create {
+						return true
+					}
+				case READ:
+					if role.Read {
+						return true
+					}
+				case UPDATE:
+					if role.Update {
+						return true
+					}
+				case DELETE:
+					if role.Delete {
+						return true
+					}
+				case ASSIGN:
+					if len(role.AssignTo) > 0 {
+						return true
+					}
+				}
 			}
-		case READ:
-			if role.Read {
-				return true
-			}
-		case UPDATE:
-			if role.Update {
-				return true
-			}
-		case DELETE:
-			if role.Delete {
-				return true
-			}
-		case ASSIGN:
-			if len(role.AssignTo) > 0 {
-				return true
+		}
+	}
+	return false
+}
+
+// canAssign takes a map of roles, a current state, and a next state
+// and returns true is assignment is permitted, false otherwise.
+func (s *AndOrService) canAssign(roles map[string]*Role, current string, next string) bool {
+	for _, role := range roles {
+		// Can role make assignments?
+		if len(role.AssignTo) > 0 {
+			// Is the object in a state covered by role?
+			for _, state := range role.States {
+				if strings.Compare(state, current) == 0 {
+					// Can that state assign to next?
+					for _, assignment := range role.AssignTo {
+						if strings.Compare(assignment, next) == 0 {
+							return true
+						}
+					}
+				}
 			}
 		}
 	}

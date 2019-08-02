@@ -128,7 +128,6 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 		fmt.Fprintln(out, "OK")
 		return 0
 	case "start":
-		fmt.Printf("DEBUG args -> %+v\n", args)
 		if len(args) > 0 {
 			andorFile = args[0]
 		}
