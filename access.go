@@ -13,63 +13,111 @@ import (
 )
 
 const (
-	_ = iota
+	//
+	// These define the operations that can be performed on an Object
+	//
+	UNDEFINED = iota
+	// CREATE an object with the requested state
 	CREATE
+	// READ an object with the requested state
 	READ
+	// UPDATE an object with the requested state
 	UPDATE
+	// DELETE an object with the requested state
 	DELETE
+	// ASSIGN an object to the requested next state
+	ASSIGN
 )
 
-// IsAllowed tests if CRUD operations can be taken on object
-// based on user, object  and a permission.
-// It returns true if permission is affirmed false otherwise.
-func (s *AndOrService) IsAllowed(user *User, object map[string]interface{}, permission int) bool {
-	// Get the object's state
-	state := ObjectState(object)
-	if q, ok := s.States[state]; ok == true {
-		// Get the state's associated role(s)
-		for _, roleName := range q.Roles {
-			// Check if user is in a role associated with state
-			if user.HasRole(roleName) {
-				// Get role
-				if role, ok := s.Roles[roleName]; ok {
-					// Check role permission requested
-					switch permission {
-					case CREATE:
-						return role.Create
-					case READ:
-						return role.Read
-					case UPDATE:
-						return role.Update
-					case DELETE:
-						return role.Delete
-					}
-				}
-
-			}
-		}
+// getOp looks at q request and returns the operation (CRUD)
+// requested.
+func getOp(r *http.Request) int {
+	p := strings.Split(r.URL.Path, "/")
+	// NOTE: we should have more than three path elements.
+	// empty, collection name, operation, object ids
+	if len(p) < 3 {
+		return UNDEFINED
 	}
-	return false
+	switch p[2] {
+	case "create":
+		return CREATE
+	case "read":
+		return READ
+	case "update":
+		return UPDATE
+	case "delete":
+		return DELETE
+	case "assign":
+		return ASSIGN
+	default:
+		return UNDEFINED
+	}
 }
 
-// CanAssign takes a user, object and state target and checks if the
-// asignment is allowed.
-func (s *AndOrService) CanAssign(user *User, object map[string]interface{}, targetState string) bool {
-	// Get the object's state
-	state := ObjectState(object)
-	if q, ok := s.States[state]; ok == true {
-		// Get the state's associated role(s)
-		for _, roleName := range q.Roles {
-			// Check if user is in a role associated with state
-			if user.HasRole(roleName) {
-				// Check what role assignments are allowed.
-				if role, ok := s.Roles[roleName]; ok {
-					for _, stateName := range role.AssignTo {
-						if strings.Compare(stateName, targetState) == 0 {
-							return true
-						}
-					}
-				}
+// getUsername looks at a request and determines who the
+// user is (e.g. via BasicAUTH or JWT). Returns a string
+// or error.
+func (s *AndOrService) getUsername(r *http.Request) string {
+	//FIXME: This should should also handle JSON Web Token based
+	// authentication/assertions ...
+	username, _, ok := r.BasicAuth()
+	if ok == false || username == "" {
+		username = "anonymous"
+	}
+	return username
+}
+
+// getUserRoles looks at a request and determines who the
+// user is and retrieves their roles. It returns a list of
+// roles that can be evaluated by hasPermission() or error
+func (s *AndOrService) getUserRoles(username string) (map[string]*Role, bool) {
+	u, ok := s.Users[username]
+	if ok == true {
+		roleMap := make(map[string]*Role)
+		// Is user member of role?
+		for _, key := range u.Roles {
+			if role, ok := s.Roles[key]; ok == true {
+				roleMap[key] = role
+			}
+		}
+		return roleMap, ok
+	}
+	return nil, ok
+}
+
+// IsAllowed applies the policies defined in user's roles,
+// object state and operation requested.  NOTE: if the operation
+// is ASSIGN then an additional check is needed with
+// CanAssign which takes roles, current object state, next object
+// state.
+//
+// if roles, ok := s.getUserRoles("jane"); ok == true {
+//     if s.IsAllowed(roles, "review", CREATE) {
+//         ... user allowed to create object in review. ...
+//     }
+// }
+func (s *AndOrService) IsAllowed(roles map[string]*Role, state string, op int) bool {
+	for _, role := range roles {
+		switch op {
+		case CREATE:
+			if role.Create {
+				return true
+			}
+		case READ:
+			if role.Read {
+				return true
+			}
+		case UPDATE:
+			if role.Update {
+				return true
+			}
+		case DELETE:
+			if role.Delete {
+				return true
+			}
+		case ASSIGN:
+			if len(role.AssignTo) > 0 {
+				return true
 			}
 		}
 	}

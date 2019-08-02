@@ -37,26 +37,11 @@ func writeJSON(w http.ResponseWriter, r *http.Request, src []byte) {
 }
 
 func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request) {
-	//FIXME: This should really be JSON Web Token based ...
-	username, _, ok := r.BasicAuth()
-	if ok == false || username == "" {
-		username = "anonymous"
-	}
-
-	log.Printf("DEBUG username %q", username)
-	// Are we logged in?
-	if u, ok := s.Users[username]; ok == true {
-		roleMap := make(map[string]*Role)
-		// Is user member of role?
-		for _, key := range u.Roles {
-			if role, ok := s.Roles[key]; ok == true {
-				roleMap[key] = role
-			}
-		}
-		src, err := json.MarshalIndent(map[string]interface{}{
-			"user":  u,
-			"roles": roleMap,
-		}, "", "    ")
+	// Who am I?
+	username := s.getUsername(r)
+	// What roles do I have?
+	if roles, ok := getUserRoles(username); ok == true {
+		src, err := json.MarshalIndent(roles, "", "    ")
 		if err != nil {
 			log.Printf("Failed to marshal %q, %s", username, err)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
