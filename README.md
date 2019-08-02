@@ -115,9 +115,8 @@ and "prune". These map to URL paths each supporting a single
 HTTP Method.
 
 + `/COLLECTION_NAME/keys/` (GET) all object keys
-+ `/COLLECTION_NAME/keys/OBJECT_STATES` (GET) get a list of objects with the given states
 + `/COLLECTION_NAME/create/OBJECT_ID` (GET) to creates an Object, an OBJECT_ID must be unique to succeed
-+ `/COLLECTION_NAME/read/OBJECT_IDS` (GET) if single object_id is requested return a single object, otherwise return a list of objects
++ `/COLLECTION_NAME/read/OBJECT_IDS` (GET) returns on or more objects, if more than one is requested then an array of objects is returned.
 + `/COLLECTION_NAME/update/OBJECT_ID` (POST) to update an object
 + `/COLLECTION_NAME/delete/OBJECT_ID` (POST) to delete an object
 + `/COLLECTION_NAME/attach/OBJECT_ID/SEMVER` (POST) attach a document to object

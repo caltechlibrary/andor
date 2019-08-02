@@ -30,6 +30,34 @@ const (
 	ASSIGN
 )
 
+// getKey takes a URL.Path and a prefix and extracts a single
+// key.
+func getKey(p string, prefix string) string {
+	k := strings.TrimSpace(strings.TrimPrefix(p, prefix))
+	if strings.Contains(k, ",") {
+		// Return the first non-empty key
+		keys := strings.Split(k, ",")
+		for _, k := range keys {
+			k = strings.TrimSpace(k)
+			if k != "" {
+				return k
+			}
+		}
+	}
+	return k
+}
+
+// getKeys takes a URL.Path and a prefix and extracts one or more
+// keys returning a slice of strings.
+func getKeys(p, prefix string) []string {
+	k := []string{}
+	keys := strings.TrimSpace(strings.TrimPrefix(p, prefix))
+	for _, key := range strings.Split(keys, ",") {
+		k = append(k, strings.TrimSpace(key))
+	}
+	return k
+}
+
 // getState takes a map[string]interface{} and returns the
 // ._State value as a string or an empty string if not found.
 func getState(object map[string]interface{}) string {
