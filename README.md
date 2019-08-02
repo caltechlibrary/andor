@@ -1,6 +1,6 @@
-{
-    "markup": "mmark"
-}
++++
+markup = "mmark"
++++
 
 
 # And/Or
@@ -17,28 +17,24 @@ our existing repositories.
 **And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset).
 It is a JSON API plus HTML, CSS and JavaScript to provide a web 
 GUI interface for curating objects.  A minimum running system 
-would consist of only two or three pieces of software. The minimum 
+would consist of only one or two pieces of software. The minimum 
 would be a web server[^1] plus the **And/Or** service supporting 
-multi-user interaction with dataset collections.  Depending on size 
-you could create a micro service providing search via Python and 
-Lunr[^2] or generate Lunrjs indexes to run browser side.  This 
-arrangement has the advantage of limiting development of new
-code to be written to the **And/Or** web service plus the HTML, 
-CSS and JavaScript needed for an acceptable UI[^3].
+multi-user interaction with dataset collections.  Additional
+functionality or public website generation would be provided
+by other services. E.g. a search service can be easily implemented
+using Python and Lunr[^2].  A public website can be generated via 
+a similar process we used to build feeds.library.caltech.edu.
 
 **And/Or** is a extremely narrowly scoped web service. The focus 
-is __ONLY__ on currating objects and related attachments. This is done
-to keep the service simple. Other services and systems can pickup
-other responsiblies such as create public websites, supporting
-complex workflows like thesis deposits. It embodies the Unix
-philophy of single purpose tools doing spefic things while 
-remaining composible for more complex demands.
+is __ONLY__ on currating objects and related attachments. 
+
+Limiting **And/Or**'s scope leads to a simpler system. Code 
+needed is limited to **And/Or** web service plus the HTML, 
+CSS and JavaScript needed for an acceptable UI[^3].
 
 This particular architecture aligns with small machine hosting
 and cloud hosting keeping recurring costs to a minimum. 
-In the cloud it should work on a small to medium EC2 instance.
-A more elaborate version could be implemented using Cloud Front, 
-S3, and running the API service in an AWS container.
+In the cloud it should work on a tiny or small EC2 instance.
 In house hosting could as light weight as Raspberry Pi 4 or
 as elaborate as a server with attached NAS[^4].
 
@@ -66,9 +62,8 @@ as elaborate as a server with attached NAS[^4].
 + UI can be implemented using HTML 5 elements, minimal JavaScript and CSS
 + Small number of curatorial [users](docs/User-Scheme.html)
 + Configurable [roles](docs/Roles-Scheme.html) are a requirement
-    + roles describes capabilities (permissions)
-    + roles describes object states for the capabilities
-    + roles describes states an object can be put in
+    + roles describes permissions for objects in given states
+    + roles describes states an object can be asigned to
 + Use existing object scheme (e.g. EPrints XML in Oral Histories)
 + Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)
 + Search and query are handle independent of API
@@ -81,39 +76,43 @@ Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage roles,
 manage permissions and enforcing storage scheme.  **And/Or**'s 
 simplification involves either avoiding the requirement by relocating
-it to an appropriate external system and keeping the scope of
+it to an appropriate external system and by keeping the scope of
 what **And/Or** does very narrow.  
 
 Examples--
 
-+ Authentication is handle externally. That means we don't need to create UI to manage passwords. Volatile and sensitive data is outside of **And/Or** 
++ Authentication is handle externally. That means we don't need to create UI to manage passwords and user profiles. Volatile and sensitive data is outside of **And/Or** so it can't be stolen from **And/Or**.
 + **And/Or** itself is a simple web API that accepts URL requests 
-and hands back JSON. The shape of the JSON is determined at time of
-migrating into **And/Or**. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.
-+ If you need additional end points beyond what **And/Or** provides (e.g. a search engine service) you those as micro services behind the same web server or externally
+and hands back JSON. It supports a small number of URL end points that support specific actions with one HTTP method (e.g. GET or POST).
++ Object sheme is determined at time of migrating into  the dataset collection. **And/Or** provides no customization.  If you want to change your data shapes you write a script to do that and you change your HTML form.
++ If you need additional end points beyond what **And/Or** provides (e.g. a search engine service, a electronic thesis workflow) you create those as micro services either behind the same webserver or else where.
 
-The web browser itself creates the illusion of a unified software system
-or single process. A single application is not required to support desire
-functionality (e.g. curration and public website generate). Customization 
-then can be deferred to other micro services or even external systems (e.g. looking up something at datacite.org or orcid.org, rendering the public
-website).
+The web browser creates the illusion of a unified software system
+or single process. A single application is not required to support all
+desire functionality (e.g. curration and public website generate) because
+**And/Or** fits a composible model of all web applications that supply
+an API.  Customization is deferred to other micro services and external 
+systems (e.g. looking up something at datacite.org or orcid.org)
 
-Some features are unavoidable. The repository problem requires managing
-users and roles. It doesn't require users and roles
-be manage through the web. Setting up users and roles can be 
-managed through simpler command line tools and configuration files.
-This is reasonable in large part because we've off loaded 
-identify management already and restarting the **And/Or** service is fast. 
+Some features are unavoidable in curation tool. Repositories run
+on the assumption of users and roles. Interestingly it 
+doesn't require users and roles be manage through the web. 
+Setting up users and roles can be managed through simpler command 
+line tools and configuration files.  This is reasonable in large part 
+because **And/Or** off loads identify management and can be restarted
+quickly.
 
 By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
 reduce the lines of code written and maintained. 
 
-### End points for our API map directly to dataset operations
 
-dataset has the following operations available in **And/Or**--- 
-keys, create, read, update, delete, attach, attachments, detach and prune.
-They map to URL paths as follows.
+### End points map directly to existing dataset operations
+
+dataset supports the a limited set of operations in **And/Or**.
+The operations are "keys", "create", "read", "update", "delete",
+"attach", "attachments", "detach" and "prune".
+These map to URL paths supporting a single HTTP Method.
 
 + `/COLLECTION_NAME/keys/` (GET) all object keys
 + `/COLLECTION_NAME/keys/OBJECT_STATES` (GET) get a list of objects with the given states
@@ -133,25 +132,28 @@ object states to enable workflows.
 + `/COLLECTION_NAME/assign/OBJECT_ID/OLD_STATE/NEW_STATE` (POST) to delete an object
 
 All other end points are static resources (e.g. HTML files, 
-CSS, JavaScript and Lunrjs indexes, a public facing website).  
+CSS, JavaScript).  
 
 
-### Notes on using the API
+### Examples of composibility
 
+When listing a collection objects suggests the need for paging.
 "keys" can be used client side to create a segmented key list and when
-combined with "read" (which can accept more than one id) it can
-but used for paging.
+combined with "read" which can accept more than one id we now have
+a means of paging through a collection's objects.
 
-If a collection should be publically viewable (e.g. Oral Histories)
-that website would be generated from the content currated in **And/Or**.
-The generation could happen on a regular schedule like we do with 
-feeds.library.caltech.edu or we could implement a object status
-service that lists changes in object states (e.g. an array of
-object ids, timestamps, current state and last operation). This could
-be done via a streaming log or as a web service itself. The stream
-of object state change changes would then be used to trigger a 
-refresh in the public site.
+A collection could be publically viewable (e.g. Oral Histories)
+by writing a script that reads the dataset collection **And/Or** is
+referencing rendering web pages appropriately (e.g. like we do
+with feeds).
 
+A search interface can be created by indexing the dataset collection
+and presenting a search UI. (E.g. Like Stephen's demo of Lunr 
+providing a search Caltech People pages).
+
+A deposit system could be created as a microservice in Drupal 
+to accept metadata and documents before handing them of to 
+**And/Or** via a service account.
 
 ### Building a UI
 
@@ -159,10 +161,10 @@ Five pages would need to be designed and implemented in HTML, CSS and
 JavaScript for our proof of concept.
 
 1. Login and landing page 
-2. Display List records (filterable by work state)
+2. Display List records (filterable by object state)
 3. Display Object details 
 4. Create/edit Object details
-5. Search UI
+5. Page to display user roles
 
 For public facing content (e.g. things Google, Bing, et el. 
 should find and index) can be deployed separately by 
@@ -170,38 +172,38 @@ process similar to how feeds.library.caltech.edu works.
 This also keeps **And/Or** simple with fewer requirements.
 
 
-### user plus role, a simple model
+### user/role/object state is a simple model
 
 An authenticated user exposes their user id to 
-**And/Or**'s web service (e.g. via a JSON Web Token or 
-Basic Auth header).  A user's id maps to membership in roles. 
-The role defines access to states, states are list objects
-with a matching value of `._State`.
+**And/Or**'s web service. The web service can then
+retrieve the available roles that scope the permissions
+the user has to operate on objects in a given set of states.
+The role can also be used to define which objects we show
+the user.  This can be implemented with a small number
+of functions such as `getUsername()`, `getUserRoles()`, 
+`isAllowed()` and `canAssign()`.
 
-Unauthenticated users are treated as the "anonymous" user and
-are restricted by roles available for the "anonymous" user. 
-This is how you could implement both dark and public
-repositories.
-
-Complicated use cases like electronic thesis deposits
-or faculty self deposit of articles could be implemented as 
-separate specialized micro services that interact with
-**And/Or** via proxy service accounts.
+Once authorization is calculated then approvided actions
+can be handle with simple HTTP handlers that perform a simple
+task mapping to an existing dataset function (e.g. keys, 
+create, read, update).
 
 
 ### Under the hood
 
 **And/Or** is built on [dataset](https://caltechlibrary.github.io/dataset).
-Objects may include attached documents which can be versioned 
-automatically. If metadata versioning becomes required dataset 
-can be extended to store diffs as well as the JSON documents.
-
-Like EPrints **And/Or** does not directly support deleting objects.
-Instead it can create the illusion of deleting objects by putting
-objects into a "deleted" state which you can exclude from your
-roles or garbage collection through a separate process.
+It is a thin layer on top of existing dataset functionality.
+__dataset__ supplies attachment versioning, **And/Or** exposes that
+in the attachment related end points. If dataset gained the ability
+to version JSON documents (e.g. stored diffs of JSON documents[^5]),
+that functionality becomes easily wrapped by **And/Or**.
 
 
+Like EPrints **And/Or** should not directly support deleting objects.
+Instead the concept of deletion in **And/Or** is to assign the object's
+`._State` value to "deleted". This makes deletion work like a Mac's 
+trashcan and fully deleting objects would be accomplished by
+a separte process performing emptying the trash[^6].
 
 
 [^1]: NginX and Apache provide authentication mechanisms such as Basic AUTH, Shibboleth and OAuth 2.
@@ -211,3 +213,7 @@ roles or garbage collection through a separate process.
 [^3]: UI, user interface, the normal way a user interacts with a website
 
 [^4]: NAS, network attached storage similar to what are now common in research labs
+
+[^5]: This could be done in the manner of EPrints which can show a diff of the EPrint XML document
+
+[^6]: Empting the trash boils down to traversing all collecting the keys of objects that are in the `._State` == "deleted" and then removing the content from disc.
