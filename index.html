@@ -45,6 +45,14 @@ arrangement has the advantage of limiting development of new
 code to be written to the <strong>And/Or</strong> web service plus the HTML,
 CSS and JavaScript needed for an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
 
+<p><strong>And/Or</strong> is a extremely narrowly scoped web service. The focus
+is <strong>ONLY</strong> on currating objects and related attachments. This is done
+to keep the service simple. Other services and systems can pickup
+other responsiblies such as create public websites, supporting
+complex workflows like thesis deposits. It embodies the Unix
+philophy of single purpose tools doing spefic things while
+remaining composible for more complex demands.</p>
+
 <p>This particular architecture aligns with small machine hosting
 and cloud hosting keeping recurring costs to a minimum.
 In the cloud it should work on a small to medium EC2 instance.
@@ -57,7 +65,7 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 
 <ul>
 <li>Provide a curatorial platform for metadata outside our existing repositories</li>
-<li>Provide an <strong>interim option</strong> for EPrints repositories requiring migration</li>
+<li>Provide an <strong>interim curration option</strong> for EPrints repositories requiring migration</li>
 <li>Thin stack
 
 <ul>
@@ -71,6 +79,7 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <li>Support versioned attached media files</li>
 <li>Support continuous migration</li>
 <li>Support alternative front ends (e.g. Drupal)</li>
+<li>Play nicely with other web based services</li>
 </ul>
 
 <h2 id="project-assumptions">Project Assumptions</h2>
@@ -78,7 +87,7 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
 <li>UI can be implemented using HTML 5 elements, minimal JavaScript and CSS</li>
-<li>Small number of curatorial <a href="docs/User-Scheme.html">users</a>, larger number of readers</li>
+<li>Small number of curatorial <a href="docs/User-Scheme.html">users</a></li>
 <li>Configurable <a href="docs/Roles-Scheme.html">roles</a> are a requirement
 
 <ul>
@@ -91,7 +100,7 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <li>Search and query are handle independent of API
 
 <ul>
-<li>e.g. Lunr either browser or server side</li>
+<li>e.g. Solr, Elastric Search, Bleve, Lunr</li>
 </ul></li>
 </ul>
 
@@ -100,54 +109,81 @@ as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"
 <p>Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage roles,
 manage permissions and enforcing storage scheme.  <strong>And/Or</strong>'s
-simplification involves either avoiding the requirements or relocating
-them to an appropriate external system.</p>
+simplification involves either avoiding the requirement by relocating
+it to an appropriate external system and keeping the scope of
+what <strong>And/Or</strong> does very narrow.</p>
 
 <p>Examples--</p>
 
 <ul>
-<li>Authentication is handle externally. That means we don't need to create UI to manage passwords, the volatile and sensitive data is outside of <strong>And/Or</strong></li>
+<li>Authentication is handle externally. That means we don't need to create UI to manage passwords. Volatile and sensitive data is outside of <strong>And/Or</strong></li>
 <li><strong>And/Or</strong> itself is a simple web API that accepts URL requests
 and hands back JSON. The shape of the JSON is determined at time of
 migrating into <strong>And/Or</strong>. There is no customization.  If you want to change your data shapes you write a script to do that or change your input form.</li>
-<li>If you need additional end points beyond what <strong>And/Or</strong> provides (e.g. a search engine service) you supply those as micro services behind the same web server</li>
+<li>If you need additional end points beyond what <strong>And/Or</strong> provides (e.g. a search engine service) you those as micro services behind the same web server or externally</li>
 </ul>
 
 <p>The web browser itself creates the illusion of a unified software system
 or single process. A single application is not required to support desire
-functionality. Customization then can be deferred to other micro services
-or even external systems (e.g. looking up something at datacite.org or
-orcid.org).</p>
+functionality (e.g. curration and public website generate). Customization
+then can be deferred to other micro services or even external systems (e.g. looking up something at datacite.org or orcid.org, rendering the public
+website).</p>
 
 <p>Some features are unavoidable. The repository problem requires managing
 users and roles. It doesn't require users and roles
 be manage through the web. Setting up users and roles can be
 managed through simpler command line tools and configuration files.
-The is reasonable in large part because you've off loaded
-identify management already.</p>
+This is reasonable in large part because we've off loaded
+identify management already and restarting the <strong>And/Or</strong> service is fast.</p>
 
 <p>By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
 reduce the lines of code written and maintained.</p>
 
-<h3 id="end-points-for-our-api-map-to-dataset-operations">End points for our API map to dataset operations</h3>
+<h3 id="end-points-for-our-api-map-directly-to-dataset-operations">End points for our API map directly to dataset operations</h3>
+
+<p>dataset has the following operations available in <strong>And/Or</strong>---
+keys, create, read, update, delete, attach, attachments, detach and prune.
+They map to URL paths as follows.</p>
 
 <ul>
-<li><code>/COLLECTION_NAME/keys/</code> (GET) to list objects keys</li>
+<li><code>/COLLECTION_NAME/keys/</code> (GET) all object keys</li>
+<li><code>/COLLECTION_NAME/keys/OBJECT_STATES</code> (GET) get a list of objects with the given states</li>
 <li><code>/COLLECTION_NAME/create/OBJECT_ID</code> (GET) to provide an Object's creates a new object, OBJECT_ID must be unique to succeed</li>
 <li><code>/COLLECTION_NAME/read/OBJECT_IDS</code> (GET) if single object_id return record otherwise a list of objects is returned</li>
 <li><code>/COLLECTION_NAME/update/OBJECT_ID</code> (POST) to update an object</li>
 <li><code>/COLLECTION_NAME/delete/OBJECT_ID</code> (POST) to delete an object</li>
+<li><code>/COLLECTION_NAME/attach/OBJECT_ID/SEMVER</code> (POST) attach a document to object</li>
+<li><code>/COLLECTION_NAME/attachments/OBJECT_ID</code> (GET) list attachments to object</li>
+<li><code>/COLLECTION_NAME/detach/OBJECT_ID/SEMVER/ATTACHMENT_NAME</code> (GET) get an attachments to object</li>
+<li><code>/COLLECTION_NAME/prune/OBJECT_ID/SEMVER/ATTACHMENT_NAME</code> (POST) remove an attachment version</li>
 </ul>
 
-<p>&quot;keys&quot; can be filtered by role's state name. Paging can be implemented
-client side by segmenting the key list returned.
-All other end points are static resources (e.g. HTML files,
-CSS, JavaScript and Lunrjs indexes, a public faces website).<br>
-We can reducing our requirements to two end points because
-we've discovered that is all we needed based on our work
-with <a href="https://www.eprints.org" title="A repository system developed at University of South Hampton">EPrints</a>. Everything else can be synthesized
-from a simple key list and object access.</p>
+<p>One additional end point is needed beyond dataset. We need to assign
+object states to enable workflows.</p>
+
+<ul>
+<li><code>/COLLECTION_NAME/assign/OBJECT_ID/OLD_STATE/NEW_STATE</code> (POST) to delete an object</li>
+</ul>
+
+<p>All other end points are static resources (e.g. HTML files,
+CSS, JavaScript and Lunrjs indexes, a public facing website).</p>
+
+<h3 id="notes-on-using-the-api">Notes on using the API</h3>
+
+<p>&quot;keys&quot; can be used client side to create a segmented key list and when
+combined with &quot;read&quot; (which can accept more than one id) it can
+but used for paging.</p>
+
+<p>If a collection should be publically viewable (e.g. Oral Histories)
+that website would be generated from the content currated in <strong>And/Or</strong>.
+The generation could happen on a regular schedule like we do with
+feeds.library.caltech.edu or we could implement a object status
+service that lists changes in object states (e.g. an array of
+object ids, timestamps, current state and last operation). This could
+be done via a streaming log or as a web service itself. The stream
+of object state change changes would then be used to trigger a
+refresh in the public site.</p>
 
 <h3 id="building-a-ui">Building a UI</h3>
 
