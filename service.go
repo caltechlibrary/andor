@@ -9,8 +9,10 @@
 package andor
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -39,10 +41,8 @@ func safeDatasetOp(c *dataset.Collection, key string, object map[string]interfac
 		return c.Create(key, object)
 	case UPDATE:
 		return c.Update(key, object)
-	case DELETE:
-		return c.Delete(key)
 	default:
-		return fmt.Errorf("Unsupported operation %d", op)
+		return fmt.Errorf("Unsupported operation type %d", op)
 	}
 }
 
@@ -105,7 +105,7 @@ func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http
 	)
 	// Make sure we have the right http Method
 	if r.Method != "POST" {
-		writerError(w, http.StatusMethodNotAllowed)
+		writeError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -123,7 +123,7 @@ func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http
 	}
 	// We need to get the submitted object before checking
 	// isAllowed.
-	src, err := ioutil.ReadAll(r.Body)
+	src, err = ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Printf("%s %s", r.URL.Path, err)
 		writeError(w, http.StatusNotAcceptable)
@@ -131,12 +131,11 @@ func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http
 	}
 	// We only accept content in JSON form with /create.
 	object := make(map[string]interface{})
-	decoder := json.NewDecoder(r.Body)
+	decoder := json.NewDecoder(bytes.NewReader(src))
 	decoder.UseNumber()
-	err := decoder.Unmarshal(src, &object)
-	if err != nil {
+	if err = decoder.Decode(&object); err != nil {
 		log.Printf("%s %s", r.URL.Path, err)
-		writeError(w, http.StatusUnsupportedMediaType)
+		writeError(w, http.StatusBadRequest)
 		return
 	}
 	// Need to apply users/roles/states rules.
@@ -185,7 +184,7 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 	}
 	unauthorized := false
 	objects := []map[string]interface{}{}
-	for _, key = range keys {
+	for _, key := range keys {
 		key = strings.TrimSpace(key)
 		if key != "" {
 			object := make(map[string]interface{})
@@ -212,11 +211,11 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	case 1:
-		src, err := json.Marshal(objects[0])
+		src, err = json.Marshal(objects[0])
 	default:
 		src, err = json.Marshal(objects)
 		if err != nil {
-			log.Printf("Error reading key %q from %q, %s", key, cName, err)
+			log.Printf("Error reading key(s) %q from %q, %s", keys, cName, err)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
 			return
 		}
@@ -227,13 +226,9 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 // requestUpdate is the API version of
 //	`dataset update COLLECTION_NAME OBJECT_ID OBJECT_JSON`
 func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	var (
-		src []byte
-		err error
-	)
 	// Make sure we have the right http Method
 	if r.Method != "POST" {
-		writerError(w, http.StatusMethodNotAllowed)
+		writeError(w, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -249,42 +244,44 @@ func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http
 		writeError(w, http.StatusUnauthorized)
 		return
 	}
-	// We need to get the submitted object before checking
-	// isAllowed.
-	src, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		log.Printf("%s %s", r.URL.Path, err)
-		writeError(w, http.StatusNotAcceptable)
-		return
-	}
-	// We only accept content in JSON form with /create.
-	object := make(map[string]interface{})
-	decoder := json.NewDecoder(r.Body)
-	decoder.UseNumber()
-	err := decoder.Unmarshal(src, &object)
-	if err != nil {
-		log.Printf("%s %s", r.URL.Path, err)
-		writeError(w, http.StatusUnsupportedMediaType)
-		return
-	}
-	// Need to apply users/roles/states rules.
-	state := getState(object)
-	if s.isAllowed(roles, state, UPDATE) == false {
-		writeError(w, http.StatusUnauthorized)
-		return
-	}
-
-	// Now get the proposed key.
+	// We need to get the original object before proceeding with update.
 	key := getKey(r.URL.Path, "/"+cName+"/update/")
-
-	// Need to make sure this part of the service is behind
-	// the mutex.
-	if err := safeDatasetOp(c, key, object, UPDATE); err != nil {
+	object := make(map[string]interface{})
+	if err := c.Read(key, object, false); err != nil {
 		log.Printf("%s %s", r.URL.Path, err)
-		writeError(w, http.StatusNotAcceptable)
+		writeError(w, http.StatusNotFound)
 		return
 	}
-	log.Printf("%s created %s in %s", username, key, c.Name)
+	state := getState(object)
+	if s.isAllowed(roles, state, UPDATE) {
+		src, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Printf("%s %s", r.URL.Path, err)
+			writeError(w, http.StatusNotAcceptable)
+			return
+		}
+		// We only accept content in JSON form with /create.
+		updatedObject := make(map[string]interface{})
+		decoder := json.NewDecoder(bytes.NewReader(src))
+		decoder.UseNumber()
+		if err := decoder.Decode(&updatedObject); err != nil {
+			log.Printf("%s %s", r.URL.Path, err)
+			writeError(w, http.StatusUnsupportedMediaType)
+			return
+		}
+		// Updating is NOT assignment to a new state,
+		// we preserve the old state.
+		updatedObject["_State"] = state
+
+		// Need to make sure this part of the service is behind
+		// the mutex.
+		if err := safeDatasetOp(c, key, object, UPDATE); err != nil {
+			log.Printf("%s %s", r.URL.Path, err)
+			writeError(w, http.StatusNotAcceptable)
+			return
+		}
+	}
+	log.Printf("%s update %s in %s", username, key, c.Name)
 }
 
 // requestDelete is the API version of
@@ -292,54 +289,90 @@ func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http
 // except is doesn't actually delete the object. It changes the
 // object's `._State` value.
 func (s *AndOrService) requestDelete(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	//FIXME: Need to make sure this part of the service is behind
-	// muxtex.
-	log.Printf("requestDelete(%q, ...) not implemented", cName)
-	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+	// Make sure we have the right http Method
+	if r.Method != "POST" {
+		writeError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Make sure we can determine permissions before reading
+	// post data.
+	username := s.getUsername(r)
+	if username == "" {
+		writeError(w, http.StatusUnauthorized)
+		return
+	}
+	roles, ok := s.getUserRoles(username)
+	if ok == false {
+		writeError(w, http.StatusUnauthorized)
+		return
+	}
+	key := getKey(r.URL.Path, "/"+cName+"/delete/")
+
+	object := make(map[string]interface{})
+	if err := c.Read(key, object, false); err != nil {
+		writeError(w, http.StatusNotFound)
+		return
+	}
+	state := getState(object)
+	if s.isAllowed(roles, state, DELETE) {
+		object["_State"] = "deleted"
+		// Need to make sure this part of the service is behind
+		// the mutex.
+		if err := safeDatasetOp(c, key, object, UPDATE); err != nil {
+			log.Printf("%s %s", r.URL.Path, err)
+			writeError(w, http.StatusNotAcceptable)
+			return
+		}
+	}
+	log.Printf("%s deleted %s in %s", username, key, c.Name)
 }
 
 // requestAssignment retrieves an object, updates ._State and
 // writes it back out.
 func (s *AndOrService) requestAssignment(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-}
+	// Make sure we have the right http Method
+	if r.Method != "POST" {
+		writeError(w, http.StatusMethodNotAllowed)
+		return
+	}
 
-// FIXME: requestAttach is the API version of
-//	`dataset attach COLLECTION_NAME OBJECT_ID FILENAMES`
-func (s *AndOrService) requestAttach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	//FIXME: Need to make sure this part of the service is behind
-	// muxtex.
-	log.Printf("requestAttach(%q, ...) not implemented", cName)
-	http.Error(w, "Internal Server error", http.StatusInternalServerError)
-}
+	// Make sure we can determine permissions before reading
+	// post data.
+	username := s.getUsername(r)
+	if username == "" {
+		writeError(w, http.StatusUnauthorized)
+		return
+	}
+	roles, ok := s.getUserRoles(username)
+	if ok == false {
+		writeError(w, http.StatusUnauthorized)
+		return
+	}
 
-// FIXME: requestAttachments is the API version of
-//	`dataset attachments COLLECTION_NAME OBJECT_ID`
-func (s *AndOrService) requestAttachments(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	//FIXME: Need to make sure this part of the service is behind
-	// muxtex.
-	log.Printf("requestAttachments(%q, ...) not implemented", cName)
-	http.Error(w, "Internal Server error", http.StatusInternalServerError)
-}
-
-// FIXME: requestDetach is the API version of
-//	`dataset detach COLLECTION_NAME OBJECT_ID FILENAME`
-func (s *AndOrService) requestDetach(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	log.Printf("requestDetach(%q, ...) not implemented", cName)
-	http.Error(w, "Internal Server error", http.StatusInternalServerError)
-}
-
-// FIXME: requestPrune is the API version of
-//	`dataset prune COLLECTION_NAME OBJECT_ID`
-func (s *AndOrService) requestPrune(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	//FIXME: Need to make sure this part of the service is behind
-	// muxtex.
-	log.Printf("requestPrune(%q, ...) not implemented", cName)
-	http.Error(w, "Internal Server error", http.StatusInternalServerError)
+	parts := strings.Split(strings.TrimPrefix(r.URL.Path, "/"+cName+"/assign/"), "/")
+	if len(parts) != 2 {
+		writeError(w, http.StatusBadRequest)
+		return
+	}
+	key, next := strings.TrimSpace(parts[0]), parts[1]
+	object := make(map[string]interface{})
+	if err := c.Read(key, object, false); err != nil {
+		writeError(w, http.StatusNotFound)
+		return
+	}
+	state := getState(object)
+	if s.isAllowed(roles, state, ASSIGN) && s.canAssign(roles, state, next) {
+		object["_State"] = next
+		// Need to make sure this part of the service is behind
+		// the mutex.
+		if err := safeDatasetOp(c, key, object, UPDATE); err != nil {
+			log.Printf("%s %s", r.URL.Path, err)
+			writeError(w, http.StatusNotAcceptable)
+			return
+		}
+	}
+	log.Printf("%s assign %s to %s in %s", username, key, next, c.Name)
 }
 
 // addAccessRoute makes a route require an authentication mechanism,
@@ -384,38 +417,28 @@ func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection)
 		s.requestRead(cName, c, w, r)
 	})
 	p = base + "/update/"
+	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestUpdate(cName, c, w, r)
 	})
 	p = base + "/delete/"
+	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestDelete(cName, c, w, r)
 	})
 
-	/*FIXME: add these after basic object ops are working.
-	// dataset attachment handling
-	p = base + "/attach/"
+	p = base + "/assign/"
+	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		s.requestAttach(cName, c, w, r)
+		s.requestAssignment(cName, c, w, r)
 	})
-	p = base + "/attachments/"
-	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		s.requestAttachments(cName, c, w, r)
-	})
-	p = base + "/detach/"
-	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		s.requestDetach(cName, c, w, r)
-	})
-	p = base + "/prune/"
-	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
-		s.requestPrune(cName, c, w, r)
-	})
-	*/
 
 	// Additional And/Or specific end points
 	p = "/" + path.Base(cName) + "/access/"
 	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, s.requestAccessInfo)
+
+	//FIXME: Need to add handler for working with attachments.
 }
 
 // RunService runs the http/https web service of AndOr.

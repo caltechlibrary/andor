@@ -127,7 +127,7 @@ HTTP Method.
 One additional end point is needed beyond dataset. We need to assign
 object states to enable workflows.
 
-+ `/COLLECTION_NAME/assign/OBJECT_ID/OLD_STATE/NEW_STATE` (POST) to delete an object
++ `/COLLECTION_NAME/assign/OBJECT_ID/NEW_STATE` (POST) to assign an object to a new state
 
 **And/Or** is a thin layer on top of existing dataset functionality.
 E.g. dataset supplies attachment versioning, **And/Or** exposes that
