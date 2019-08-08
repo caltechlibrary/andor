@@ -3,7 +3,7 @@
 
 ## Bugs
 
-+ [x] init should generate a roles.toml and users.toml for editing if non exist
++ [x] init should generate a roles.toml and users.toml for editing if they do not exist
 
 ## Address Missing features
 

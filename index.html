@@ -146,9 +146,8 @@ HTTP Method.</p>
 
 <ul>
 <li><code>/COLLECTION_NAME/keys/</code> (GET) all object keys</li>
-<li><code>/COLLECTION_NAME/keys/OBJECT_STATES</code> (GET) get a list of objects with the given states</li>
 <li><code>/COLLECTION_NAME/create/OBJECT_ID</code> (GET) to creates an Object, an OBJECT_ID must be unique to succeed</li>
-<li><code>/COLLECTION_NAME/read/OBJECT_IDS</code> (GET) if single object_id is requested return a single object, otherwise return a list of objects</li>
+<li><code>/COLLECTION_NAME/read/OBJECT_IDS</code> (GET) returns on or more objects, if more than one is requested then an array of objects is returned.</li>
 <li><code>/COLLECTION_NAME/update/OBJECT_ID</code> (POST) to update an object</li>
 <li><code>/COLLECTION_NAME/delete/OBJECT_ID</code> (POST) to delete an object</li>
 <li><code>/COLLECTION_NAME/attach/OBJECT_ID/SEMVER</code> (POST) attach a document to object</li>
@@ -161,7 +160,7 @@ HTTP Method.</p>
 object states to enable workflows.</p>
 
 <ul>
-<li><code>/COLLECTION_NAME/assign/OBJECT_ID/OLD_STATE/NEW_STATE</code> (POST) to delete an object</li>
+<li><code>/COLLECTION_NAME/assign/OBJECT_ID/NEW_STATE</code> (POST) to assign an object to a new state</li>
 </ul>
 
 <p><strong>And/Or</strong> is a thin layer on top of existing dataset functionality.
