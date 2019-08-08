@@ -1,4 +1,5 @@
 + [Home](/)
-+ [Demo Collection 01](./)
++ [Demo Collection 02](./)
 + [Who am I?](whoami.html)
 + [List Objects](list.html)
++ [Create an Object](edit.html)

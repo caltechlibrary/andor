@@ -15,5 +15,7 @@ to the web service.  Web UI is located under `/demo-collection-01/`.
 
 + [demo-collection-01.ds](/demo-collection-01/)
     + read only demo of users, roles and BasicAUTH access for a single collection
++ [demo-collection-02.ds](/demo-collection-02/)
+    + CRUD demo for users, roles and BasicAUTH access for a single collection
 
 [^1]: And/Or is named after a character in [Ruby](https://www.zbs.org/index_new.php/store/ruby) stories produced by [ZBS](https://www.zbs.org) 
