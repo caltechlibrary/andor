@@ -7,9 +7,12 @@ markup = "mmark"
 
 This is a demo of And/Or[^1], a JSON object web service based on
 [dataset](https://github.com/caltechlibrary/dataset) collections. 
-The demo dataset collection is "demo-colloction-01.ds". Web UI 
-is built from static HTML/CSS/JavaScripts making http calls back
-to the web service.  Web UI is located under `/demo-collection-01/`.
+E.g. a demo dataset collection, "demo-colloction-01.ds". 
+
+The Web UI are built from static HTML/CSS/JavaScripts making http 
+calls to the web service.  Web UI is located under the collection,
+e.g. `/demo-collection-01/`. The JavaScript library, `/demo.js`, provides
+examples of how to call the JSON API and render results in a webpage.
 
 ## Web UI Demos
 
