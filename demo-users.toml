@@ -3,12 +3,33 @@
 # Example "users.toml". Lines starting with "#" are comments.
 # This shows example users.
 #
-["Jane"]
-display_name = "Jane Doe"
-member_of = ["publisher"]
-["Millie"]
-display_name = "Millie Flowers"
-member_of = [ "editor" ]
-["Innez"]
-display_name = "Innez Mars"
-member_of = [ "writer" ]
+
+[anonynous]
+user_id = "anonymous"
+display_name = "Anonymous"
+roles = ["public"]
+
+[bea]
+user_id = "bea"
+display_name = "Bea"
+roles = ["depositor", "public"]
+
+[ester]
+user_id = "ester"
+display_name = "Ester"
+roles = ["publisher"]
+
+[innez]
+user_id = "innez"
+display_name = "Innez"
+roles = ["depositor", "curator"]
+
+[jane]
+user_id = "jane"
+display_name = "Jane"
+roles = ["depositor", "curator"]
+
+[millie]
+user_id = "millie"
+display_name = "Millie"
+roles = ["depositor", "reviewer", "public"]

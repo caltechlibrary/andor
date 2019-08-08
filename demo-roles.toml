@@ -2,48 +2,51 @@
 # Example "workflows.toml". Lines starting with "#" are comments.
 # This file setups up the workflows used by AndOr.
 #
+
+[curator]
+role_id = "curator"
+role_name = "Curator"
+states = ["review", "embargoed", "published"]
+create = false
+read = true
+update = true
+delete = true
+assign_to = ["*"]
+
+[depositor]
+role_id = "depositor"
+role_name = "Depositor"
+states = ["review"]
+create = true
+read = false
+update = false
+delete = false
+
+[public]
+role_id = "public"
+role_name = "Public"
+states = ["published"]
+create = false
+read = true
+update = false
+delete = false
+
 [publisher]
-workflow_name = "Publisher"
-queue = "*"
-create = true
-read = true
-update = true
-delete = true
-assign_to = [ "*" ]
-
-[editor]
-workflow_name = "Editor"
-queue = "review"
-create = true
-read = true
-update = true
-delete = true
-assign_to = [ "inbox", "embargoed", "published"  ]
-
-[writer]
-workflow_name = "Writer"
-queue = "inbox"
-create = true
-read =  true
-update = true
-delete = true
-assign_to = [ "review" ]
-
-[embargoed]
-workflow_name = "Embargoed"
-queue = "embargoed"
+role_id = "publisher"
+role_name = "Publisher"
+states = ["*"]
 create = false
 read = true
+update = true
+delete = true
+assign_to = ["*"]
+
+[reviewer]
+role_id = "reviewer"
+role_name = "Reviewer"
+states = ["review"]
+create = true
+read = false
 update = false
 delete = false
-assign_to = [ "review" ]
-
-[published]
-workflow_name = "Published"
-queue = "published"
-create = false
-read = true
-update = false
-delete = false
-assign_to = [ ]
-
+assign_to = ["published", "embargoed"]

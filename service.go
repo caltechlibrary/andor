@@ -65,17 +65,28 @@ func writeJSON(w http.ResponseWriter, r *http.Request, src []byte) {
 func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request) {
 	// Who am I?
 	username := s.getUsername(r)
+	if username == "" {
+		http.NotFound(w, r)
+		return
+	}
+	log.Printf("DEBUG username %q", username)
 	// What roles do I have?
-	if roles, ok := s.getUserRoles(username); ok == true {
-		src, err := json.MarshalIndent(roles, "", "    ")
-		if err != nil {
-			log.Printf("Failed to marshal %q, %s", username, err)
-			writeError(w, http.StatusInternalServerError)
+	if user, ok := s.getUserInfo(username); ok == true {
+		if roles, ok := s.getUserRoles(username); ok == true {
+			o := map[string]interface{}{
+				"user":  user,
+				"roles": roles,
+			}
+			src, err := json.MarshalIndent(o, "", "    ")
+			if err != nil {
+				log.Printf("Failed to marshal %q, %s", username, err)
+				writeError(w, http.StatusInternalServerError)
+				return
+			}
+			// return payload appropriately
+			writeJSON(w, r, src)
 			return
 		}
-		// return payload appropriately
-		writeJSON(w, r, src)
-		return
 	}
 	// Otherwise return 404, Not Found
 	http.NotFound(w, r)
@@ -211,9 +222,9 @@ func (s *AndOrService) requestRead(cName string, c *dataset.Collection, w http.R
 		http.Error(w, "Not found", http.StatusNotFound)
 		return
 	case 1:
-		src, err = json.Marshal(objects[0])
+		src, err = json.MarshalIndent(objects[0], "", "    ")
 	default:
-		src, err = json.Marshal(objects)
+		src, err = json.MarshalIndent(objects, "", "    ")
 		if err != nil {
 			log.Printf("Error reading key(s) %q from %q, %s", keys, cName, err)
 			http.Error(w, "Internal Server error", http.StatusInternalServerError)
@@ -400,7 +411,7 @@ func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection)
 		addAccessRoute(access, base)
 	}
 	// End points based on dataset
-	p := base + "/keys"
+	p := base + "/keys/"
 	log.Printf("Adding handler %s", p)
 	mux.HandleFunc(p, func(w http.ResponseWriter, r *http.Request) {
 		s.requestKeys(cName, c, w, r)

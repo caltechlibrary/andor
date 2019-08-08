@@ -366,7 +366,7 @@ func (s *AndOrService) DumpRoles(fName string) error {
 	}
 	switch {
 	case strings.HasSuffix(fName, ".json"):
-		src, err = json.Marshal(s.Roles)
+		src, err = json.MarshalIndent(s.Roles, "", "    ")
 	case strings.HasSuffix(fName, ".toml"):
 		src, err = toml.Marshal(s.Roles)
 	default:
@@ -389,7 +389,7 @@ func (s *AndOrService) DumpUsers(fName string) error {
 	}
 	switch {
 	case strings.HasSuffix(fName, ".json"):
-		src, err = json.Marshal(s.Users)
+		src, err = json.MarshalIndent(s.Users, "", "    ")
 	case strings.HasSuffix(fName, ".toml"):
 		src, err = toml.Marshal(s.Users)
 	default:

@@ -108,6 +108,15 @@ func (s *AndOrService) getUsername(r *http.Request) string {
 	return strings.TrimSpace(username)
 }
 
+// getUserInfo returns a user object which includes login id,
+// and display name.
+func (s *AndOrService) getUserInfo(username string) (*User, bool) {
+	if u, ok := s.Users[username]; ok == true {
+		return u, true
+	}
+	return nil, false
+}
+
 // getUserRoles looks at a request and determines who the
 // user is and retrieves their roles. It returns a list of
 // roles that can be evaluated by hasPermission() or error
