@@ -1,15 +1,20 @@
 
 # Welcome to And/Or Demo
 
-JSON objects:
+In this demo we focusing on listing objects in the various
+object states. For the purposes of discussions objects which
+share a common state are said to be in a "queue". This is
+analogous to EPrints where objects in a common state are said
+to be in a "buffer". A queue is like a mailbox. It simply lists
+the objects in key order with the common state.
 
-+ [List keys](keys/)
-+ Single [object](read/100)
-+ List [objects](read/100,101,102,103)
-+ [Access](access/ "user profile")
+The queues listed will vary with the roles and the individual
+who is currently logged in. Ideally you should only see the queues
+that your roles support. For thie demo we just define all the
+possible states and if you don't have permissions then you'll
+be prompted to login with a different set of credentials.
 
-Web UI:
++ [Draft](list.html?state=draft)
++ [Review](list.html?state=review)
++ [Published](list.html?state=published)
 
-+ [Who am I](whoami.html) - who am I?
-+ [List Objects](list.html) - list objects
-+ [View Object](view.html?id=100) - view object id 100

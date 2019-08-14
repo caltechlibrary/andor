@@ -12,7 +12,9 @@
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="./">Demo Collection 01</a></li>
-<li><a href="list.html">List objects</a></li>
+<li><a href="list.html">List All Objects</a></li>
+<li><a href="list.html?keys=100,101,102,103">List Objects (paged)</a></li>
+<li><a href="list.html?state=published">List Published Objects</a></li>
 <li><a href="whoami.html">Who am I?</a></li>
 </ul>
 </nav>
@@ -23,22 +25,24 @@
 <a id="object-json-view">JSON view</a><p>
 </section>
 
-<script src="/demo.js"></script>
+<script src="/andor.js"></script>
 <script>
 (function (window, document) {
    "use strict";
-    var elem = document.getElementById("object-view"),
+    let c_name = "demo-collection-01",
+        elem = document.getElementById("object-view"),
         anchor = document.getElementById("object-json-view"),
         u = new URL(window.location.href),
         objectID = u.searchParams.get("key");
+
     if (objectID && anchor !== undefined) {
-        anchor.setAttribute("href", `/demo-collection-01/objects/${objectID}`)
+        anchor.setAttribute("href", `/${c_name}/read/${objectID}`)
     } else {
-        anchor.setAttribute("href", "/demo-collection-01/objects/")
+        anchor.setAttribute("href", `/${c_name}/list.html`)
         anchor.innerHTML = "No object id specified, view List";
     }
     if (elem !== undefined) {
-        Demo.viewObject(elem, objectID);
+        AndOr.viewObject(elem, c_name, objectID);
     }
 }(window, document));
 </script>

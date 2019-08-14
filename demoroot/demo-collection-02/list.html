@@ -13,8 +13,10 @@
 <li><a href="/">Home</a></li>
 <li><a href="./">Demo Collection 02</a></li>
 <li><a href="whoami.html">Who am I?</a></li>
-<li>List Objects</li>
 <li><a href="edit.html">Create an Object</a></li>
+<li><a href="list.html?state=draft">Draft</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=published">Published</a></li>
 </ul>
 </nav>
 
@@ -22,16 +24,21 @@
 <ul id="object-list"></ul>
 </section>
 
-<script src="/demo.js"></script>
+<script src="/andor.js"></script>
 <script>
-(function (document) {
+(function (window, document) {
    "use strict";
-    var elem = document.getElementById("object-list");
+    var c_name = "demo-collection-02", 
+        elem = document.getElementById("object-list"),
+        u = new URL(window.location.href),
+        state = u.searchParams.get("state");
 
-    if (elem !== undefined) {
-        Demo.listObjects(elem);
+    if (elem !== undefined && state !== null) {
+        AndOr.viewAllObjects(elem, c_name, state);
+    } else {
+        AndOr.viewAllObjects(elem, c_name);
     }
-}(document));
+}(window, document));
 </script>
 
 <footer>

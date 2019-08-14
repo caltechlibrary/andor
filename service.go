@@ -95,8 +95,19 @@ func (s *AndOrService) requestAccessInfo(w http.ResponseWriter, r *http.Request)
 // requestKeys is the API version of `dataset keys COLLECTION_NAME`
 // We only support GET on keys.
 func (s *AndOrService) requestKeys(cName string, c *dataset.Collection, w http.ResponseWriter, r *http.Request) {
-	//FIXME: Need to apply users/roles/states rules.
-	keys := c.Keys()
+	var (
+		keys []string
+		err  error
+	)
+	keys = c.Keys()
+	//NOTE: need to support filtered keys by object state and frame
+	switch {
+	case strings.Contains(r.URL.Path, "/keys/state/"):
+		state := strings.TrimPrefix(r.URL.Path, "/"+cName+"/keys/state/")
+		if state != "" {
+			keys, err = c.KeyFilter(keys[:], fmt.Sprintf(`(eq ._State %q)`, strings.TrimSpace(state)))
+		}
+	}
 	sort.Strings(keys)
 	src, err := json.MarshalIndent(keys, "", "    ")
 	if err != nil {
@@ -408,6 +419,7 @@ func (s *AndOrService) assignHandlers(mux *http.ServeMux, c *dataset.Collection)
 	base := "/" + path.Base(cName)
 	log.Printf("Adding access route %q", base)
 	if s.IsAccessRestricted() {
+		log.Printf("adding access policy to %q", base)
 		addAccessRoute(access, base)
 	}
 	// End points based on dataset

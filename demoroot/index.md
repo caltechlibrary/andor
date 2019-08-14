@@ -5,23 +5,30 @@ markup = "mmark"
 
 # Welcome to [And/Or](https://github.com/caltechlibrary/andor)
 
-This is a demo of And/Or[^1], a JSON object web service based on
-[dataset](https://github.com/caltechlibrary/dataset) collections. 
-E.g. a demo dataset collection, "demo-colloction-01.ds". 
+This is a demo of And/Or[^1], a web base multi-user version of 
+[dataset](https://github.com/caltechlibrary/dataset). It is a web
+service designed to build curation tools for collections of JSON
+objects.
 
+[demo-collection-01.ds](/demo-collection-01/)
+: demonstrates the basic user, role, object state, and impact on viewing
 
-The Web UI are built from static HTML/CSS/JavaScripts making http 
-calls to the web service.  Web UI is located under the collection,
-e.g. "/demo-collection-01/". The JavaScript library, "/demo.js", 
-provides examples of how to call the JSON API and render results 
-in a webpage.
+[demo-collection-02.ds](/demo-collection-02/)
+: demonstrates CRUD operations on a repository
 
+Each demo collection featuers a Web UI created with static
+files. Aside from the And/Or JSON object service which provides
+content the rest of the UI is constructed from HTML, CSS, and JavaScript.
+Each collection can have it's own UI as the name of the collection is
+mapped to the static host content for the specific collection
+(e.g `/demo-collection-01/`).
+Common functionality is defined via JavaScript and implemented in a
+file called `/andor.js` which contains a root object calls `AndOr`. 
 
-## Web UI Demos
+The demo configuration creates the following users - ester, innez, 
+jane, bea and millie. They use a common password "hello". If running
+demo under BasicAUTH then use a private browser window to switch
+between logins.
 
-+ [demo-collection-01.ds](/demo-collection-01/)
-    + read only demo of users, roles and BasicAUTH access for a single collection
-+ [demo-collection-02.ds](/demo-collection-02/)
-    + CRUD demo for users, roles and BasicAUTH access for a single collection
 
 [^1]: And/Or is named after a character in the [Ruby](https://www.zbs.org/index_new.php/store/ruby) stories produced by [ZBS](https://www.zbs.org) 

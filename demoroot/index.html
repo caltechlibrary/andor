@@ -18,30 +18,31 @@
 <section>
 <h1 id="welcome-to-and-or-https-github-com-caltechlibrary-andor">Welcome to <a href="https://github.com/caltechlibrary/andor">And/Or</a></h1>
 
-<p>This is a demo of And/Or<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>, a JSON object web service based on
-<a href="https://github.com/caltechlibrary/dataset">dataset</a> collections.
-E.g. a demo dataset collection, &quot;demo-colloction-01.ds&quot;.</p>
+<p>This is a demo of And/Or<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>, a web base multi-user version of
+<a href="https://github.com/caltechlibrary/dataset">dataset</a>. It is a web
+service designed to build curation tools for collections of JSON
+objects.</p>
 
-<p>The Web UI are built from static HTML/CSS/JavaScripts making http
-calls to the web service.  Web UI is located under the collection,
-e.g. &quot;/demo-collection-01/&quot;. The JavaScript library, &quot;/demo.js&quot;,
-provides examples of how to call the JSON API and render results
-in a webpage.</p>
+<dl>
+<dt><a href="/demo-collection-01/">demo-collection-01.ds</a></dt>
+<dd>demonstrates the basic user, role, object state, and impact on viewing</dd>
+<dt><a href="/demo-collection-02/">demo-collection-02.ds</a></dt>
+<dd>demonstrates CRUD operations on a repository</dd>
+</dl>
 
-<h2 id="web-ui-demos">Web UI Demos</h2>
+<p>Each demo collection featuers a Web UI created with static
+files. Aside from the And/Or JSON object service which provides
+content the rest of the UI is constructed from HTML, CSS, and JavaScript.
+Each collection can have it's own UI as the name of the collection is
+mapped to the static host content for the specific collection
+(e.g <code>/demo-collection-01/</code>).
+Common functionality is defined via JavaScript and implemented in a
+file called <code>/andor.js</code> which contains a root object calls <code>AndOr</code>.</p>
 
-<ul>
-<li><a href="/demo-collection-01/">demo-collection-01.ds</a>
-
-<ul>
-<li>read only demo of users, roles and BasicAUTH access for a single collection</li>
-</ul></li>
-<li><a href="/demo-collection-02/">demo-collection-02.ds</a>
-
-<ul>
-<li>CRUD demo for users, roles and BasicAUTH access for a single collection</li>
-</ul></li>
-</ul>
+<p>The demo configuration creates the following users - ester, innez,
+jane, bea and millie. They use a common password &quot;hello&quot;. If running
+demo under BasicAUTH then use a private browser window to switch
+between logins.</p>
 <h1 id="footnote-section">Footnotes</h1>
 
 <div class="footnotes">

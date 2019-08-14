@@ -11,8 +11,10 @@
 <li><a href="/">Home</a></li>
 <li><a href="./">Demo Collection 02</a></li>
 <li><a href="whoami.html">Who am I?</a></li>
-<li><a href="list.html">List Objects</a></li>
 <li><a href="edit.html">Create an Object</a></li>
+<li><a href="list.html?state=draft">Draft</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=published">Published</a></li>
 </ul>
 
 </nav>
@@ -20,21 +22,23 @@
 <section>
 <h1>Welcome to And/Or Demo</h1>
 
-<p>JSON objects:</p>
+<p>In this demo we focusing on listing objects in the various
+object states. For the purposes of discussions objects which
+share a common state are said to be in a &ldquo;queue&rdquo;. This is
+analogous to EPrints where objects in a common state are said
+to be in a &ldquo;buffer&rdquo;. A queue is like a mailbox. It simply lists
+the objects in key order with the common state.</p>
+
+<p>The queues listed will vary with the roles and the individual
+who is currently logged in. Ideally you should only see the queues
+that your roles support. For thie demo we just define all the
+possible states and if you don&rsquo;t have permissions then you&rsquo;ll
+be prompted to login with a different set of credentials.</p>
 
 <ul>
-<li><a href="keys/">List keys</a></li>
-<li>Single <a href="read/100">object</a></li>
-<li>List <a href="read/100,101,102,103">objects</a></li>
-<li><a href="access/" title="user profile">Access</a></li>
-</ul>
-
-<p>Web UI:</p>
-
-<ul>
-<li><a href="whoami.html">Who am I</a> - who am I?</li>
-<li><a href="list.html">List Objects</a> - list objects</li>
-<li><a href="view.html?id=100">View Object</a> - view object id 100</li>
+<li><a href="list.html?state=draft">Draft</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=published">Published</a></li>
 </ul>
 
 </section>

@@ -1,4 +1,6 @@
 + [Home](/)
 + [Demo Collection 01](./)
 + [Who am I?](whoami.html)
-+ [List Objects](list.html)
++ [List All Objects](list.html)
++ [List Object (paged)](list.html?keys=100,101,102,103)
++ [List Published Objects](list.html?state=published)
