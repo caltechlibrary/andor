@@ -9,27 +9,17 @@ user_id = "anonymous"
 display_name = "Anonymous"
 roles = ["public"]
 
-[bea]
-user_id = "bea"
-display_name = "Bea"
-roles = ["depositor", "public"]
-
 [ester]
 user_id = "ester"
 display_name = "Ester"
-roles = ["publisher"]
-
-[innez]
-user_id = "innez"
-display_name = "Innez"
-roles = ["depositor", "curator"]
+roles = ["publisher", "public" ]
 
 [jane]
 user_id = "jane"
 display_name = "Jane"
-roles = ["depositor", "curator"]
+roles = ["depositor", "curator", "public"]
 
 [millie]
 user_id = "millie"
 display_name = "Millie"
-roles = ["depositor", "reviewer", "public"]
+roles = ["depositor", "public"]

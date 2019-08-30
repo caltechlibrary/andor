@@ -16,11 +16,12 @@ assign_to = ["*"]
 [depositor]
 role_id = "depositor"
 role_name = "Depositor"
-states = ["review"]
+states = ["deposit"]
 create = true
 read = false
 update = false
 delete = false
+assign_to = ["review"]
 
 [public]
 role_id = "public"
@@ -35,18 +36,9 @@ delete = false
 role_id = "publisher"
 role_name = "Publisher"
 states = ["*"]
-create = false
+create = true
 read = true
 update = true
 delete = true
 assign_to = ["*"]
 
-[reviewer]
-role_id = "reviewer"
-role_name = "Reviewer"
-states = ["review"]
-create = true
-read = false
-update = false
-delete = false
-assign_to = ["published", "embargoed"]

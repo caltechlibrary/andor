@@ -9,18 +9,37 @@
 <nav>
 <ul>
 <li><a href="/">Home</a></li>
-<li><a href="./">Demo Collection 02</a></li>
+<li><a href="./">People</a></li>
 <li><a href="whoami.html">Who am I?</a></li>
-<li><a href="edit.html">Create an Object</a></li>
-<li><a href="list.html?state=draft">Draft</a></li>
-<li><a href="list.html?state=review">Review</a></li>
 <li><a href="list.html?state=published">Published</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=embargoed">Embargoed</a></li>
+<li><a href="list.html">All Objects</a></li>
 </ul>
 
 </nav>
 
 <section>
-<h1 id="view-object">View Object</h1>
+<p>&lt;!DOCTYPE html&gt;
+<html>
+<head>
+    <title>Caltech Library&rsquo;s Digital Library Development Sandbox</title>
+    <link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header>
+<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">Demo Collection 01</a></li>
+<li><a href="list.html">List All Objects</a></li>
+<li><a href="list.html?keys=100,101,102,103">List Objects (paged)</a></li>
+<li><a href="list.html?state=published">List Published Objects</a></li>
+<li><a href="whoami.html">Who am I?</a></li>
+</ul>
+</nav></p>
 
 <section>
 <div id="object-view"></div>
@@ -28,33 +47,38 @@
 <a id="object-json-view">JSON view</a><p>
 </section>
 
-<!-- START: View Object -->
-
-<script src="/scripts/CL.js"></script>
-
-<script src="/scripts/andor.js"></script>
-
+<script src="/andor.js"></script>
 <script>
 (function (window, document) {
    "use strict";
-    var elem = document.getElementById("object-view"),
+    let c_name = "demo-collection-01",
+        elem = document.getElementById("object-view"),
         anchor = document.getElementById("object-json-view"),
         u = new URL(window.location.href),
-        c_name = AndOr.getCollectionName(u.pathname),
         objectID = u.searchParams.get("key");
+
     if (objectID && anchor !== undefined) {
         anchor.setAttribute("href", `/${c_name}/read/${objectID}`)
     } else {
         anchor.setAttribute("href", `/${c_name}/list.html`)
         anchor.innerHTML = "No object id specified, view List";
     }
-    if (elem !== undefined && objectID !== null) {
+    if (elem !== undefined) {
         AndOr.viewObject(elem, c_name, objectID);
     }
 }(window, document));
 </script>
 
-<!--   END: View Object -->
+<p><footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&amp;copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address>
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+</body>
+</html></p>
 
 </section>
 

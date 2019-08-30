@@ -9,44 +9,47 @@
 <nav>
 <ul>
 <li><a href="/">Home</a></li>
-<li><a href="./">Demo Collection 01</a></li>
+<li><a href="./">People</a></li>
 <li><a href="whoami.html">Who am I?</a></li>
-<li><a href="list.html">List All Objects</a></li>
-<li><a href="list.html?keys=100,101,102,103">List Object (paged)</a></li>
-<li><a href="list.html?state=published">List Published Objects</a></li>
+<li><a href="list.html?state=published">Published</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=embargoed">Embargoed</a></li>
+<li><a href="list.html">All Objects</a></li>
 </ul>
 
 </nav>
 
 <section>
-<h1 id="who-am-i">Who am I?</h1>
+<h1>List View</h1>
 
-<section>
-<div id="whoami"></div>
-<p>
-<a href="access">JSON view</a><p>
-</section>
+<div id="object-list"></div>
 
-<!-- START: Who Am I? function -->
+<!-- START: List people based on GET request in URL -->
 
 <script src="/scripts/CL.js"></script>
-
 <script src="/scripts/andor.js"></script>
-
 <script>
 (function (window, document) {
-    'use strict';
-    let u = new URL(window.location.href),
-        c_name = AndOr.getCollectionName(u.pathname),
-        elem = document.getElementById("whoami");
+   "use strict";
+    let elem = document.getElementById("object-list"),
+        u = new URL(window.location.href),
+        c_name = andor.getCollectionName(u.pathname),
+        keys = u.searchParams.get("keys"),
+        state = u.searchParams.get("state");
 
     if (elem !== undefined) {
-        AndOr.whoAmI(elem, c_name);
+        if (keys !== null && keys.includes(",")) {
+           AndOr.viewObjectList(elem, c_name, keys.split(","));
+        } else if (state !== null && state !== "") {
+           AndOr.viewAllObjects(elem, c_name, state);
+        } else {
+           AndOr.viewAllObjects(elem, c_name);
+        }
     }
 }(window, document));
 </script>
 
-<!--   END: Who Am I? function -->
+<!--   END: List people based on GET request in URL -->
 
 </section>
 

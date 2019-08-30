@@ -5,6 +5,10 @@ markup = "mmark"
 
 # Documentation
 
+## About And/Or
+
+See [about.md](about.html)
+
 ## Project
 
 Below are development documents outlining some of the

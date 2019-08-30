@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Caltech Library's Digital Library Development Sandbox</title>
-    <link rel="stylesheet" href="/css/site.css">
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-<header>
-<a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
 </header>
 <nav>
 <ul>
@@ -18,19 +16,28 @@
 <li><a href="list.html?state=review">Review</a></li>
 <li><a href="list.html?state=published">Published</a></li>
 </ul>
+
 </nav>
+
+<section>
+<h2 id="list-objects">List Objects</h2>
 
 <section>
 <ul id="object-list"></ul>
 </section>
 
-<script src="/andor.js"></script>
+<!-- START: List Objects -->
+
+<script src="/scripts/CL.js"></script>
+
+<script src="/scripts/andor.js"></script>
+
 <script>
 (function (window, document) {
    "use strict";
-    var c_name = "demo-collection-02", 
-        elem = document.getElementById("object-list"),
+    var elem = document.getElementById("object-list"),
         u = new URL(window.location.href),
+        c_name = AndOr.getCollectionName(u.pathname),
         state = u.searchParams.get("state");
 
     if (elem !== undefined && state !== null) {
@@ -41,6 +48,10 @@
 }(window, document));
 </script>
 
+<!--   END: List Objects -->
+
+</section>
+
 <footer>
 <span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
 <span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
@@ -49,5 +60,26 @@
 <span><a href="mailto:library@caltech.edu">Email Us</a></span>
 <a class="cl-hide" href="sitemap.xml">Site Map</a>
 </footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
 </body>
 </html>

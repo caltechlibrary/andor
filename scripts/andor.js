@@ -9,6 +9,18 @@
     let AndOr = new Object();
 
     /**
+     * getCollectionName takes a URL pathname and returns the dirname
+     * as the collection name.
+     */
+    function getCollectionName(url_path) {
+        let p = url_path.split("/")
+        if (p.length > 1) {
+            return p[1];
+        }
+        return "unknown";
+    }
+
+    /**
      * whoAmI takes a DOM element and renders a textual description
      * of a person's role and object assignment options.
      *
@@ -201,6 +213,7 @@ You may assign objects to&mdash;
     }
 
     /* Attach our functions to our object for export */
+    AndOr.getCollectionName = getCollectionName;
     AndOr.whoAmI = whoAmI;
     AndOr.viewAllObjects = viewAllObjects;
     AndOr.viewObjectList = viewObjectList;

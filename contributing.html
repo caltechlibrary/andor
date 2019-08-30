@@ -9,44 +9,32 @@
 <nav>
 <ul>
 <li><a href="/">Home</a></li>
-<li><a href="./">Demo Collection 01</a></li>
-<li><a href="whoami.html">Who am I?</a></li>
-<li><a href="list.html">List All Objects</a></li>
-<li><a href="list.html?keys=100,101,102,103">List Object (paged)</a></li>
-<li><a href="list.html?state=published">List Published Objects</a></li>
+<li><a href="./">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="install.html">INSTALL</a></li>
+<li><a href="./docs">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">Github</a>
+<!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
 </ul>
 
 </nav>
 
 <section>
-<h1 id="who-am-i">Who am I?</h1>
+<h1>Guidelines for contributing to this project</h1>
 
-<section>
-<div id="whoami"></div>
-<p>
-<a href="access">JSON view</a><p>
-</section>
+<p>Any constructive contributions &amp;ndash; bug reports, pull requests (code or documentation), suggestions for improvements, and more &amp;ndash; are welcome.</p>
 
-<!-- START: Who Am I? function -->
+<h2>Conduct</h2>
 
-<script src="/scripts/CL.js"></script>
+<p>Everyone is asked to read and respect the <a href="CODE_OF_CONDUCT.md">code of conduct</a> before participating in this project.</p>
 
-<script src="/scripts/andor.js"></script>
+<h2>Coordinating work</h2>
 
-<script>
-(function (window, document) {
-    'use strict';
-    let u = new URL(window.location.href),
-        c_name = AndOr.getCollectionName(u.pathname),
-        elem = document.getElementById("whoami");
+<p>A quick way to find out what is currently in the near-term plans for this project is to look at the <a href="https://github.com/caltechlibrary/andor/issues">GitHub issue tracker</a>, but the possibilities are not limited to what you see there &amp;ndash; if you have ideas for new features and enhancements, please feel free to write them up as a new issue or contact the developers directly!</p>
 
-    if (elem !== undefined) {
-        AndOr.whoAmI(elem, c_name);
-    }
-}(window, document));
-</script>
+<h2>Submitting contributions</h2>
 
-<!--   END: Who Am I? function -->
+<p>Please feel free to contact the author directly, or even better, jump right in and use the standard GitHub approach of forking the repo and creating a pull request.  When committing code changes and submitting pull requests, please write a clear log message for your commits.</p>
 
 </section>
 

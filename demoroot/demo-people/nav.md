@@ -1,0 +1,7 @@
++ [Home](/)
++ [People](./)
++ [Who am I?](whoami.html)
++ [Published](list.html?state=published)
++ [Review](list.html?state=review)
++ [Embargoed](list.html?state=embargoed)
++ [All Objects](list.html)

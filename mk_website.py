@@ -7,9 +7,12 @@ from subprocess import Popen, PIPE, run
 
 custom_page_map = { 
         "README.md" : "index.html",
+        "ABOUT.md": "about.html",
         "INSTALL.md": "install.html",
         "LICENSE": "license.html",
-        "DEVELOPERS.md": "developers.html"
+        "DEVELOPERS.md": "developers.html",
+        "CONTRIBUTING.md": "contributing.html",
+        "CODE_OF_CONDUCT.md": "code-of-conduct.html"
 }
 
 # NOTE: Fragments get ignored when converting to HTML

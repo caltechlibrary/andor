@@ -25,12 +25,13 @@ andor$(EXT): bin/andor$(EXT)
 bin/andor$(EXT): *.go cmd/andor/andor.go
 	go build -o bin/andor$(EXT) cmd/andor/andor.go
 
-build: $(PROJECT_LIST) libandor
+build: $(PROJECT_LIST) libandor 
 
 install: 
 	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
+	cp -v scripts/andor.js demoroot/scripts/
 	./mk_website.py $(baseurl)
 
 test: clean bin/andor$(EXT)
