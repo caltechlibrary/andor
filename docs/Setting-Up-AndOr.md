@@ -43,7 +43,7 @@ to setup and run it.
     bin/andor start
 ```
 
-**andor** by default runs at http://localhost:8248. You can 
+**andor** by default runs at http://localhost:8246. You can 
 change it by updating your "andor.toml" file created with
 `bin/andor init`.
 

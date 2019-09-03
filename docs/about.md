@@ -38,15 +38,13 @@ on hardware as small as a Rasbpberry Pi.
 ## Goals
 
 + Provide a curatorial platform for metadata outside our existing repositories
-+ Provide an __interim curation option__ for EPrints repositories requiring migration
 + Thin stack 
     + No RDMS requirement (only And/Or and a web server)
-    + Be easier to implement than migrating an EPrints repository
-    + Be faster than EPrints under for curating objects
+    + Be easier to implement than migrating a repository
+    + Be faster than EPrints for curating objects
     + Be simpler than EPrints, Invenio and Drupal/Islandora
 + Use existing schema 
 + Support role based workflows
-+ Support versioned attached media files
 + Support continuous migration
 + Support alternative front ends (e.g. Drupal)
 
@@ -137,8 +135,8 @@ that functionality could be included in **And/Or**.
 
 ### Web UI
 
-Five pages would need to be designed and implemented in HTML, CSS and
-JavaScript for our proof of concept.
+Five pages would need to be designed per collection and 
+implemented in HTML, CSS and JavaScript for our proof of concept.
 
 1. Login and landing page 
 2. Display List records (filterable by object state)
@@ -146,30 +144,31 @@ JavaScript for our proof of concept.
 4. Create/edit Object details
 5. Page to display user roles
 
-For public facing content (e.g. things Google, Bing, et el. 
-should find and index) can be deployed separately by 
-process similar to how feeds.library.caltech.edu works.
-This also keeps **And/Or** simple with fewer requirements.
+**And/Or** is NOT for public facing content 
+(e.g. things Google, Bing, et el.  should find and index) 
+Machanisms for public facing content should be deployed 
+separately by process similar to how feeds.library.caltech.edu 
+works. This keeps **And/Or** simple with fewer requirements.
 
 ### Examples of composibility
 
 When listing a collection objects suggests the need for paging.
 "keys" can be used client side to create a segmented key list and when
-combined with "read" which can accept more than one id we now have
-a means of paging through a collection's objects.
+combined with "read" which can accept an id list, thus we get
+paging for a collection's objects by getting the universe of keys,
+and then requesting to "read" for the keys we want to display
+in a page.
 
-A collection could be publically viewable (e.g. Oral Histories)
-by writing a script that reads the dataset collection **And/Or** is
-referencing rendering web pages appropriately (e.g. like we do
-with feeds).
+A search interface could be created as a microserve in the manner 
+of Stevens' Lunr demo for Caltech People. If **And/Or** and the
+search microserver are behind the same web server you could present
+both services using a common URL namespace (Apache or NingX are
+good candites from a front facing web server integrating **And/Or**
+and your search system).
 
-A search interface can be created by indexing the dataset collection
-and presenting a search UI. (E.g. Like Stephen's demo of Lunr 
-providing a search Caltech People pages).
-
-A deposit system could be created as a microservice in Drupal 
-to accept metadata and documents before handing them of to 
-**And/Or** via a service account.
+A deposit system could be created as a microservice (e.g. 
+in Drupal) to accept metadata and documents before handing 
+them of to **And/Or** via a service account.
 
 
 ### User/role/object state is a simple model

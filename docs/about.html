@@ -57,18 +57,16 @@ on hardware as small as a Rasbpberry Pi.</p>
 
 <ul>
 <li>Provide a curatorial platform for metadata outside our existing repositories</li>
-<li>Provide an <strong>interim curation option</strong> for EPrints repositories requiring migration</li>
 <li>Thin stack
 
 <ul>
 <li>No RDMS requirement (only And/Or and a web server)</li>
-<li>Be easier to implement than migrating an EPrints repository</li>
-<li>Be faster than EPrints under for curating objects</li>
+<li>Be easier to implement than migrating a repository</li>
+<li>Be faster than EPrints for curating objects</li>
 <li>Be simpler than EPrints, Invenio and Drupal/Islandora</li>
 </ul></li>
 <li>Use existing schema</li>
 <li>Support role based workflows</li>
-<li>Support versioned attached media files</li>
 <li>Support continuous migration</li>
 <li>Support alternative front ends (e.g. Drupal)</li>
 </ul>
@@ -171,8 +169,8 @@ that functionality could be included in <strong>And/Or</strong>.</p>
 
 <h3 id="web-ui">Web UI</h3>
 
-<p>Five pages would need to be designed and implemented in HTML, CSS and
-JavaScript for our proof of concept.</p>
+<p>Five pages would need to be designed per collection and
+implemented in HTML, CSS and JavaScript for our proof of concept.</p>
 
 <ol>
 <li>Login and landing page</li>
@@ -182,30 +180,31 @@ JavaScript for our proof of concept.</p>
 <li>Page to display user roles</li>
 </ol>
 
-<p>For public facing content (e.g. things Google, Bing, et el.
-should find and index) can be deployed separately by
-process similar to how feeds.library.caltech.edu works.
-This also keeps <strong>And/Or</strong> simple with fewer requirements.</p>
+<p><strong>And/Or</strong> is NOT for public facing content
+(e.g. things Google, Bing, et el.  should find and index)
+Machanisms for public facing content should be deployed
+separately by process similar to how feeds.library.caltech.edu
+works. This keeps <strong>And/Or</strong> simple with fewer requirements.</p>
 
 <h3 id="examples-of-composibility">Examples of composibility</h3>
 
 <p>When listing a collection objects suggests the need for paging.
 &quot;keys&quot; can be used client side to create a segmented key list and when
-combined with &quot;read&quot; which can accept more than one id we now have
-a means of paging through a collection's objects.</p>
+combined with &quot;read&quot; which can accept an id list, thus we get
+paging for a collection's objects by getting the universe of keys,
+and then requesting to &quot;read&quot; for the keys we want to display
+in a page.</p>
 
-<p>A collection could be publically viewable (e.g. Oral Histories)
-by writing a script that reads the dataset collection <strong>And/Or</strong> is
-referencing rendering web pages appropriately (e.g. like we do
-with feeds).</p>
+<p>A search interface could be created as a microserve in the manner
+of Stevens' Lunr demo for Caltech People. If <strong>And/Or</strong> and the
+search microserver are behind the same web server you could present
+both services using a common URL namespace (Apache or NingX are
+good candites from a front facing web server integrating <strong>And/Or</strong>
+and your search system).</p>
 
-<p>A search interface can be created by indexing the dataset collection
-and presenting a search UI. (E.g. Like Stephen's demo of Lunr
-providing a search Caltech People pages).</p>
-
-<p>A deposit system could be created as a microservice in Drupal
-to accept metadata and documents before handing them of to
-<strong>And/Or</strong> via a service account.</p>
+<p>A deposit system could be created as a microservice (e.g.
+in Drupal) to accept metadata and documents before handing
+them of to <strong>And/Or</strong> via a service account.</p>
 
 <h3 id="user-role-object-state-is-a-simple-model">User/role/object state is a simple model</h3>
 

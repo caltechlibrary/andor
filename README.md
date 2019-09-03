@@ -11,7 +11,7 @@ And/Or
 
 **And/Or** is a proof of concept for a simple object repository
 based on Caltech Library's [dataset](https://caltechlibrary.github.io/dataset)
-tool.  It provides a web-based multi-user verion of dataset suitable for
+tool.  It provides a web-based multi-user version of dataset suitable for
 JSON object curation by a small group of users. It implements a role/object
 state based permission scheme enabling support for simple workflows.
 
@@ -34,23 +34,25 @@ Table of contents
 Introduction
 ------------
 
-**And/Or** is a multi-user web version of [dataset](https://github.com/caltechlibrary/dataset). __dataset__ has proven to be a
-useful tool for managing library metadata using a data science approach.
-It is easy to import content into it and export from it. It lacks 
-multi-user curation support or the convienence of having web browser based
-edit forms. The **And/Or** prototype is an exploration
+**And/Or** is a multi-user web version of 
+[dataset](https://github.com/caltechlibrary/dataset). __dataset__ 
+has proven to be a useful tool for managing library metadata using 
+a data science approach.  It is built for continious migration dataflows. 
+It lacks multi-user curation support or the convienence of having 
+web browser based edit forms. **And/Or** is a prototype exploration
 of using dataset as a storage engine and extending it to support multiple
 users using a role/object state based permission scheme. It is a proof
-of concept for a extremely light weight JSON object repository that supports
-simple workflows.
+of concept for a extremely light weight JSON object repository that 
+supports simple workflows and continious migration.
 
-**And/Or** provides a web friendly JSON API mapping __dataset__ functionality
-to URLs. It supports serving static HTML, CSS and JavaScript for building
-suitable user interfaces that humans night be inclined to use.  The JSON API 
-supports creating, reading, update and deleting objects in a collection. The
-API supports key list retrieval and limitted filtering.  Finally And/Or
-provides BasicAUTH user authentication support for mapping users 
-to role/object state permission scheme.  With these primitive facilities 
+**And/Or** provides a web friendly JSON API mapping __dataset__ 
+functionality to URLs. It supports serving static HTML, CSS and 
+JavaScript for building suitable user interfaces that humans night 
+be inclined to use.  The JSON API supports creating, reading, 
+update and deleting objects in a collection. The API supports key 
+list retrieval and limitted filtering.  Finally And/Or provides 
+BasicAUTH user authentication support for mapping users to 
+role/object state permission scheme.  With these primitive facilities 
 you can build a simple object repository systems using the HTML, CSS and 
 JavaScript to create a web client interacting with the And/Or JSON API.
 
@@ -61,8 +63,8 @@ Installation
 See [INSTALL.md](install.html). This software is experimental
 and pre-compiled binaries are NOT provided.  This software is written in 
 [Go](https://golang.org) programming language and needs a Go compiler
-to be compiled. 
-
+to be compiled. Installation maybe as simple as the following
+go and git commands.
 
 ```bash
     go get -u github.com/caltechlibrary/andor/...
@@ -91,7 +93,7 @@ Known issues and limitations
 ----------------------------
 
 This is a proof-of-concept project. It SHOULD NOT be used
-in a production setting.  It is ONLY suitable for demonstration
+in any production setting.  It is ONLY suitable for demonstrating
 an approach to building light weight object repositories.
 
 Getting help

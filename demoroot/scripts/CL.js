@@ -176,7 +176,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     window.CL = Object.assign(window.CL, CL);
 }(document, window));
 /**
- * CL-fields.js provides browser side JavaScript form building
+ * CL-ui.js provides browser side JavaScript form building
  * functions for Caltech Library resources (e.g. feeds.library.caltech.edu).
  *
  * @author R. S. Doiel
@@ -235,50 +235,54 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
     /**
      * field takes a default_attributes object, a template
-     * string and an optional validation function. It returns 
-     * an object that has the following functions - get(), set(), 
+     * string and an optional init function. It returns 
+     * an object that has the following functions - init(), get(), set(), 
      * html(), and json().
      *
      * Example:
      *
      *      creator = CL.field({
-     *          last_name: "",
-     *          first_name: "",
-     *          orcid: ""
+     *          last_name: "Jones",
+     *          first_name: "Henry",
+     *          birth_date: "July 1, 1899"
      *          },
      *          '<div>' +
      *          '   <label>Last Name:</label>' +
-     *          '   <input name="last_name" value="${last_name}">' +
+     *          '   <input name="last_name" value="{{last_name}}">' +
      *          '</div>' +
      *          '<div>' +
      *          '  <label>First Name:</label>' +
-     *          '  <input name="first_name" value="${first_name}">' +
+     *          '  <input name="first_name" value="{{first_name}}">' +
      *          '</div>' +
      *          '<div>' +
-     *          '  <label>ORCID:</label>' +
-     *          '  <input name="orcid" value="${orcid}">' +
+     *          '  <label>Birth Date:</label>' +
+     *          '  <input name="birth_date" value="{{birth_date}}">' +
      *          '</div>',
      *          function(obj) {
-     *             if ('orcid' in obj) {
-     *                return validate_orcid(obj.orcid);
+     *             // Normalize date before rendering form.
+     *             if (('birth_date' in obj) && obj.birth_date !== "") {
+     *                dt = new Date(obj.birth_date);
+     *                obj.birth_date = dt.toDateString()
      *             }
-     *             return false;
      *          });
      *          
      *     // Render as HTML
      *     element.innerHTML = creator.html();
      */
-    CL.field = function(attributes, template_string, validate_function = undefined, sep = "") {
+    CL.field = function(attributes, template_string, init_function = undefined, sep = "") {
         let obj = new Object();
         // Shallow copy of object attributes
         for (let key in attributes) {
             obj[key] = attributes[key];
         }
-        // Attach our validation_function
-        if (validate_function === undefined) {
-            obj.validate = function () { return true; };
+        // Attach our init function
+        if (init_function === undefined) {
+            //NOTE: Our default init function always succeeds.
+            obj.init = function () { return true };
         } else {
-            obj.validate = validate_function;
+            //NOTE: User supplied init_function should return
+            // true on success, false otherwise.
+            obj.init = init_function;
         }
         // Add our get(), set(), html(), and json functions()
         obj.get = function(key, error_value) {
@@ -298,7 +302,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         }
         obj.html = function() {
             let obj = this;
-            return __template(template_string, obj);
+            return __template(template_string, obj, sep);
         }
         obj.json = function() {
             let self = this;
@@ -331,11 +335,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *         };
      *
      *     steinbeck = CL.field(steinbeck, 
-     *         '<span class="last_name">${last_name}</span>, ' +
-     *         '<span class="first_name">${first_name}</span>');
+     *         '<span class="last_name">{{last_name}}</span>, ' +
+     *         '<span class="first_name">{{first_name}}</span>');
      *
      *     creators = CL.field({"creators": [ steinbeck ]},
-     *         '<div class="creators">By ${creators}</div>',
+     *         '<div class="creators">By {{creators}}</div>',
      *         sep = '; ');
      *
      *     book = CL.field({
@@ -344,36 +348,39 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      *          "creators": creators
      *         }, 
      *         '<div class="book">' +
-     *         '   <div class="title">${title}</div>' +
-     *         '   <div class="creators">By ${creators}</div>' + 
-     *         '   <div class="description">${description}</div>' +
+     *         '   <div class="title">{{title}}</div>' +
+     *         '   <div class="creators">By {{creators}}</div>' + 
+     *         '   <div class="description">{{description}}</div>' +
      *         '</div>'
      *         undefined, '; ');
      *     books.push(book);
      *
      *     pratchett = CL.field(pratchett, 
-     *         '<span class="last_name">${last_name}</span>, ' +
-     *         '<span class="first_name">${first_name}</span>');
+     *         '<span class="last_name">{{last_name}}</span>, ' +
+     *         '<span class="first_name">{{first_name}}</span>');
      *
      *     gaimen = CL.field(gaimen, 
-     *         '<span class="last_name">${last_name}</span>, ' +
-     *         '<span class="first_name">${first_name}</span>');
+     *         '<span class="last_name">{{last_name}}</span>, ' +
+     *         '<span class="first_name">{{first_name}}</span>');
      *
      *     creators = CL.field({"creators": [ pratchett, gaimen ]},
-     *         '<div class="creators">By ${creators}</div>',
+     *         '<div class="creators">By {{creators}}</div>',
      *         sep = '; ');
      *
+     *     // NOTE: We attach normalizeBookData for the init function 
+     *     // which is called by assembleFields initializing the 
+     *     // data before rendering.
      *     book = CL.field({
      *          "title": "Good Omens"
      *          "description": "A book about angels and demons set in London for the most part", 
      *          "creators": creators
      *         }, 
      *         '<div class="book">' +
-     *         '   <div class="title">${title}</div>' +
-     *         '   <div class="creators">By ${creators}</div>' + 
-     *         '   <div class="description">${description}</div>' +
+     *         '   <div class="title">{{title}}</div>' +
+     *         '   <div class="creators">By {{creators}}</div>' + 
+     *         '   <div class="description">{{description}}</div>' +
      *         '</div>'
-     *         undefined, '; ');
+     *         normalizeBook, '; ');
      *     books.push(book);
      *
      *     let element = CL.assembleFields(
@@ -385,7 +392,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
         element.innerHTML = "";
         for (let key in fields) {
-            element.innerHTML += fields[key].html();
+            if (fields[key].init() === true) {
+                element.innerHTML += fields[key].html();
+            }
         }
         return element;
     }
