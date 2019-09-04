@@ -1,41 +1,38 @@
 (function (document, window) {
-'use strict';
-let cl = Object.assign({}, window.CL),
-    div = document.getElementById('example-output');
-
-function setupAnchor(elem, link_text, prefix, suffix, value) {
-    if (value === "" ) {
-        elem.setAttribute("href", value);
-        elem.innerHTML = "";
-        return;
-    }
-    elem.setAttribute("href", prefix + value + suffix);
-    elem.innerHTML = link_text;
-}
-
-let people = {
-        "family_name": "",
-        "given_name": "",
-        "cl_people_id": "",
-        "thesis_id": "",
-        "authors_id": "",
-        "archivesspace_id": "",
-        "directory_id": "",
-        "viaf": "",
-        "lcnaf": "",
-        "isni": "",
-        "wikidata": "",
-        "snac": "",
-        "orcid": "",
-        "image": "",
-        "educated_at": "",
-        "caltech": false,
-        "jpl": false,
-        "faculty": false,
-        "alumn": false,
-        "notes": ""
-    },
-    field = CL.field(people, `
+    'use strict';
+    /**
+     * Page data
+     */
+    let cl = Object.assign({}, window.CL),
+        AndOr = Object.assign({}, window.AndOr),
+        div = document.getElementById('example-output'),
+        page_url = new URL(window.location.href),
+        c_name = AndOr.getCollectionName(page_url.pathname),
+        key = page_url.searchParams.get("key") || "", 
+        people = {
+            "family_name": "",
+            "given_name": "",
+            "cl_people_id": "",
+            "thesis_id": "",
+            "authors_id": "",
+            "archivesspace_id": "",
+            "directory_id": "",
+            "viaf": "",
+            "lcnaf": "",
+            "isni": "",
+            "wikidata": "",
+            "snac": "",
+            "orcid": "",
+            "image": "",
+            "educated_at": "",
+            "caltech": false,
+            "jpl": false,
+            "faculty": false,
+            "alumn": false,
+            "notes": "",
+            "_State": "deposit"
+        },
+        form_src = `
 <style>
 form.form-example {
     width: auto;
@@ -68,6 +65,11 @@ form.form-example > div > input[type=checkbox] {
     min-width: 1em;
     padding-left: 1em;
     margin-left: 1em;
+}
+form.form-example > div > button {
+    display: inline;
+    padding: 0.32em;
+    margin: 0.64em;
 }
 </style>
 <form class="form-example">
@@ -164,222 +166,300 @@ form.form-example > div > input[type=checkbox] {
     <textarea id="notes" name="notes">{{notes}}</textarea>
 </div>
 <div>
-<input id="save" type="button" value="Save">
-<input id="reset" type="reset" value="Reset">
+    <label for="_State">Status:</label>
+    <select id="_State">
+        <option value="{{_State}}" selected>{{_State}}</option>
+        <option value="deposit">Deposit</option>
+        <option value="review">Review</option>
+        <option value="embargoed">Embargoed</option>
+        <option value="published">Published</option>
+        <option value="deleted">Deleted</option>
+    </select>
+</div>
+<div>
+<button id="create">Create</button>
+<button id="save">Save</button>
+<button id="reset">Reset</button>
 </div>
 </form><!-- END: form.form-example -->
-`,
-        function() {
-            let obj = this;
-            // NOTE: Convert bool true to 'checked' and
-            // false to empty string for using in 
-            // checkbox input.
-            for (let key in obj) {
-                if (obj[key] === true) {
-                    obj[key] = "checked";
-                } else if (obj[key] === false) {
-                    obj[key] = "";
-                }
-            }
-            return true;
-        });
-    div.innerHTML = "";
-    let form = CL.assembleFields(div, field),
-        /**
-         * Now we add our event listeners and lookups using
-         * vanilla JavaScript and CL.httpGet()..
-         */
-        family_name = form.querySelector("#family_name"),
-        given_name = form.querySelector("#given_name"),
-        cl_people_id = form.querySelector("#cl_people_id"),
-        cl_people_url = form.querySelector("#cl_people_url"),
-        thesis_id = form.querySelector("#thesis_id"),
-        thesis_url = form.querySelector("#thesis_author_url"),
-        authors_id = form.querySelector("#authors_id"),
-        authors_url = form.querySelector("#authors_url"),
-        archivesspace_id = form.querySelector("#archivesspace_id"),
-        archivesspace_url = form.querySelector("#archivesspace_url"),
-        directory_id = form.querySelector("#directory_id"),
-        directory_url = form.querySelector("#directory_url"),
-        viaf = form.querySelector("#viaf"),
-        viaf_url = form.querySelector("#viaf_url"),
-        lcnaf = form.querySelector("#lcnaf"),
-        lcnaf_url = form.querySelector("#lcnaf_url"),
-        isni = form.querySelector("#isni"),
-        isni_url = form.querySelector("#isni_url"),
-        wikidata = form.querySelector("#wikidata"),
-        wikidata_url = form.querySelector("#wikidata_url"),
-        snac = form.querySelector("#snac"),
-        snac_url = form.querySelector("#snac_url"),
-        orcid = form.querySelector("#orcid"),
-        orcid_url = form.querySelector("#orcid_url"),
-        image = form.querySelector("#image"),
-        image_url = form.querySelector("#image_url"),
-        educated_at = form.querySelector("#educated_at"),
-        caltech = form.querySelector("#caltech"),
-        jpl = form.querySelector("#jpl"),
-        faculty = form.querySelector("#faculty"),
-        alumn = form.querySelector("#alumn"),
-        notes = form.querySelector("#notes"),
-        save = form.querySelector("#save"),
-        reset = form.querySelector("#reset"); 
+`;
     
-    family_name.addEventListener("change", function(evt) {
-        people.family_name = this.value;
-    });
-    given_name.addEventListener("change", function(evt) {
-        people.given_name = this.value;
-    });
-    cl_people_id.addEventListener("change", function(evt) {
-        people.cl_people_id = (function(s) {
-            if (s === "") {
-                return s;
+    /**
+     * Page functions
+     */
+    
+    //console.log("DEBUG page_url", page_url);
+    //console.log("DEBUG c_name", c_name);
+    //console.log("DEBUG key ->", key, "<-");
+    
+    function setupAnchor(elem, link_text, prefix, suffix, value) {
+        if (value === "" ) {
+            elem.setAttribute("href", value);
+            elem.innerHTML = "";
+            return;
+        }
+        elem.setAttribute("href", prefix + value + suffix);
+        elem.innerHTML = link_text;
+    }
+    
+    function capitalize_word(w) {
+        return w.charAt(0).toUpperCase()+w.slice(1);
+    }
+    
+    function capitalize_string(s, sep = '-') {
+        if (s === "") {
+            return s;
+        }
+        return s.toLowerCase().split(sep).map(capitalize_word).join(sep);
+    }
+    
+    function form_init() {
+        let obj = this;
+        // NOTE: Convert bool true to 'checked' and
+        // false to empty string for using in 
+        // checkbox input.
+        for (let key in obj) {
+             if (obj[key] === true) {
+                 obj[key] = "checked";
+             } else if (obj[key] === false) {
+                 obj[key] = "";
+             }
+        }
+        return true;
+    }
+
+    function render_form(elem, people, form_src, form_init) {
+        elem.innerHTML = "";
+        let field = CL.field(people, form_src, form_init),
+            form = CL.assembleFields(elem, field),
+            /**
+             * Now we add our event listeners and lookups using
+             * vanilla JavaScript and CL.httpGet()..
+             */
+            family_name = form.querySelector("#family_name"),
+            given_name = form.querySelector("#given_name"),
+            cl_people_id = form.querySelector("#cl_people_id"),
+            cl_people_url = form.querySelector("#cl_people_url"),
+            thesis_id = form.querySelector("#thesis_id"),
+            thesis_url = form.querySelector("#thesis_url"),
+            authors_id = form.querySelector("#authors_id"),
+            authors_url = form.querySelector("#authors_url"),
+            archivesspace_id = form.querySelector("#archivesspace_id"),
+            archivesspace_url = form.querySelector("#archivesspace_url"),
+            directory_id = form.querySelector("#directory_id"),
+            directory_url = form.querySelector("#directory_url"),
+            viaf = form.querySelector("#viaf"),
+            viaf_url = form.querySelector("#viaf_url"),
+            lcnaf = form.querySelector("#lcnaf"),
+            lcnaf_url = form.querySelector("#lcnaf_url"),
+            isni_url = form.querySelector("#isni_url"),
+            wikidata = form.querySelector("#wikidata"),
+            wikidata_url = form.querySelector("#wikidata_url"),
+            snac = form.querySelector("#snac"),
+            snac_url = form.querySelector("#snac_url"),
+            orcid = form.querySelector("#orcid"),
+            orcid_url = form.querySelector("#orcid_url"),
+            image = form.querySelector("#image"),
+            image_url = form.querySelector("#image_url"),
+            educated_at = form.querySelector("#educated_at"),
+            caltech = form.querySelector("#caltech"),
+            jpl = form.querySelector("#jpl"),
+            faculty = form.querySelector("#faculty"),
+            alumn = form.querySelector("#alumn"),
+            notes = form.querySelector("#notes"),
+            create = form.querySelector("#create"),
+            save = form.querySelector("#save"),
+            reset = form.querySelector("#reset"); 
+        
+        family_name.addEventListener("change", function(evt) {
+            people.family_name = this.value;
+        });
+        given_name.addEventListener("change", function(evt) {
+            people.given_name = this.value;
+        });
+        cl_people_id.addEventListener("change", function(evt) {
+            people.cl_people_id = capitalize_string(this.value, '-');
+            setupAnchor(cl_people_url, 
+                'Check Feeds for ' + people.cl_people_id, 
+                'https://feeds.library.caltech.edu/people/', 
+                '',
+                people.cl_people_id);
+            this.value = people.cl_people_id;
+        });
+        thesis_id.addEventListener("change", function (evt) {
+            people.thesis_id = capitalize_string(this.value, '-');
+            setupAnchor(thesis_url, 
+                'Check CaltechTHESIS (as author) for ' + people.thesis_id, 
+                'https://thesis.library.caltech.edu/view/author/',
+                '.html',
+                people.thesis_id);
+            this.value = people.thesis_id;
+        });
+        authors_id.addEventListener("change", function(evt) {
+            people.authors_id = capitalize_string(this.value);
+            setupAnchor(authors_url, 
+                'Check CaltechAUTHORS for ' + people.authors_id, 
+                'https://authors.library.caltech.edu/view/person-az/',
+                '.html',
+                people.authors_id);
+            this.value = people.authors_id;
+        });
+        archivesspace_id.addEventListener("change", function(evt) {
+            people.archivesspace_id = this.value;
+            setupAnchor(archivesspace_url, 
+                'Check Caltech Archives for ' + this.value, 
+                'https://collections.archives.caltech.edu/agents/people/',
+                '',
+                this.value);
+        });
+        directory_id.addEventListener("change", function(evt) {
+            people.directory_id = this.value;
+            setupAnchor(directory_url, 
+                'Check Caltech Directory for ' + this.value, 
+                'https://directory.caltech.edu/personnel/',
+                '',
+                this.value);
+        });
+        viaf.addEventListener("change", function(evt) {
+            people.viaf = this.value;
+            setupAnchor(viaf_url, 
+                'Check VIAF.org for ' + this.value, 
+                'https://viaf.org/viaf/',
+                '/',
+                this.value);
+        });
+        lcnaf.addEventListener("change", function(evt) {
+            people.lcnaf = this.value;
+            setupAnchor(lcnaf_url, 
+                'Check LOC Name Authority File for ' + this.value, 
+                'http://id.loc.gov/authorities/names/',
+                '',
+                this.value);
+        });
+        isni.addEventListener("change", function(evt) {
+            people.isni = this.value;
+            setupAnchor(isni_url, 
+                'Check ISNI for ' + this.value, 
+                'http://isni.oclc.org/DB=1.2/SET=4/TTL=1/CMD?ACT=SRCH&IKT=6102&SRT=LST_nd&TRM=ISN%3A',
+                '',
+                this.value);
+        });
+        wikidata.addEventListener("change", function(evt) {
+            people.wikidata = this.value;
+            setupAnchor(wikidata_url, 
+                'Check Wikidata for ' + this.value, 
+                'https://www.wikidata.org/wiki/',
+                '',
+                this.value);
+        });
+        snac.addEventListener("change", function(evt) {
+            people.snac = this.value;
+            setupAnchor(snac_url, 
+                'Check SNAC for ' + this.value, 
+                'https://snaccooperative.org/',
+                '',
+                this.value);
+        });
+        orcid.addEventListener("change", function(evt) {
+            people.orcid = this.value;
+            setupAnchor(orcid_url, 
+                'Check ORCID for ' + this.value, 
+                'https://orcid.org/',
+                '',
+                this.value);
+        });
+        image.addEventListener("change", function(evt) {
+            people.image = this.value;
+            setupAnchor(image_url, 
+                'Image preview ' + this.value, 
+                '',
+                '',
+                this.value);
+        });
+        educated_at.addEventListener("change", function(evt) {
+            people.educated_at = this.value;
+        });
+        caltech.addEventListener("change", function(evt) {
+            if (this.checked) {
+                people.caltech = true;
+            } else {
+                people.caltech = false;
             }
-            return s.toLowerCase().split('-').map(function(w) {
-                return w.charAt(0).toUpperCase()+w.slice(1);
-            }).join('-');
-        }(this.value));
-        setupAnchor(cl_people_url, 
-            'See Feeds ' + people.cl_people_id, 
-            'https://feeds.library.caltech.edu/people/', 
-            '',
-            people.cl_people_id);
-        this.value = people.cl_people_id;
-    });
-    thesis_id.addEventListener("change", function (evt) {
-        people.thesis_id = this.value.toUpperCase();
-        setupAnchor(thesis_url, 
-            'See CaltechTHESIS (as author) ' + people.thesis_id, 
-            'https://thesis.library.caltech.edu/view/authors/',
-            '.html',
-            people.thesis_id);
-        this.value = people.thesis_id;
-    });
-    authors_id.addEventListener("change", function(evt) {
-        people.authors_id = this.value.toUpperCase();
-        setupAnchor(authors_url, 
-            'See CaltechAUTHORS ' + this.value, 
-            'https://authors.library.caltech.edu/view/person-az/',
-            '.html',
-            this.value);
-    });
-    archivesspace_id.addEventListener("change", function(evt) {
-        people.archivesspace_id = this.value;
-        setupAnchor(archivesspace_url, 
-            'See Caltech Archives ' + this.value, 
-            'https://collections.archives.caltech.edu/agents/people/',
-            '',
-            this.value);
-    });
-    directory_id.addEventListener("change", function(evt) {
-        people.directory_id = this.value;
-        setupAnchor(directory_url, 
-            'See Caltech Directory ' + this.value, 
-            'https://directory.caltech.edu/personnel/',
-            '',
-            this.value);
-    });
-    viaf.addEventListener("change", function(evt) {
-        people.viaf = this.value;
-        setupAnchor(viaf_url, 
-            'See VIAF.org ' + this.value, 
-            'https://viaf.org/viaf/',
-            '',
-            this.value);
-    });
-    lcnaf.addEventListener("change", function(evt) {
-        people.lcnaf = this.value;
-        setupAnchor(lcnaf_url, 
-            'See LOC Name Authority File ' + this.value, 
-            'http://id.loc.gov/authorities/names/',
-            '',
-            this.value);
-    });
-    isni.addEventListener("change", function(evt) {
-        people.isni = this.value;
-        setupAnchor(isni_url, 
-            'See ISNI ' + this.value, 
-            'http://isni.oclc.org/DB=1.2/SET=4/TTL=1/CMD?ACT=SRCH&IKT=6102&SRT=LST_nd&TRM=ISN%3A',
-            '',
-            this.value);
-    });
-    wikidata.addEventListener("change", function(evt) {
-        people.wikidata = this.value;
-        setupAnchor(wikidata_url, 
-            'See Wikidata ' + this.value, 
-            'https://www.wikidata.org/wiki/',
-            '',
-            this.value);
-    });
-    snac.addEventListener("change", function(evt) {
-        people.snac = this.value;
-        setupAnchor(snac_url, 
-            'See SNAC ' + this.value, 
-            'https://snaccooperative.org/',
-            '',
-            this.value);
-    });
-    orcid.addEventListener("change", function(evt) {
-        people.orcid = this.value;
-        setupAnchor(orcid_url, 
-            'See ORCID ' + this.value, 
-            'https://orcid.org/',
-            '',
-            this.value);
-    });
-    image.addEventListener("change", function(evt) {
-        people.image = this.value;
-        setupAnchor(image_url, 
-            'See Image preview ' + this.value, 
-            '',
-            '',
-            this.value);
-    });
-    educated_at.addEventListener("change", function(evt) {
-        people.educated_at = this.value;
-    });
-    caltech.addEventListener("change", function(evt) {
-        if (this.checked) {
-            people.caltech = true;
-        } else {
-            people.caltech = false;
-        }
-    });
-    jpl.addEventListener("change", function(evt) {
-        if (this.checked) {
-            people.jpl = true;
-        } else {
-            people.jpl = false;
-        }
-    });
-    faculty.addEventListener("change", function(evt) {
-        if (this.checked) {
-            people.faculty = true;
-        } else {
-            people.faculty = false;
-        }
-    });
-    alumn.addEventListener("change", function(evt) {
-        if (this.checked) {
-            people.alumn = true;
-        } else {
-            people.alumn = false;
-        }
-    });
-    notes.addEventListener("change", function(evt) {
-        people.notes = this.value;
-    });
-    save.addEventListener("click", function (evt) {
-        console.log("DEBUG people payload ->", JSON.stringify(people));
-    });
-    reset.addEventListener("click", function(evt) {
-        people = { "family_name": "", "given_name": "",
-        "cl_people_id": "", "thesis_id": "", "authors_id": "",
-        "archivesspace_id": "", "directory_id": "",
-        "viaf": "", "lcnaf": "", "isni": "", "wikidata": "",
-        "snac": "", "orcid": "", "image_url": "", "educated_at": "",
-        "caltech": false, "jpl": false, "faculty": false,
-        "alumn": false, "notes": "" };
-    });
+        });
+        jpl.addEventListener("change", function(evt) {
+            if (this.checked) {
+                people.jpl = true;
+            } else {
+                people.jpl = false;
+            }
+        });
+        faculty.addEventListener("change", function(evt) {
+            if (this.checked) {
+                people.faculty = true;
+            } else {
+                people.faculty = false;
+            }
+        });
+        alumn.addEventListener("change", function(evt) {
+            if (this.checked) {
+                people.alumn = true;
+            } else {
+                people.alumn = false;
+            }
+        });
+        notes.addEventListener("change", function(evt) {
+            people.notes = this.value;
+        });
+        create.addEventListener("click", function(evt) {
+            console.log("DEBUG people payload ->", JSON.stringify(people));
+            //FIXME: Check to see if key exists
+            AndOr.createObject(c_name, people.cl_people_id, people, function(data, err) {
+                console.log("DEBUG createObject() -> data", data, " error ", err);
+            });
+        }, false);
+        save.addEventListener("click", function (evt) {
+            console.log("DEBUG people payload ->", JSON.stringify(people));
+            //FIXME: Check to see if key exists
+            AndOr.updateObject(c_name, people.cl_people_id, people, function(data, err) {
+                console.log("DEBUG updateObject() -> data", data, " error ", err);
+            });
+        }, false);
+        reset.addEventListener("click", function(evt) {
+            people = { "family_name": "", "given_name": "",
+            "cl_people_id": "", "thesis_id": "", "authors_id": "",
+            "archivesspace_id": "", "directory_id": "",
+            "viaf": "", "lcnaf": "", "isni": "", "wikidata": "",
+            "snac": "", "orcid": "", "image_url": "", "educated_at": "",
+            "caltech": false, "jpl": false, "faculty": false,
+            "alumn": false, "notes": "" };
+        });
+    }
+
+
+    /**
+     * Main, apply main logic for page.
+     */
+    if (key !== undefined && key !== "") {
+        console.log("DEBUG key is defined, waiting on readObject");
+        div.innerHTML = "Get data for " + key;
+        let tid = setInterval(function() {
+            console.log(`DEBUG AndOr.readObject(${c_name}, ${key}, ...) timer id ${tid}`);
+            AndOr.readObject(c_name, key, function(data, err) {
+                console.log("DEBUG got data, err", data, err);
+                if (err) {
+                    console.log("readObject() error", err);
+                    clearInterval(tid);
+                    return;
+                }
+                people = Object.assign(people, data);
+                render_form(div, people, form_src, form_init);
+                clearInterval(tid);
+            });
+        }, 5 * 1000);
+    } else {
+        console.log("DEBUG key is NOT defined, using default object");
+        render_form(div, people, form_src, form_init);
+    }
+
     window.People = people; //DEBUG
 }(document, window));

@@ -115,12 +115,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     };
 
 
-
     /**
      * CL.httpGet() - makes an HTTP get request and returns the results 
      * via callbackFn.
      *
-     * @param url (string) the assembled URL (including any GET args)
+     * @param url (a URL object) the assembled URL (including any GET args)
      * @param contentType - string of indicating mime type 
      *        (e.g. text/html, text/plain, application/json)
      * @param callbackFn - an function to handle the callback, 
@@ -129,7 +128,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      */
     CL.httpGet = function (url, contentType, callbackFn) {
         let self = this,
-            xhr = new XMLHttpRequest();
+            xhr = new XMLHttpRequest(),
+            page_url = new URL(window.location.href);
         xhr.onreadystatechange = function () {
             // process response
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -145,14 +145,26 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             }
         };
 
-        /* Check to see if we should be using a default prefix for host */
-        if (url.startsWith("/") && self.BaseURL !== undefined) {
-            url = self.BaseURL + url;
+        /* NOTE: Check to see if we should turn a string version of URL 
+         * into a URL object. Handle case of applying a BaseURL prefix
+         * if protocol/host is missing */
+        if (typeof url === "string") {
+            if (url.startsWith("/") && self.BaseURL !== undefined) {
+                url = new (self.BaseURL + url);
+            } else {
+                url = new URL(url);
+            }
+        } 
+        if (page_url.username !== undefined && url.username === undefined) {
+            url.username = page_url.username;
+        }
+        if (page_url.password !== undefined && url.password == undefined) {
+            url.password = page_url.password;
         }
 
         /* we always want JSON data */
-        xhr.open('GET', url);
-        if (url.includes(".json.gz") || url.includes(".js.gz")) {
+        xhr.open('GET', url, true);
+        if (url.pathname.includes(".json.gz") || url.pathname.includes(".js.gz")) {
             xhr.setRequestHeader('Content-Encoding', 'gzip');
         }
         if (contentType !== "" ) {
@@ -171,6 +183,74 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             };
         }
         xhr.send();
+    };
+
+    /**
+     * CL.httpPost() - makes an HTTP POST request and returns the results 
+     * via callbackFn.
+     *
+     * @param url (string) the assembled URL (including any GET args)
+     * @param contentType - string of indicating mime type 
+     *        (e.g. text/html, text/plain, application/json)
+     * @param payload - the text you want to POST
+     * @param callbackFn - an function to handle the callback, 
+     *        function takes two args data (an object) and 
+     *        error (a string)
+     */
+    CL.httpPost = function (url, contentType, payload, callbackFn) {
+        let self = this,
+            xhr = new XMLHttpRequest(),
+            page_url = new URL(window.location.href);
+        xhr.onreadystatechange = function () {
+            // process response
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status == 200) {
+                    let data = xhr.responseText;
+                    if (contentType === "application/json") {
+                        data = JSON.parse(xhr.responseText);
+                    }
+                    callbackFn(data, "");
+                } else {
+                    callbackFn("", xhr.status);
+                }
+            }
+        };
+
+        /* NOTE: Check to see if we should turn a string version of URL 
+         * into a URL object. Handle case of applying a BaseURL prefix
+         * if protocol/host is missing */
+        if (typeof url == "string") {
+            if ( url.startsWith("/") && self.BaseURL !== undefined) {
+                url = new URL(self.BaseURL + url);
+            } else {
+                url = new URL(url);
+            }
+        }
+        if (page_url.username !== undefined && url.username === undefined) {
+            url.username = page_url.username;
+        }
+        if (page_url.password !== undefined && url.password == undefined) {
+            url.password = page_url.password;
+        }
+
+        /* we always want JSON data */
+        xhr.open('POST', url, true);
+        if (contentType !== "" ) {
+            xhr.setRequestHeader('Content-Type', contentType);
+        }
+        if (self.hasAttribute("progress_bar")) {
+            let progress_bar = self.getAttribute("progress_bar");
+            xhr.onprogress = function(pe) {
+                if (pe.lengthComputable) {
+                    progress_bar.max = pe.total;
+                    progress_bar.value = pe.loaded;
+                }
+            };
+            xhr.onloadend = function(pe) {
+                progress_bar.value = pe.loaded;
+            };
+        }
+        xhr.send(payload);
     };
 
     window.CL = Object.assign(window.CL, CL);

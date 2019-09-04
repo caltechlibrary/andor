@@ -78,24 +78,46 @@ You may assign objects to&mdash;
      * @param filter is a dataset type key filter.
      */
     function viewObjectList(elem, collection_name, keys, label) {
-        let req = new XMLHttpRequest(),
-            h2 = document.createElement("h2"),
-            ul = document.createElement("ul"),
-            url = "/" + collection_name + "/read/" + keys.join(",");
-        
-        if (label === undefined || label === null ) {
-            h2.innerHTML = '';
-        } else {
-            h2.innerHTML = label;
-        }
-        elem.appendChild(h2);
-        elem.appendChild(ul);
+        let u = new URL(window.location.href);
 
-        req.addEventListener("load", function(evt) {
-            let objects = JSON.parse(req.response);
-            for (let i = 0; i < objects.length; i++) {
-                let key = objects[i]._Key,
-                    title = objects[i].title,
+        u.pathname = `/${collection_name}/read/${keys.join(",")}`;
+        console.log("DEBUG viewObjectList url", u);
+
+        CL.httpGet(u, 'application/json', function (objects, err) {
+            console.log("DEBUG got objects, err", objects, err);
+            if (err) {
+                console.log("Error happened", err);
+                elem.innerHTML = `Unable to read ${collection_name} keys ${keys.join(", ")}<p>${err}`;
+                return;
+            }
+            let h2 = document.createElement("h2"),
+                ul = document.createElement("ul");
+        
+            if (label === undefined || label === null ) {
+                h2.innerHTML = '';
+            } else {
+                h2.innerHTML = label;
+            }
+            elem.appendChild(h2);
+            elem.appendChild(ul);
+
+            // Handle single object case and array of objects case
+            if (Array.isArray(objects)) {
+                for (let i = 0; i < objects.length; i++) {
+                    let key = objects[i]._Key,
+                        title = `${objects[i].family_name + ", " + objects[i].given_name} (${key}, ${objects[i]._State})`,
+                        href = "/" + collection_name + "/view.html?key="+key,
+                        li = document.createElement("li"),
+                        anchor = document.createElement("a");
+                    anchor.innerHTML = title;
+                    anchor.setAttribute("href", href);
+                    li.innerHTML = "";
+                    li.appendChild(anchor);
+                    ul.appendChild(li);
+                }
+            } else {
+                let key = objects._Key,
+                    title = `${objects.family_name + ", " + objects.given_name} (${key}, ${objects._State})`,
                     href = "/" + collection_name + "/view.html?key="+key,
                     li = document.createElement("li"),
                     anchor = document.createElement("a");
@@ -106,11 +128,6 @@ You may assign objects to&mdash;
                 ul.appendChild(li);
             }
         });
-        req.addEventListener("error", function(evt) {
-            console.log("Error happened", evt);
-        });
-        req.open("GET", url);
-        req.send();
     }
 
     /**
@@ -121,26 +138,29 @@ You may assign objects to&mdash;
      * @param keys is a list of object keys in the collection
      */
     function viewAllObjects(elem, collection_name, state) {
-        let req = new XMLHttpRequest(),
-            url = "/" + collection_name + "/keys/",
+        let u = new URL(window.location.href),
             label = "List all objects";
-        
-        if (state !== undefined && state !== null && state !== "") {
-            url += `/state/${state}`;
-            label = `${state} objects`;
-        }
 
-        req.addEventListener("load", function(evt) {
-            let keys = JSON.parse(req.response);
-            console.log("DEBUG label", label);
-            viewObjectList(elem, collection_name, keys, label);
+        u.pathname = "/" + collection_name + "/keys/";
+
+        if (state !== undefined && state !== null && state !== "") {
+            u.pathname += `state/${state}`;
+            label = `${state} objects`;
+            //FIXME: Need to get keys first and filter by state.
+        }
+        CL.httpGet(u, 'application/json', function(keys, err) {
+            if (err) {
+                console.log("Error happened", err);
+                elem.innerHTML = `Unable to read ${collection_name} keys ${state}<p>${err}`;
+                return;
+            }
+            console.log("DEBUG label", label, keys);
+            if (Array.isArray(keys)  && keys.length > 0) {
+                viewObjectList(elem, collection_name, keys, label);
+            } else {
+                elem.innerHTML = `Now objects found for ${collection_name}, ${state}`;
+            }
         });
-        req.addEventListener("error", function(evt) {
-            elem.innerHTML = "error";
-            console.log("Error happened", evt);
-        });
-        req.open("GET", url);
-        req.send();
     }
 
     /**
@@ -153,20 +173,24 @@ You may assign objects to&mdash;
      */
     function viewObject(elem, collection_name, key) {
         let div = document.createElement("div"),
-            req = new XMLHttpRequest(), 
-            url = "/" + collection_name + "/read/" + key;
+            u = new URL(window.location.href);
+
+        u.pathname = "/" + collection_name + "/read/" + key;
 
         elem.appendChild(div)
-
-        req.addEventListener("load", function(evt) {
-            let o = JSON.parse(req.response),
-                creator_names = [];
-                div.innerHTML = "";
-                for (let i = 0; i < o.creators.length; i++) {
-                    let display_name = o.creators[i].display_name;
-                    creator_names.push(display_name)
-                }
-                div.innerHTML = `<h1>${o.title}</h1>
+        CL.httpGet(u, 'application/json', function (o, err) {
+            if (err) {
+                div.innerHTML = `error ${err}`;
+                console.log("Error happened", evt);
+                return;
+            }
+            creator_names = [];
+            div.innerHTML = "";
+            for (let i = 0; i < o.creators.length; i++) {
+                let display_name = o.creators[i].display_name;
+                creator_names.push(display_name)
+            }
+            div.innerHTML = `<h1>${o.title}</h1>
 <h2>Description</h2>
 <div class="description">${o.description}</div>
 <h2>Author(s)</h2>
@@ -175,42 +199,158 @@ You may assign objects to&mdash;
 <div class="pub-date">${o.pubDate}</div>
 <p>`;
         });
-        req.addEventListener("error", function(evt) {
-            div.innerHTML = "error";
-            console.log("Error happened", evt);
-        });
-        req.open("GET", url);
-        req.send();
     }
 
     /**
-     * createObject takes a collection name and a template
-     * and renders an form that is ready to collect the fields
-     * and perform a post to /create/KEY and retrieves an empty
-     * object.
+     * createObject takes a collection name, a key, a JavaScript object
+     * and sends it to the And/Or API.
+     *
+     * @param collection_name - the name of the dataset collection being served by andor (minus '.ds' ext.)
+     * @param key - the key for the JSON object document
+     * @param obj - the JavaScript object to be saved as a JSON object document
+     * @param callbackFn - the callback function to handle the response from the POST
      */
+    function createObject(collection_name, key, obj, callbackFn) {
+        let u = new URL(window.location.href),
+            payload = '';
+
+        if (collection_name === undefined || collection_name === "") {
+            console.log('WARNING: AndOr.createObject() called without collection name');
+            return false;
+        }
+        if (key === undefined || key === null || key === "") {
+            console.log('WARNING: AndOr.createObject() called without key');
+            return false;
+        }
+        if (obj === undefined || obj === null) {
+            console.log('WARNING: AndOr.createObject() called without JavaScript object');
+            return false;
+        }
+        u.pathname = '/' + collection_name + '/create/' + key; 
+        //FIXME: need to clear any searchParams ....
+        payload = JSON.stringify(obj);
+        //FIXME: Need to check to see if key does not exists and before calling create API, otherwise
+        // return an error.
+        let r = new XMLHttpRequest();
+        console.log("DEBUG posting to", u);
+        console.log("DEBUG payload is", payload);
+        CL.httpPost(u, 'application/json', payload, function(data, err) {
+            callbackFn(data, err);
+            if (err) {
+                console.log('ERROR: post ' + u + ' - ' + err);
+                return;
+            }
+            console.log('DEBUG Success! ', data);
+        });
+    }
 
     /**
-     * editObject takes an object and sets up a form.
+     * updateObject takes an object and sets up a form.
      *
-     * @param elem is the DOM element that is updated with object's 
-     * attributes. The contents of the object will be replaced by 
-     * a rendered template literal.
      * @param collection_name
      * @param key to object (empty means new object)
-     * @param template liter that renders the form.
-     * @param defaultObject is what will be used if the Key is not provided
+     * @param obj - object to send as update
+     * @param callbackFn - is the callback to handle response from the POST
      */
-    function editObject(elem, collection_name, key, template) {
-        let req = new XMLHttpRequest(), 
-            url = "/" + collection_name + "/";
+    function updateObject(collection_name, key, obj, callbackFn) {
+        let url = new URL(window.location.href),
+            payload = '';
 
-        if (key == undefined || key === null || key === "") {
-            url = "/" + collection_name + "/create/" + key,
-            object = defaultObject;
-            return 
+        if (collection_name === undefined || collection_name === "") {
+            console.log('WARNING: AndOr.updateObject() called without collection name');
+            return false;
         }
+        if (key === undefined || key === null || key === "") {
+            console.log('WARNING: AndOr.updateObject() called without key');
+            return false;
+        }
+        if (obj === undefined || obj === null) {
+            console.log('WARNING: AndOr.updateObject() called without JavaScript object');
+            return false;
+        }
+        url.pathname = '/' + collection_name + '/update/' + key; 
+        payload = JSON.stringify(obj);
+        //FIXME: Need to check to see if key does not exists and before calling update API, otherwise
+        // return an error.
+        CL.httpPost(url, 'application/json', payload, function(data, err) {
+            callbackFn(data, err);
+            if (err) {
+                console.log('ERROR: post ' + url + ' - ' + err);
+                return;
+            }
+            console.log('DEBUG Success! ', data);
+        });
     }
+
+    /**
+     * readObject takes an collection name and key and gets the
+     * object and calls the callback function.
+     *
+     * @param collection_name
+     * @param key to object (empty means new object)
+     * @param callbackFn - the callback function that returns the object and error from GET
+     */
+    function readObject(collection_name, key, callbackFn) {
+        let u = new URL(window.location.href),
+            payload = '';
+
+        if (collection_name === undefined || collection_name === "") {
+            console.log('WARNING: AndOr.readObject() called without collection name');
+            return false;
+        }
+        if (key === undefined || key === null || key === "") {
+            console.log('WARNING: AndOr.readObject() called without key');
+            return false;
+        }
+        // Folder our keys if we have more than one.
+        if (Array.isArray(key)) {
+            key = key.join(',');
+        }
+        u.pathname = '/' + collection_name + '/read/' + key; 
+        //FIXME: Need to clear any search params
+        CL.httpGet(u, 'application/json', function(data, err) {
+            callbackFn(data, err);
+            if (err) {
+                console.log('ERROR: post ' + url + ' - ' + err);
+                return;
+            }
+            console.log('DEBUG Success! ', data);
+        });
+    }
+
+
+    /**
+     * getKeys takes an collection name and returns a list of keys via
+     * the callback function.
+     *
+     * @param collection_name
+     * @param key to object (empty means new object)
+     * @param callbackFn - the callback function that returns the object and error from GET
+     */
+    function getKeys(collection_name, callbackFn) {
+        let u = new URL(window.location.href),
+            payload = [];
+
+        if (collection_name === undefined || collection_name === "") {
+            console.log('WARNING: AndOr.readObject() called without collection name');
+            return false;
+        }
+        u.pathname = '/' + collection_name + '/keys';
+        //FIXME: Need to clear any search params ...
+        //FIXME: Need to check to see if key does not exists and before calling read API, otherwise
+        // return an error.
+        CL.httpGet(u, 'application/json', function(keys, err) {
+            callbackFn(keys, err);
+            if (err) {
+                console.log('ERROR: post ' + url + ' - ' + err);
+                return;
+            }
+            console.log('DEBUG Success! ', data);
+        });
+    }
+
+
+    
 
     /* Attach our functions to our object for export */
     AndOr.getCollectionName = getCollectionName;
@@ -218,7 +358,10 @@ You may assign objects to&mdash;
     AndOr.viewAllObjects = viewAllObjects;
     AndOr.viewObjectList = viewObjectList;
     AndOr.viewObject = viewObject;
-    AndOr.editObject = editObject;
+    AndOr.getKeys = getKeys;
+    AndOr.createObject = createObject;
+    AndOr.updateObject = updateObject;
+    AndOr.readObject = readObject;
 
     /* Now update our global object */
     if (window.AndOr == undefined) {

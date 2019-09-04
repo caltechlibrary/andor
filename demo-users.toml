@@ -17,7 +17,7 @@ roles = ["publisher", "public" ]
 [jane]
 user_id = "jane"
 display_name = "Jane"
-roles = ["depositor", "curator", "public"]
+roles = ["publisher", "depositor", "curator", "public"]
 
 [millie]
 user_id = "millie"

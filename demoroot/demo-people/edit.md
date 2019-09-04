@@ -1,11 +1,13 @@
 
 # Create/Edit People Info
 
+
 <div id="example-output">
-Form will go here.
+Loading form.
 </div>
 
-<!-- START: Example People Info Form built with CL-ui.js -->
+
+<!-- START: Example People Info Form built with CL-ui.js and andor.js -->
 
 <script src="../scripts/CL.js"></script>
 
@@ -13,5 +15,5 @@ Form will go here.
 
 <script src="edit.js"></script>
 
-<!--   END: Example People Info Form built with CL-ui.js -->
+<!--   END: Example People Info Form built with CL-ui.js and andor.js -->
 
