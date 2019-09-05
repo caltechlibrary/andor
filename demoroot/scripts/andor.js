@@ -105,7 +105,7 @@ You may assign objects to&mdash;
             if (Array.isArray(objects)) {
                 for (let i = 0; i < objects.length; i++) {
                     let key = objects[i]._Key,
-                        title = `${objects[i].family_name + ", " + objects[i].given_name} (${key}, ${objects[i]._State}) <a href="edit.html?cl_people_id=${key}">edit</a>`,
+                        title = `${objects[i].family_name + ", " + objects[i].given_name} (edit ${key}, ${objects[i]._State})`,
                         href = "/" + collection_name + "/edit.html?cl_people_id="+key,
                         li = document.createElement("li"),
                         anchor = document.createElement("a");

@@ -3,6 +3,7 @@
 
 ## Bugs
 
++ [ ] view methods should only be defined in a custom repository's JS, andor.js should only support retrieval methods specific to the And/Or JSON API.
 + [x] init should generate a roles.toml and users.toml for editing if they do not exist
 
 ## Address Missing features

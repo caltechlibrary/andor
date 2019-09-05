@@ -30,7 +30,9 @@
             "faculty": false,
             "alumn": false,
             "notes": "",
-            "_State": "deposit"
+            // And/Or required fields.
+            "_State": "deposit",
+            "_Key": ""
         },
         default_people = Object.assign({}, people),
         form_src = `
@@ -178,30 +180,22 @@ form.form-example > div > button {
     </select>
 </div>
 <div>
-<button id="create">Create</button>
-<button id="save">Save</button>
+<button id="create" disabled="true">Create</button>
+<button id="save" disabled="true">Save</button>
 <button id="reset">Reset</button>
 </div>
 </form><!-- END: form.form-example -->
 `;
-    
+
     /**
-     * Check for key or cl_people_id being password to form.
+     * Check for cl_people_id being passed in URL
      */
-    //key = page_url.searchParams.get("key");
-    console.log("DEBUG key now ->", key, typeof key);
-    
-    key = page_url.searchParams.get("key"); 
-    if (key === undefined || key === "" || key === null) {
-        key = page_url.searchParams.get("cl_people_id"); 
-console.log("DEBUG key now ->", key, page_url.searchParams.get('cl_people_id'));
-        if (key === undefined || key === null) {
-            key = "";
-        }
-    }  else {
+    key = page_url.searchParams.get("cl_people_id");
+    if (! key) {
         key = "";
     }
-console.log("DEBUG key now ->", key);
+    console.log("DEBUG key now ->", key, typeof key);
+
 
     /**
      * Page functions
@@ -237,15 +231,15 @@ console.log("DEBUG key now ->", key);
         // NOTE: Convert bool true to 'checked' and
         // false to empty string for using in 
         // checkbox input.
-        for (let key in obj) {
-             if (obj[key] === true) {
-                 obj[key] = "checked";
-             } else if (obj[key] === false) {
-                 obj[key] = "";
+        for (let aKey in obj) {
+             if (obj[aKey] === true) {
+                 obj[aKey] = "checked";
+             } else if (obj[aKey] === false) {
+                 obj[aKey] = "";
              }
         }
         if (obj.cl_people_id === undefined || obj.cl_people_id === "") {
-            if (obj._Key !== undefined) {
+            if (obj._Key !== undefined && obj._Key !== "") {
                 obj.cl_people_id = obj._Key;
             } else if (key !== undefined && key !== "") {
                 obj.cl_people_id = key;
@@ -300,6 +294,16 @@ console.log("DEBUG field", field);
             save = form.querySelector("#save"),
             reset = form.querySelector("#reset"); 
         
+        console.log("DEBUG key now ->", key, typeof key);
+            create.setAttribute("disabled", "disabled");
+            save.setAttribute("disabled", "disabled");
+        if (key === undefined || key === "" || key === null) {
+            create.removeAttribute("disabled");
+        } else  {
+            save.removeAttribute("disabled");
+        }
+
+        // Setup rest of form.
         family_name.addEventListener("change", function(evt) {
             people.family_name = this.value;
         });
@@ -313,6 +317,7 @@ console.log("DEBUG field", field);
                 'https://feeds.library.caltech.edu/people/', 
                 '',
                 people.cl_people_id);
+            people._Key = cl_people_id;
             this.value = people.cl_people_id;
         });
         thesis_id.addEventListener("change", function (evt) {
@@ -457,22 +462,30 @@ console.log("DEBUG field", field);
                     return;
                 }
                 console.log("DEBUG createObject() -> data", data, " error ", err);
+                // We've created our object so let's disable create
+                // and enable save for further edits
+                create.setAttribute("disabled", true);
+                save.setAttribute("disabled", false);
             });
             evt.preventDefault();
         }, false);
         save.addEventListener("click", function (evt) {
             console.log("DEBUG people.cl_people_id before save", people.cl_people_id, typeof people.cl_people_id);
             console.log("DEBUG saving people payload ->", JSON.stringify(people));
-            if (people._Key !== undefined && people.cl_people_id === "") {
-                people.cl_people_id = people._Key;
-            }
-            if (people.cl_people_id === undefined || people.cl_people_id === "") {
+            let key = people.cl_people_id;
+
+            if (key === undefined || key === "") {
+                console.log("ERROR missing key (cl_people_id, required)");
+                create.setAttribute("disabled", true);
+                save.setAttribute("disabled", true);
                 evt.preventDefault();
                 return;
             }
+            // Force the ._Key to match the key/people.cl_people_id value.
+            people._Key = key;
             //FIXME: Check to see if key exists
-            console.log(`DEBUG calling AndOr.updateObject(${c_name}, ${people.cl_people_id}, ...)`);
-            AndOr.updateObject(c_name, people.cl_people_id, people, function(data, err) {
+            console.log(`DEBUG calling AndOr.updateObject(${c_name}, ${key}, ...)`);
+            AndOr.updateObject(c_name, key, people, function(data, err) {
                 if (err) {
                     console.log("DEBUG can't save object,", err);
                     evt.preventDefault(); 
@@ -486,10 +499,16 @@ console.log("DEBUG field", field);
             // NOTE: Need to clear any key/cl_people_id settings in
             // URL.
             let u = new URL(window.location.href);
+
+            // On reset form is empty so we should enable the "create"
+            // button and leave save unset.
+            create.setAttribute("disabled", "disabled");
+            save.setAttribute("disabled", "disabled");
             console.log("DEBUG before to change u.search", u.search);
             u.search = "";
             console.log("DEBUG after to change u.search", u.search);
-            window.location = u;
+            key = "";
+            window.location = u.toString();
             console.log("DEBUG after reset window");
             evt.preventDefault();
         });
@@ -499,7 +518,7 @@ console.log("DEBUG field", field);
     /**
      * Main, apply main logic for page.
      */
-    if (key !== undefined && key !== "") {
+    if (key !== undefined && key !== null && key !== "") {
         let t1 = Date.now(), t2 = Date.now();
         console.log(`DEBUG (${(t2 - t1)/1000}) key is defined, waiting on readObject`);
         div.innerHTML = "Retrieving " + key;
