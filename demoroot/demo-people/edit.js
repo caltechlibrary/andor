@@ -8,7 +8,7 @@
         div = document.getElementById('example-output'),
         page_url = new URL(window.location.href),
         c_name = AndOr.getCollectionName(page_url.pathname),
-        key = page_url.searchParams.get("key") || "", 
+        key = "",
         people = {
             "family_name": "",
             "given_name": "",
@@ -32,6 +32,7 @@
             "notes": "",
             "_State": "deposit"
         },
+        default_people = Object.assign({}, people),
         form_src = `
 <style>
 form.form-example {
@@ -185,6 +186,24 @@ form.form-example > div > button {
 `;
     
     /**
+     * Check for key or cl_people_id being password to form.
+     */
+    //key = page_url.searchParams.get("key");
+    console.log("DEBUG key now ->", key, typeof key);
+    
+    key = page_url.searchParams.get("key"); 
+    if (key === undefined || key === "" || key === null) {
+        key = page_url.searchParams.get("cl_people_id"); 
+console.log("DEBUG key now ->", key, page_url.searchParams.get('cl_people_id'));
+        if (key === undefined || key === null) {
+            key = "";
+        }
+    }  else {
+        key = "";
+    }
+console.log("DEBUG key now ->", key);
+
+    /**
      * Page functions
      */
     
@@ -225,13 +244,22 @@ form.form-example > div > button {
                  obj[key] = "";
              }
         }
+        if (obj.cl_people_id === undefined || obj.cl_people_id === "") {
+            if (obj._Key !== undefined) {
+                obj.cl_people_id = obj._Key;
+            } else if (key !== undefined && key !== "") {
+                obj.cl_people_id = key;
+                obj._Key = key;
+            }
+        }
         return true;
     }
 
     function render_form(elem, people, form_src, form_init) {
         elem.innerHTML = "";
-        let field = CL.field(people, form_src, form_init),
-            form = CL.assembleFields(elem, field),
+        let field = CL.field(people, form_src, form_init);
+console.log("DEBUG field", field);
+        let form = CL.assembleFields(elem, field),
             /**
              * Now we add our event listeners and lookups using
              * vanilla JavaScript and CL.httpGet()..
@@ -268,6 +296,7 @@ form.form-example > div > button {
             alumn = form.querySelector("#alumn"),
             notes = form.querySelector("#notes"),
             create = form.querySelector("#create"),
+            _State = form.querySelector("#_State"),
             save = form.querySelector("#save"),
             reset = form.querySelector("#reset"); 
         
@@ -410,28 +439,59 @@ form.form-example > div > button {
         notes.addEventListener("change", function(evt) {
             people.notes = this.value;
         });
+        _State.addEventListener("change", function(evt) {
+            people._State = this.value;
+        });
         create.addEventListener("click", function(evt) {
+            console.log("DEBUG people before create", people);
+            if (people.cl_people_id === undefined || people.cl_people_id === "") {
+                evt.preventDefault();
+                return;
+            }
             console.log("DEBUG people payload ->", JSON.stringify(people));
             //FIXME: Check to see if key exists
             AndOr.createObject(c_name, people.cl_people_id, people, function(data, err) {
+                if (err) {
+                    console.log("DEBUG can't create object,", err);
+                    evt.preventDefault(); 
+                    return;
+                }
                 console.log("DEBUG createObject() -> data", data, " error ", err);
             });
+            evt.preventDefault();
         }, false);
         save.addEventListener("click", function (evt) {
-            console.log("DEBUG people payload ->", JSON.stringify(people));
+            console.log("DEBUG people.cl_people_id before save", people.cl_people_id, typeof people.cl_people_id);
+            console.log("DEBUG saving people payload ->", JSON.stringify(people));
+            if (people._Key !== undefined && people.cl_people_id === "") {
+                people.cl_people_id = people._Key;
+            }
+            if (people.cl_people_id === undefined || people.cl_people_id === "") {
+                evt.preventDefault();
+                return;
+            }
             //FIXME: Check to see if key exists
+            console.log(`DEBUG calling AndOr.updateObject(${c_name}, ${people.cl_people_id}, ...)`);
             AndOr.updateObject(c_name, people.cl_people_id, people, function(data, err) {
+                if (err) {
+                    console.log("DEBUG can't save object,", err);
+                    evt.preventDefault(); 
+                    return;
+                }
                 console.log("DEBUG updateObject() -> data", data, " error ", err);
             });
+            evt.preventDefault(); 
         }, false);
         reset.addEventListener("click", function(evt) {
-            people = { "family_name": "", "given_name": "",
-            "cl_people_id": "", "thesis_id": "", "authors_id": "",
-            "archivesspace_id": "", "directory_id": "",
-            "viaf": "", "lcnaf": "", "isni": "", "wikidata": "",
-            "snac": "", "orcid": "", "image_url": "", "educated_at": "",
-            "caltech": false, "jpl": false, "faculty": false,
-            "alumn": false, "notes": "" };
+            // NOTE: Need to clear any key/cl_people_id settings in
+            // URL.
+            let u = new URL(window.location.href);
+            console.log("DEBUG before to change u.search", u.search);
+            u.search = "";
+            console.log("DEBUG after to change u.search", u.search);
+            window.location = u;
+            console.log("DEBUG after reset window");
+            evt.preventDefault();
         });
     }
 
@@ -440,24 +500,41 @@ form.form-example > div > button {
      * Main, apply main logic for page.
      */
     if (key !== undefined && key !== "") {
-        console.log("DEBUG key is defined, waiting on readObject");
-        div.innerHTML = "Get data for " + key;
-        let tid = setInterval(function() {
-            console.log(`DEBUG AndOr.readObject(${c_name}, ${key}, ...) timer id ${tid}`);
-            AndOr.readObject(c_name, key, function(data, err) {
-                console.log("DEBUG got data, err", data, err);
-                if (err) {
+        let t1 = Date.now(), t2 = Date.now();
+        console.log(`DEBUG (${(t2 - t1)/1000}) key is defined, waiting on readObject`);
+        div.innerHTML = "Retrieving " + key;
+        let updateOK = false,
+            tid = -1;
+        AndOr.readObject(c_name, key, function(data, err) {
+            t2 = Date.now();
+            console.log(`DEBUG (${(t2 - t1)/1000}) got data, err`, data, err);
+            if (err) {
                     console.log("readObject() error", err);
                     clearInterval(tid);
                     return;
-                }
-                people = Object.assign(people, data);
-                render_form(div, people, form_src, form_init);
+            }
+            people = Object.assign(people, data);
+            render_form(div, people, form_src, form_init);
+            updateOK = true;
+            if (tid >= 0) {
                 clearInterval(tid);
-            });
-        }, 5 * 1000);
+            }
+        });
+        t2 = Date.now();
+        console.log(`DEBUG (${(t2 - t1)/1000}) (waiting on) AndOr.readObject(${c_name}, ${key}, ...) timer`);
+        // We're polling for results here ...
+        tid = setInterval(function() {
+            console.log(`DEBUG (${(t2 - t1)/1000}) (waiting on) AndOr.readObject(${c_name}, ${key}, ...) timer ${tid}`);
+            if (updateOK == true) {
+                console.log(`DEBUG (${(t2 - t1)/1000}) clearInterval timer id ${tid}`);
+                clearInterval(tid);
+            }
+            t2 = Date.now();
+        }, 1 * 1000);
     } else {
         console.log("DEBUG key is NOT defined, using default object");
+        people = Object.assign({}, default_people);
+        console.log("DEBUG render form with default_people", people.cl_people_id);
         render_form(div, people, form_src, form_init);
     }
 

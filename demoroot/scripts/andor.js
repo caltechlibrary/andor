@@ -105,8 +105,8 @@ You may assign objects to&mdash;
             if (Array.isArray(objects)) {
                 for (let i = 0; i < objects.length; i++) {
                     let key = objects[i]._Key,
-                        title = `${objects[i].family_name + ", " + objects[i].given_name} (${key}, ${objects[i]._State})`,
-                        href = "/" + collection_name + "/view.html?key="+key,
+                        title = `${objects[i].family_name + ", " + objects[i].given_name} (${key}, ${objects[i]._State}) <a href="edit.html?cl_people_id=${key}">edit</a>`,
+                        href = "/" + collection_name + "/edit.html?cl_people_id="+key,
                         li = document.createElement("li"),
                         anchor = document.createElement("a");
                     anchor.innerHTML = title;
@@ -118,7 +118,7 @@ You may assign objects to&mdash;
             } else {
                 let key = objects._Key,
                     title = `${objects.family_name + ", " + objects.given_name} (${key}, ${objects._State})`,
-                    href = "/" + collection_name + "/view.html?key="+key,
+                    href = "/" + collection_name + "/edit.html?cl_people_id="+key,
                     li = document.createElement("li"),
                     anchor = document.createElement("a");
                 anchor.innerHTML = title;
@@ -158,7 +158,7 @@ You may assign objects to&mdash;
             if (Array.isArray(keys)  && keys.length > 0) {
                 viewObjectList(elem, collection_name, keys, label);
             } else {
-                elem.innerHTML = `Now objects found for ${collection_name}, ${state}`;
+                elem.innerHTML = `No objects found for ${collection_name}, ${state}`;
             }
         });
     }
@@ -256,12 +256,13 @@ You may assign objects to&mdash;
         let url = new URL(window.location.href),
             payload = '';
 
+        console.log(`DEBUG updateObject(${collection_name}, ${key}, ...)`);
         if (collection_name === undefined || collection_name === "") {
             console.log('WARNING: AndOr.updateObject() called without collection name');
             return false;
         }
         if (key === undefined || key === null || key === "") {
-            console.log('WARNING: AndOr.updateObject() called without key');
+            console.log('WARNING: AndOr.updateObject() called without key', key, obj);
             return false;
         }
         if (obj === undefined || obj === null) {

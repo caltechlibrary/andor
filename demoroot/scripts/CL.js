@@ -206,7 +206,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status == 200) {
                     let data = xhr.responseText;
-                    if (contentType === "application/json") {
+                    console.log(`DEBUG xhr.responseText '${xhr.responseText}'`);
+                    if (contentType === "application/json" && data !== "") {
                         data = JSON.parse(xhr.responseText);
                     }
                     callbackFn(data, "");
@@ -296,7 +297,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
         let out = tmpl;
         for (let key in obj) {
             let re = new RegExp('{{' + key + '}}', 'g');
-            if (Array.isArray(obj[key])) {
+            if (obj[key] === undefined) {
+                console.log(`ERROR: you have assigned 'undefined' to object attribute, ${key} -> ${obj[key]}`);
+            } else if (Array.isArray(obj[key])) {
                 let a = [];
                 for (let i in obj[key]) {
                     if (obj[key][i].html !== undefined) {
@@ -472,8 +475,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
         element.innerHTML = "";
         for (let key in fields) {
-            if (fields[key].init() === true) {
-                element.innerHTML += fields[key].html();
+            if (fields[key].init !== undefined && 
+                    fields[key].html !== undefined) {
+                if (fields[key].init() === true) {
+                    element.innerHTML += fields[key].html();
+                }
             }
         }
         return element;

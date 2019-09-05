@@ -41,6 +41,8 @@ func safeDatasetOp(c *dataset.Collection, key string, object map[string]interfac
 		return c.Create(key, object)
 	case UPDATE:
 		return c.Update(key, object)
+	case DELETE:
+		return c.Delete(key)
 	default:
 		return fmt.Errorf("Unsupported operation type %d", op)
 	}
@@ -169,6 +171,11 @@ func (s *AndOrService) requestCreate(cName string, c *dataset.Collection, w http
 
 	// Now get the proposed key.
 	key := getKey(r.URL.Path, "/"+cName+"/create/")
+	if c.HasKey(key) == true {
+		log.Printf("%s, aborting create,  %q already exists in %s", username, key, c.Name)
+		writeError(w, http.StatusMethodNotAllowed)
+		return
+	}
 
 	// Need to make sure this part of the service is behind
 	// the mutex.
@@ -276,6 +283,7 @@ func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http
 	}
 	state := getState(object)
 	if s.isAllowed(roles, state, UPDATE) {
+		log.Printf("DEBUG state (original) %q for %s in %s -> %+v\n", state, key, cName, object)
 		src, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			log.Printf("%s %s", r.URL.Path, err)
@@ -291,19 +299,34 @@ func (s *AndOrService) requestUpdate(cName string, c *dataset.Collection, w http
 			writeError(w, http.StatusUnsupportedMediaType)
 			return
 		}
-		// Updating is NOT assignment to a new state,
-		// we preserve the old state.
-		updatedObject["_State"] = state
+		// NOTE: if Updated state is different we need to check
+		// if we are allowed to change that state, otherwise
+		// we need to preserve prior state!!!!
+		if val, ok := updatedObject["_State"]; ok == true {
+			newState := val.(string)
+			if strings.Compare(state, newState) > 0 &&
+				s.canAssign(roles, state, newState) == false {
+				// we must preserve the old state.
+				log.Printf("%s denied assigning from %q to %q for %s in %s", username, state, newState, key, c.Name)
 
+				updatedObject["_State"] = state
+			}
+		} else {
+			updatedObject["_State"] = state
+		}
+
+		log.Printf("DEBUG new (original) %q for %s in %s -> %+v\n", state, key, cName, updatedObject)
 		// Need to make sure this part of the service is behind
 		// the mutex.
-		if err := safeDatasetOp(c, key, object, UPDATE); err != nil {
+		if err := safeDatasetOp(c, key, updatedObject, UPDATE); err != nil {
 			log.Printf("%s %s", r.URL.Path, err)
 			writeError(w, http.StatusNotAcceptable)
 			return
 		}
+		log.Printf("%s updated %s in %s", username, key, c.Name)
+	} else {
+		log.Printf("%s denied update %s in %s", username, key, c.Name)
 	}
-	log.Printf("%s update %s in %s", username, key, c.Name)
 }
 
 // requestDelete is the API version of
