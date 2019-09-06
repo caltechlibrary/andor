@@ -4,7 +4,7 @@
 This software is a proof of concept. As such you need to have
 Go version 1.12 or better to compile it and then to manually
 install it.  Typically the following steps are done to install 
-(example is POSIX based).
+(example is POSIX system based).
 
 ```bash
     git clone https://github.com/caltechlibrary/andor

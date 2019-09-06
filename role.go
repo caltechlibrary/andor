@@ -9,7 +9,6 @@
 package andor
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -135,7 +134,7 @@ func LoadRoles(fName string) (map[string]*Role, map[string]*State, error) {
 			return nil, nil, err
 		}
 	case ".toml":
-		if _, err := toml.Decode(string(src), &roles); err != nil {
+		if err := toml.Unmarshal(src, &roles); err != nil {
 			return nil, nil, err
 		}
 	default:
@@ -150,13 +149,11 @@ func (role *Role) Bytes() []byte {
 	if role == nil {
 		return []byte{}
 	}
-	buf := new(bytes.Buffer)
-	encoder := toml.NewEncoder(buf)
-	if err := encoder.Encode(role); err != nil {
-		fmt.Printf("DEBUG encoder.Encode(role) error in Bytes() -> %s\n", err)
+	src, err := toml.Marshal(role)
+	if err != nil {
 		return []byte{}
 	}
-	return buf.Bytes()
+	return src
 }
 
 // String() outputs a role to a string TOML.

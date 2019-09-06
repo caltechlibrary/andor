@@ -20,241 +20,124 @@
 </nav>
 
 <section>
-<h1 id="and-or">And/Or</h1>
+<h1>And/Or</h1>
 
 <blockquote>
 <p><span class="red">An</span>other <span class="red">d</span>igital / <span class="red">O</span>bject <span class="red">r</span>epository</p>
 </blockquote>
 
-<p>This is a concept document for a very light weight digital object
-repository implemented as &quot;a multi-user version of
-<a href="https://caltechlibrary.github.io/dataset">dataset</a> with a web
-based GUI&quot;. It targets the ability to curate
-metadata objects and attachments outside the scope of
-our existing repositories.</p>
+<p><a href="https://choosealicense.com/licenses/bsd-3-clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License" /></a></p>
 
-<p><strong>And/Or</strong> is based on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
-It is a JSON API plus HTML, CSS and JavaScript to provide a web
-GUI interface for curating objects.  A minimum running system
-would consist of only one or two pieces of software. The minimum
-would be a web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> plus the <strong>And/Or</strong> service supporting
-multi-user interaction with dataset collections.  Additional
-functionality or public website generation would be provided
-by other services. E.g. a search service can be easily implemented
-using Python and Lunr<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.  A public website can be generated via
-a similar process we used to build feeds.library.caltech.edu.</p>
+<!-- [![Latest release](https://img.shields.io/badge/Latest_release-0.0.1-b44e88.svg?style=flat-square)](http://shields.io) -->
 
-<p><strong>And/Or</strong> is a extremely narrowly scoped web service. The focus
-is <strong>ONLY</strong> on currating objects and related attachments.</p>
+<p><strong>And/Or</strong> is a proof of concept for a simple object repository
+based on Caltech Library&rsquo;s <a href="https://caltechlibrary.github.io/dataset">dataset</a>
+tool.  It provides a web-based multi-user version of dataset suitable for
+JSON object curation by a small group of users. It implements a role/object
+state based permission scheme enabling support for simple workflows.</p>
 
-<p>Limiting <strong>And/Or</strong>'s scope leads to a simpler system. Code
-needed is limited to <strong>And/Or</strong> web service plus the HTML,
-CSS and JavaScript needed for an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
-
-<p>This particular architecture aligns with small machine hosting
-and cloud hosting keeping recurring costs to a minimum.
-In the cloud it should work on a tiny or small EC2 instance.
-In house hosting could as light weight as Raspberry Pi 4 or
-as elaborate as a server with attached NAS<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>.</p>
-
-<h2 id="goals">Goals</h2>
+<h2>Table of contents</h2>
 
 <ul>
-<li>Provide a curatorial platform for metadata outside our existing repositories</li>
-<li>Provide an <strong>interim curration option</strong> for EPrints repositories requiring migration</li>
-<li>Thin stack
-
-<ul>
-<li>No RDMS requirement (only And/Or and a web server)</li>
-<li>Be easier than migrating our EPrints</li>
-<li>Be faster than EPrints under load</li>
-<li>Be simpler than EPrints, Invenio, Drupal/Islandora</li>
-</ul></li>
-<li>Use existing schema</li>
-<li>Support role based workflows</li>
-<li>Support versioned attached media files</li>
-<li>Support continuous migration</li>
-<li>Support alternative front ends (e.g. Drupal)</li>
-<li>Play nicely with other web based services</li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="install.html">Installation</a></li>
+<li><a href="docs/">Documentation</a></li>
+<li><a href="#known-issues-and-limitations">Known issues and limitations</a></li>
+<li><a href="#getting-help">Getting help</a></li>
+<li><a href="contributing.html">Contributing</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#authors-and-history">Authors and history</a></li>
+<li><a href="#authors-and-acknowledgments">Acknowledgments</a></li>
 </ul>
 
-<h2 id="project-assumptions">Project Assumptions</h2>
+<h2>Introduction</h2>
 
-<ul>
-<li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata and media</li>
-<li>UI can be implemented using HTML 5 elements, minimal JavaScript and CSS</li>
-<li>Small number of curatorial <a href="docs/User-Scheme.html">users</a></li>
-<li>Configurable <a href="docs/Roles-Scheme.html">roles</a> are a requirement
+<p><strong>And/Or</strong> is a multi-user web version of
+<a href="https://github.com/caltechlibrary/dataset">dataset</a>. <strong>dataset</strong>
+has proven to be a useful tool for managing library metadata using
+a data science approach.  It is built for continious migration dataflows.
+It lacks multi-user curation support or the convienence of having
+web browser based edit forms. <strong>And/Or</strong> is a prototype exploration
+of using dataset as a storage engine and extending it to support multiple
+users using a role/object state based permission scheme. It is a proof
+of concept for a extremely light weight JSON object repository that
+supports simple workflows and continious migration.</p>
 
-<ul>
-<li>roles describes permissions for objects in given states</li>
-<li>roles describes states an object can be asigned to</li>
-</ul></li>
-<li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
-<li>Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)</li>
-<li>Search and query are handle independent of API
+<p><strong>And/Or</strong> provides a web friendly JSON API mapping <strong>dataset</strong>
+functionality to URLs. It supports serving static HTML, CSS and
+JavaScript for building suitable user interfaces that humans might
+be inclined to use.  The JSON API supports creating, reading,
+update and deleting objects in a collection. The API supports key
+list retrieval and limitted filtering.  And/Or provides
+BasicAUTH user authentication support for mapping users to
+role/object state permission scheme. Ideally authentication would be
+provided by another service (e.g. Apache/NginX setup for Shibboleth).
+With these primitive facilities you can build a simple object
+repository systems using the HTML, CSS and JavaScript to create a
+web client interacting with the And/Or JSON API.</p>
 
-<ul>
-<li>e.g. Solr, Elastric Search, Bleve, Lunr</li>
-</ul></li>
-</ul>
+<h2>Installation</h2>
 
-<h2 id="limiting-features-and-complexity">Limiting features and complexity</h2>
+<p>See <a href="install.html">INSTALL.md</a>. This software is experimental
+and pre-compiled binaries are NOT provided.  This software is written in
+<a href="https://golang.org">Go</a> programming language and needs a Go compiler
+to be compiled. Installation maybe as simple as the following
+go and git commands.</p>
 
-<p>Some of the most complicated parts of digital object repositories
-are managing customization, managing users, manage roles,
-manage permissions and enforcing storage scheme.  <strong>And/Or</strong>'s
-simplification involves either avoiding the requirement by relocating
-it to an appropriate external system and by keeping the scope of
-what <strong>And/Or</strong> does very narrow.</p>
+<pre><code class="language-bash">    go get -u github.com/caltechlibrary/andor/...
+</code></pre>
 
-<p>Examples--</p>
+<p>A &ldquo;Makefile&rdquo; has been provided for your convience if you wish to
+manually compile the program.</p>
 
-<ul>
-<li>Authentication is handle externally. That means we don't need to create UI to manage passwords and user profiles. Volatile and sensitive data is outside of <strong>And/Or</strong> so it can't be stolen from <strong>And/Or</strong>.</li>
-<li><strong>And/Or</strong> itself is a simple web API that accepts URL requests
-and hands back JSON. It supports a small number of URL end points that support specific actions with one HTTP method (e.g. GET or POST).</li>
-<li>Object sheme is determined at time of migrating into  the dataset collection. <strong>And/Or</strong> provides no customization.  If you want to change your data shapes you write a script to do that and you change your HTML form.</li>
-<li>If you need additional end points beyond what <strong>And/Or</strong> provides (e.g. a search engine service, a electronic thesis workflow) you create those as micro services either behind the same webserver or else where.</li>
-</ul>
+<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/andor 
+    cd andor
+    go build -o bin/andor cmd/andor/andor.go
+</code></pre>
 
-<p>The web browser creates the illusion of a unified software system
-or single process. A single application is not required to support all
-desire functionality (e.g. curration and public website generate) because
-<strong>And/Or</strong> fits a composible model of all web applications that supply
-an API.  Customization is deferred to other micro services and external
-systems (e.g. looking up something at datacite.org or orcid.org)</p>
+<p>After compiling <strong>And/Or</strong> you can run a localhost
+demo with the following command.</p>
 
-<p>Some features are unavoidable in curation tool. Repositories run
-on the assumption of users and roles. Interestingly it
-doesn't require users and roles be manage through the web.
-Setting up users and roles can be managed through simpler command
-line tools and configuration files.  This is reasonable in large part
-because <strong>And/Or</strong> off loads identify management and can be restarted
-quickly.</p>
+<pre><code>    cd demo &amp;&amp; ../bin/andor start people-andor.toml
+</code></pre>
 
-<p>By focusing on a minimal feature set and leveraging technical
-opportunities that already exist we can radically
-reduce the lines of code written and maintained.</p>
+<p>Then point your web broser at <a href="http://localhost:8246">http://localhost:8246</a>
+and try the demo.</p>
 
-<h3 id="end-points-map-directly-to-existing-dataset-operations">End points map directly to existing dataset operations</h3>
+<h2>Known issues and limitations</h2>
 
-<p>dataset supports the a limited set of operations in <strong>And/Or</strong>.
-The operations are &quot;keys&quot;, &quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot;,
-&quot;attach&quot;, &quot;attachments&quot;, &quot;detach&quot; and &quot;prune&quot;.
-These map to URL paths supporting a single HTTP Method.</p>
+<p>This is a proof-of-concept project. It SHOULD NOT be used
+in any production setting.  It is ONLY suitable for demonstrating
+an approach to building light weight object repositories.</p>
 
-<ul>
-<li><code>/COLLECTION_NAME/keys/</code> (GET) all object keys</li>
-<li><code>/COLLECTION_NAME/keys/OBJECT_STATES</code> (GET) get a list of objects with the given states</li>
-<li><code>/COLLECTION_NAME/create/OBJECT_ID</code> (GET) to provide an Object's creates a new object, OBJECT_ID must be unique to succeed</li>
-<li><code>/COLLECTION_NAME/read/OBJECT_IDS</code> (GET) if single object_id return record otherwise a list of objects is returned</li>
-<li><code>/COLLECTION_NAME/update/OBJECT_ID</code> (POST) to update an object</li>
-<li><code>/COLLECTION_NAME/delete/OBJECT_ID</code> (POST) to delete an object</li>
-<li><code>/COLLECTION_NAME/attach/OBJECT_ID/SEMVER</code> (POST) attach a document to object</li>
-<li><code>/COLLECTION_NAME/attachments/OBJECT_ID</code> (GET) list attachments to object</li>
-<li><code>/COLLECTION_NAME/detach/OBJECT_ID/SEMVER/ATTACHMENT_NAME</code> (GET) get an attachments to object</li>
-<li><code>/COLLECTION_NAME/prune/OBJECT_ID/SEMVER/ATTACHMENT_NAME</code> (POST) remove an attachment version</li>
-</ul>
+<h2>Getting help</h2>
 
-<p>One additional end point is needed beyond dataset. We need to assign
-object states to enable workflows.</p>
+<p>You can contact us via GitHub <a href="https://github.com/caltechlibrary/andor/issues">issue tracker</a>.</p>
 
-<ul>
-<li><code>/COLLECTION_NAME/assign/OBJECT_ID/OLD_STATE/NEW_STATE</code> (POST) to delete an object</li>
-</ul>
+<h2>Contributing</h2>
 
-<p>All other end points are static resources (e.g. HTML files,
-CSS, JavaScript).</p>
+<p>See <a href="contributing.html">CONTRIBUTING.md</a></p>
 
-<h3 id="examples-of-composibility">Examples of composibility</h3>
+<h2>License</h2>
 
-<p>When listing a collection objects suggests the need for paging.
-&quot;keys&quot; can be used client side to create a segmented key list and when
-combined with &quot;read&quot; which can accept more than one id we now have
-a means of paging through a collection's objects.</p>
+<p>Software produced by the Caltech Library is Copyright &copy; 2019, Caltech.<br>
+This software is freely distributed under a BSD/MIT type license.<br>
+Please see the <a href="LICENSE">LICENSE</a> file for more information.</p>
 
-<p>A collection could be publically viewable (e.g. Oral Histories)
-by writing a script that reads the dataset collection <strong>And/Or</strong> is
-referencing rendering web pages appropriately (e.g. like we do
-with feeds).</p>
+<h2>Authors and history</h2>
 
-<p>A search interface can be created by indexing the dataset collection
-and presenting a search UI. (E.g. Like Stephen's demo of Lunr
-providing a search Caltech People pages).</p>
+<p><a href="https://rsdoiel.github.io">Robert</a> is the culprit responsible
+for this proof of concept</p>
 
-<p>A deposit system could be created as a microservice in Drupal
-to accept metadata and documents before handing them of to
-<strong>And/Or</strong> via a service account.</p>
+<h2>Acknowledgments</h2>
 
-<h3 id="building-a-ui">Building a UI</h3>
+<p>This work was funded by the California Institute of Technology Library.</p>
 
-<p>Five pages would need to be designed and implemented in HTML, CSS and
-JavaScript for our proof of concept.</p>
-
-<ol>
-<li>Login and landing page</li>
-<li>Display List records (filterable by object state)</li>
-<li>Display Object details</li>
-<li>Create/edit Object details</li>
-<li>Page to display user roles</li>
-</ol>
-
-<p>For public facing content (e.g. things Google, Bing, et el.
-should find and index) can be deployed separately by
-process similar to how feeds.library.caltech.edu works.
-This also keeps <strong>And/Or</strong> simple with fewer requirements.</p>
-
-<h3 id="user-role-object-state-is-a-simple-model">user/role/object state is a simple model</h3>
-
-<p>An authenticated user exposes their user id to
-<strong>And/Or</strong>'s web service. The web service can then
-retrieve the available roles that scope the permissions
-the user has to operate on objects in a given set of states.
-The role can also be used to define which objects we show
-the user.  This can be implemented with a small number
-of functions such as <code>getUsername()</code>, <code>getUserRoles()</code>,
-<code>isAllowed()</code> and <code>canAssign()</code>.</p>
-
-<p>Once authorization is calculated then approvided actions
-can be handle with simple HTTP handlers that perform a simple
-task mapping to an existing dataset function (e.g. keys,
-create, read, update).</p>
-
-<h3 id="under-the-hood">Under the hood</h3>
-
-<p><strong>And/Or</strong> is built on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
-It is a thin layer on top of existing dataset functionality.
-<strong>dataset</strong> supplies attachment versioning, <strong>And/Or</strong> exposes that
-in the attachment related end points. If dataset gained the ability
-to version JSON documents (e.g. stored diffs of JSON documents<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>),
-that functionality becomes easily wrapped by <strong>And/Or</strong>.</p>
-
-<p>Like EPrints <strong>And/Or</strong> should not directly support deleting objects.
-Instead the concept of deletion in <strong>And/Or</strong> is to assign the object's
-<code>._State</code> value to &quot;deleted&quot;. This makes deletion work like a Mac's
-trashcan and fully deleting objects would be accomplished by
-a separte process performing emptying the trash<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup>.</p>
-<h1 id="footnote-section">Footnotes</h1>
-
-<div class="footnotes">
-
-<hr>
-
-<ol>
-<li id="fn:1">NginX and Apache provide authentication mechanisms such as Basic AUTH, Shibboleth and OAuth 2.</li>
-
-<li id="fn:2"><a href="https://lunrjs.com">Lunr</a> is a browser friendly indexing and search library that can now be supported server side too via Python.</li>
-
-<li id="fn:3">UI, user interface, the normal way a user interacts with a website</li>
-
-<li id="fn:4">NAS, network attached storage similar to what are now common in research labs</li>
-
-<li id="fn:5">This could be done in the manner of EPrints which can show a diff of the EPrint XML document</li>
-
-<li id="fn:6">Empting the trash boils down to traversing all collecting the keys of objects that are in the <code>._State</code> == &quot;deleted&quot; and then removing the content from disc.</li>
-</ol>
-
+<div align="center">
+  <br>
+  <a href="https://www.caltech.edu">
+    <img width="100" height="100" src="assets/caltech-round.svg">
+  </a>
 </div>
 
 </section>

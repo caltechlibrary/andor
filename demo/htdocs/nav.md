@@ -1,0 +1,2 @@
++ [Home](/)
++ [People](/people/)

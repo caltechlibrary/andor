@@ -3,15 +3,18 @@ markup = "mmark"
 +++
 
 
-# Welcome to [And/Or](https://github.com/caltechlibrary/andor)
+# Welcome to [And/Or](https://github.com/caltechlibrary/andor) Demo
 
-This is a demo of And/Or[^1], a extremely light weight
-JSON object repository.
+This is a demo of And/Or[^1], a web base multi-user version of 
+[dataset](https://github.com/caltechlibrary/dataset). It is a web
+service designed to build curation tools for metadata that doesn't
+currently fit in our existing repository and catalog systems.
 
-+ [Hello World](helloworld.txt) - an example a serving a text file
-+ [repository object ids](/repository/objects/) - a list of JSON repository ids
-+ [JSON Object](/repository/objects/150) - object id 150
-+ [View Object](/repository/view.html?id=150) - object id 150
+The demo shows basic curation operations like listing keys,
+records and managing JSON documents in a collection
+a Caltech People inspired project.
+
++ [demo-people.ds](/demo-people/) demonstrates a simple person object collection. People objects consist of a series of unique ids (e.g. orcid, snac, wikidata, viaf) and name forms.
++ [How this stuff works](/how-this-stuff-works.html)
 
 
-[^1]: And/Or is named after a character in [Ruby](https://www.zbs.org/index_new.php/store/ruby) stories produced by [ZBS](https://www.zbs.org) 

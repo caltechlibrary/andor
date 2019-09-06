@@ -1,7 +1,7 @@
 
 # Role Use Cases
 
-Below are use cases exploring how a user/role/queue model.
+Below are use cases exploring how a user/role/queue model could work.
 
 ## Use case 1
 

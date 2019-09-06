@@ -1,0 +1,25 @@
+#
+#
+# Example "users.toml". Lines starting with "#" are comments.
+# This shows example users.
+#
+
+[anonynous]
+user_id = "anonymous"
+display_name = "Anonymous"
+roles = ["public"]
+
+[ester]
+user_id = "ester"
+display_name = "Ester"
+roles = ["publisher", "public" ]
+
+[jane]
+user_id = "jane"
+display_name = "Jane"
+roles = ["publisher", "depositor", "curator", "public"]
+
+[millie]
+user_id = "millie"
+display_name = "Millie"
+roles = ["depositor", "public"]

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">Demo Collection 02</a></li>
+<li><a href="whoami.html">Who am I?</a></li>
+<li><a href="edit.html">Create an Object</a></li>
+<li><a href="list.html?state=draft">Draft</a></li>
+<li><a href="list.html?state=review">Review</a></li>
+<li><a href="list.html?state=published">Published</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h2 id="edit">Edit</h2>
+
+<section>
+<div id="object-edit">
+<form id="edit-object">
+    <div>
+        <label>Key</label>
+        <input name="key" type="text" value="" placeholder="Object key">
+    </div>
+    <div>
+        <label>Title</label>
+        <input name="title" type="text" value="" placeholder="title">
+    </div>
+    <div>
+        <label>Pub Date</label>
+        <input name="pubDate" type="date" value="" placeholder="pubDate">
+    </div>
+    <div>
+        Creators Widget would go here ...
+    </div>
+    <div>
+        <label>Description</label><br />
+        <textarea name="description" placeholder="description goes here"></textarea>
+    </div>
+    <div>
+        <input type="submit" value="Update"> 
+        <input type="reset" value="Clear">
+    </div>
+</form>
+</div>
+<p>
+<a id="object-json-view">JSON view</a><p>
+</section>
+
+<!-- START: Edit Object Form -->
+
+<script src="/scripts/CL.js"></script>
+
+<script src="/scripts/andor.js"></script>
+
+<script>
+(function (window, document) {
+   "use strict";
+    var 
+        elem = document.getElementById("object-edit"),
+        anchor = document.getElementById("object-json-view"),
+        u = new URL(window.location.href),
+        c_name = AndOr.getCollectionName(u.pathname),
+        objectID = u.searchParams.get("key");
+
+    if (objectID !== null && anchor !== undefined) {
+        anchor.setAttribute("href", `/${c_name}/read/${objectID}`)
+    } else {
+        anchor.setAttribute("href", `/${c_name}/create/${objectID}`)
+        anchor.innerHTML = "No object id specified, view List";
+    }
+    if (obejctID !== null && elem !== undefined) {
+        Andor.editObject(elem, objectID);
+    }
+}(window, document));
+</script>
+
+<!--   END: Edit Object Form -->
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>
