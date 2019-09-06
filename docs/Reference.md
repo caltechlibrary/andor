@@ -1,7 +1,11 @@
++++
+markup = "mmark"
++++
+
 
 # Reference material
 
-+ Established Authentication options
++ Established Authentication options[^1]
     + [NginX and Basic AUTH](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/)
     + [NginX Shibboleth Module](https://github.com/nginx-shib/nginx-http-shibboleth)
     + [NginX AUTH Digest](https://www.nginx.com/resources/wiki/modules/auth_digest/)
@@ -12,4 +16,7 @@
 + Harvesting and Migration 
     + [eprinttools](https://github.com/caltechlibrary/eprinttools)
     + [dataset](https://github.com/caltechlibrary/dataset)
+
+
+[^1]: These examples are for NginX but Apache also supports these services
 

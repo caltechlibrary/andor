@@ -5,9 +5,9 @@ markup = "mmark"
 
 # Documentation
 
-## About And/Or
+## Design concepts
 
-See [about.md](about.html)
+See [About And/Or](about.html)
 
 ## Project
 
@@ -17,17 +17,12 @@ concepts and rationale around **AndOr**.
 + Concepts 
     + [Collections, Objects and Attachments](Collections-Objects-Attachments.html)
     + [Users, Roles and States](Users-Roles-States.html)
-+ Proof of concepts (planned demos)
-    + [People and Groups](people-groups.html) 
-        + Example of custom metadata objects
-    + [Oral Histories](Oral-Histories-as-Proof-of-Concept.html)
-        + [Migrating an EPrints Repository](migrating-eprints.html) 
-        + Integrating curating Oral Histories content
-+ Scheme and scheme user cases
++ Proof of concept demo
+    + [People Demo](people-demo.html) 
++ Scheme and scheme use cases
     + [User Scheme](User-Scheme.html)
     + [Role Scheme](Role-Scheme.html)
     + [Object Scheme](Object-Scheme.html)
-+ [Schedule](Schedule.html)
 + [Running And/Or](Running-AndOr.html)
 + Misc [Reference Material](Reference.html)
 

@@ -47,14 +47,16 @@ supports simple workflows and continious migration.
 
 **And/Or** provides a web friendly JSON API mapping __dataset__ 
 functionality to URLs. It supports serving static HTML, CSS and 
-JavaScript for building suitable user interfaces that humans night 
+JavaScript for building suitable user interfaces that humans might 
 be inclined to use.  The JSON API supports creating, reading, 
 update and deleting objects in a collection. The API supports key 
-list retrieval and limitted filtering.  Finally And/Or provides 
+list retrieval and limitted filtering.  And/Or provides 
 BasicAUTH user authentication support for mapping users to 
-role/object state permission scheme.  With these primitive facilities 
-you can build a simple object repository systems using the HTML, CSS and 
-JavaScript to create a web client interacting with the And/Or JSON API.
+role/object state permission scheme. Ideally authentication would be 
+provided by another service (e.g. Apache/NginX setup for Shibboleth). 
+With these primitive facilities you can build a simple object 
+repository systems using the HTML, CSS and JavaScript to create a 
+web client interacting with the And/Or JSON API.
 
 
 Installation
@@ -83,10 +85,11 @@ After compiling **And/Or** you can run a localhost
 demo with the following command.
 
 ```
-    ./bin/andor start demo-andor.toml
+    cd demo && ../bin/andor start people-andor.toml
 ```
 
-Point your web broser at http://localhost:8246 to try the demo.
+Then point your web broser at http://localhost:8246 
+and try the demo.
 
 
 Known issues and limitations
@@ -110,21 +113,22 @@ See [CONTRIBUTING.md](contributing.html)
 License
 -------
 
-Software produced by the Caltech Library is Copyright (C) 2019, Caltech.  This software is freely distributed under a BSD/MIT type license.  Please see the [LICENSE](LICENSE) file for more information.
+Software produced by the Caltech Library is Copyright (C) 2019, Caltech.  
+This software is freely distributed under a BSD/MIT type license.  
+Please see the [LICENSE](LICENSE) file for more information.
 
 
 Authors and history
 ---------------------------
 
-[R. S. Doiel](https://rsdoiel.github.io) is the culprit responsible for this proof of concept
+[Robert](https://rsdoiel.github.io) is the culprit responsible 
+for this proof of concept
 
 
 Acknowledgments
 ---------------
 
 This work was funded by the California Institute of Technology Library.
-
-(If this work was also supported by other organizations, acknowledge them here.  In addition, if your work relies on software libraries, or was inspired by looking at other work, it is appropriate to acknowledge this intellectual debt too.)
 
 <div align="center">
   <br>

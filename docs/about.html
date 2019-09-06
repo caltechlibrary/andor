@@ -29,20 +29,21 @@
 <p>This is a concept document for a very light weight digital object
 repository implemented as &quot;a multi-user version of
 <a href="https://caltechlibrary.github.io/dataset">dataset</a> with a web
-based GUI&quot;. It targets the ability to curate
-metadata objects and attachments outside the scope of
-our existing repositories.</p>
+based GUI&quot;. It targets the ability to curate metadata objects
+outside the scope of our existing repository systems.</p>
 
 <p><strong>And/Or</strong> is based on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
-It is a web JSON API plus HTML, CSS and JavaScript providing a web
-GUI interface for curating objects.  It is intended
-to run using a standard web server like Apache or NginX
-and the <strong>And/Or</strong> service running via reverse proxy behind.
+It is a web JSON API plus static HTML, CSS and JavaScript
+providing a web GUI interface for curating objects.  It
+is intended to function as a microservice running behind
+a standard web server like Apache or NginX and
+assessible via a reverse proxy configuration.
 For the purposes of a proof of concept the minimum is
-a <strong>And/Or</strong> web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> providing both static website
-service plus supporting multi-user interaction with dataset
-collections.  The concept is additional functionality
-is provided by other microservices and systems<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.</p>
+system is <strong>And/Or</strong> web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> providing static
+web hosting, BasicAUTH authentication and supporting
+multi-user interaction with dataset collections.<br>
+Part of the design concept is that additional functionality
+would be provided by other microservices or systems<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.</p>
 
 <p><strong>And/Or</strong> is a extremely narrowly scoped web service. The focus
 is <strong>ONLY</strong> on currating JSON objects.</p>
@@ -154,24 +155,31 @@ a single HTTP Method (either GET or POST).</p>
 </ul>
 
 <p><strong>And/Or</strong> is a thin layer on top of existing dataset functionality.
-E.g. dataset supplies attachment versioning, <strong>And/Or</strong> exposes that
-in the attachment related end points. If dataset gained the ability
-to version JSON documents (e.g. stored diffs of JSON documents<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>),
-that functionality could be included in <strong>And/Or</strong>.</p>
+E.g. dataset supplies attachment versioning <strong>And/Or</strong> does not.
+That functionality but could easily be added. The idea is that as
+dataset matures and gains the abilities useful in a multi-user
+context <strong>And/Or</strong> would be enhanced to support the additional
+dataset features by mapping them to an appropriate URL end point.
+Example, if adding versioning to JSON documents (e.g.
+stored diffs of JSON documents<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>) as added to dataset,
+that functionality was available in dataset it could be included
+in <strong>And/Or</strong>.</p>
 
 <h3 id="web-ui">Web UI</h3>
 
-<p>Four pages would need to be designed per collection and
+<p>Four pages static web pages need to be designed per collection and
 implemented in HTML, CSS and JavaScript for our proof of concept.</p>
 
 <ol>
 <li>Login and landing page</li>
 <li>Display List records (filterable by object state)</li>
-<li>An edit for that serves to display object details in an editable form as well as create, update and retrieve an object by id.</li>
-<li>Page to display user roles</li>
+<li>An edit page that supports CRUD operations</li>
+<li>Page to display the logged in user roles</li>
 </ol>
 
-<p><strong>And/Or</strong> is NOT for public facing content
+<h3 id="limited-functionality-is-intentional">Limited functionality is intentional</h3>
+
+<p><strong>And/Or</strong> is NOT for public facing content system
 (e.g. things Google, Bing, et el.  should find and index)
 Machanisms for public facing content should be deployed
 separately by processes similar to how feeds.library.caltech.edu

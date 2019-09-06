@@ -65,14 +65,16 @@ supports simple workflows and continious migration.</p>
 
 <p><strong>And/Or</strong> provides a web friendly JSON API mapping <strong>dataset</strong>
 functionality to URLs. It supports serving static HTML, CSS and
-JavaScript for building suitable user interfaces that humans night
+JavaScript for building suitable user interfaces that humans might
 be inclined to use.  The JSON API supports creating, reading,
 update and deleting objects in a collection. The API supports key
-list retrieval and limitted filtering.  Finally And/Or provides
+list retrieval and limitted filtering.  And/Or provides
 BasicAUTH user authentication support for mapping users to
-role/object state permission scheme.  With these primitive facilities
-you can build a simple object repository systems using the HTML, CSS and
-JavaScript to create a web client interacting with the And/Or JSON API.</p>
+role/object state permission scheme. Ideally authentication would be
+provided by another service (e.g. Apache/NginX setup for Shibboleth).
+With these primitive facilities you can build a simple object
+repository systems using the HTML, CSS and JavaScript to create a
+web client interacting with the And/Or JSON API.</p>
 
 <h2>Installation</h2>
 
@@ -96,10 +98,11 @@ manually compile the program.</p>
 <p>After compiling <strong>And/Or</strong> you can run a localhost
 demo with the following command.</p>
 
-<pre><code>    ./bin/andor start demo-andor.toml
+<pre><code>    cd demo &amp;&amp; ../bin/andor start people-andor.toml
 </code></pre>
 
-<p>Point your web broser at <a href="http://localhost:8246">http://localhost:8246</a> to try the demo.</p>
+<p>Then point your web broser at <a href="http://localhost:8246">http://localhost:8246</a>
+and try the demo.</p>
 
 <h2>Known issues and limitations</h2>
 
@@ -117,17 +120,18 @@ an approach to building light weight object repositories.</p>
 
 <h2>License</h2>
 
-<p>Software produced by the Caltech Library is Copyright &copy; 2019, Caltech.  This software is freely distributed under a BSD/MIT type license.  Please see the <a href="LICENSE">LICENSE</a> file for more information.</p>
+<p>Software produced by the Caltech Library is Copyright &copy; 2019, Caltech.<br>
+This software is freely distributed under a BSD/MIT type license.<br>
+Please see the <a href="LICENSE">LICENSE</a> file for more information.</p>
 
 <h2>Authors and history</h2>
 
-<p><a href="https://rsdoiel.github.io">R. S. Doiel</a> is the culprit responsible for this proof of concept</p>
+<p><a href="https://rsdoiel.github.io">Robert</a> is the culprit responsible
+for this proof of concept</p>
 
 <h2>Acknowledgments</h2>
 
 <p>This work was funded by the California Institute of Technology Library.</p>
-
-<p>(If this work was also supported by other organizations, acknowledge them here.  In addition, if your work relies on software libraries, or was inspired by looking at other work, it is appropriate to acknowledge this intellectual debt too.)</p>
 
 <div align="center">
   <br>

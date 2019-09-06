@@ -10,20 +10,21 @@ markup = "mmark"
 This is a concept document for a very light weight digital object
 repository implemented as "a multi-user version of 
 [dataset](https://caltechlibrary.github.io/dataset) with a web 
-based GUI". It targets the ability to curate 
-metadata objects and attachments outside the scope of 
-our existing repositories.  
+based GUI". It targets the ability to curate metadata objects 
+outside the scope of our existing repository systems.  
 
 **And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset).
-It is a web JSON API plus HTML, CSS and JavaScript providing a web 
-GUI interface for curating objects.  It is intended
-to run using a standard web server like Apache or NginX
-and the **And/Or** service running via reverse proxy behind.
+It is a web JSON API plus static HTML, CSS and JavaScript 
+providing a web GUI interface for curating objects.  It 
+is intended to function as a microservice running behind
+a standard web server like Apache or NginX and
+assessible via a reverse proxy configuration.
 For the purposes of a proof of concept the minimum is 
-a **And/Or** web server[^1] providing both static website
-service plus supporting multi-user interaction with dataset 
-collections.  The concept is additional functionality 
-is provided by other microservices and systems[^2].
+system is **And/Or** web server[^1] providing static
+web hosting, BasicAUTH authentication and supporting 
+multi-user interaction with dataset collections.  
+Part of the design concept is that additional functionality 
+would be provided by other microservices or systems[^2].
 
 **And/Or** is a extremely narrowly scoped web service. The focus 
 is __ONLY__ on currating JSON objects. 
@@ -122,22 +123,29 @@ a single HTTP Method (either GET or POST).
 + `/COLLECTION_NAME/delete/OBJECT_ID` (POST) to delete an object
 
 **And/Or** is a thin layer on top of existing dataset functionality.
-E.g. dataset supplies attachment versioning, **And/Or** exposes that
-in the attachment related end points. If dataset gained the ability
-to version JSON documents (e.g. stored diffs of JSON documents[^4]),
-that functionality could be included in **And/Or**.
+E.g. dataset supplies attachment versioning **And/Or** does not.
+That functionality but could easily be added. The idea is that as 
+dataset matures and gains the abilities useful in a multi-user
+context **And/Or** would be enhanced to support the additional
+dataset features by mapping them to an appropriate URL end point.
+Example, if adding versioning to JSON documents (e.g. 
+stored diffs of JSON documents[^4]) as added to dataset, 
+that functionality was available in dataset it could be included 
+in **And/Or**.
 
 ### Web UI
 
-Four pages would need to be designed per collection and 
+Four pages static web pages need to be designed per collection and 
 implemented in HTML, CSS and JavaScript for our proof of concept.
 
 1. Login and landing page 
 2. Display List records (filterable by object state)
-3. An edit for that serves to display object details in an editable form as well as create, update and retrieve an object by id.
-4. Page to display user roles
+3. An edit page that supports CRUD operations
+4. Page to display the logged in user roles
 
-**And/Or** is NOT for public facing content 
+### Limited functionality is intentional
+
+**And/Or** is NOT for public facing content system
 (e.g. things Google, Bing, et el.  should find and index) 
 Machanisms for public facing content should be deployed 
 separately by processes similar to how feeds.library.caltech.edu 
