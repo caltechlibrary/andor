@@ -20,9 +20,7 @@
 </nav>
 
 <section>
-<h1 id="adjusted-development-schedule">Adjusted Development schedule</h1>
-
-<p>Due to actual time off the schedule was spread across more weeks.</p>
+<h1 id="proposed-development-schedule">Proposed Development schedule</h1>
 <figure>
 <table>
 <thead>
@@ -48,60 +46,64 @@
 
 <tr>
 <td align="left">3</td>
-<td align="left">2019-08-12</td>
+<td align="left">2019-08-05</td>
 <td align="left">Implement Basic UI in HTML and JavaScript plus more testing</td>
 </tr>
 
 <tr>
-<td align="left">3</td>
-<td align="left">2019-08-05</td>
-<td align="left">Haitus</td>
-</tr>
-
-<tr>
 <td align="left">4</td>
-<td align="left">2019-08-26</td>
+<td align="left">2019-08-12</td>
 <td align="left">Implement demo UIs for demo collections</td>
 </tr>
 
 <tr>
-<td align="left">4</td>
-<td align="left">2019-08-28</td>
-<td align="left">Internal demo and discussion or <strong>AndOr</strong></td>
-</tr>
-
-<tr>
 <td align="left">5</td>
-<td align="left">2019-09-02</td>
-<td align="left">Revise, debug demo for DLD and others</td>
+<td align="left">2019-08-19</td>
+<td align="left">Ready to demo <strong>AndOr</strong></td>
 </tr>
 </tbody>
 </table>
-<figcaption>Original schedule assumed was five weeks full time effort, actual was 5 weeks were stretch over two months
+<figcaption>Proposed schedule assumes full time effort, dates subject to change
 </figcaption>
 </figure>
 
-<h2 id="people-as-proof-of-concept">People as Proof of concept</h2>
+<h2 id="people-and-groups-as-proof-of-concept">People and Groups as Proof of concept</h2>
 
-<p>We are out growing our GSheet based People list.
-<strong>AndOr</strong> is a proposal to explore an alternative curation
-tool.  The demo implements listing people records, creating,
-reading, updating and &quot;deleting&quot; individual records using
-a user, role, object state module to implement workflows.</p>
-
-<p>Capabilities</p>
+<p>We are out growing our GSheet based People and Groups list.
+<strong>AndOr</strong> is to provide an alternative curating interface.
+The demo will show roles for managing two collections---
+People and Groups. It should provide the following basic
+capabilities</p>
 
 <ol>
-<li>Create, Update, Delete People records (rows in the GSheet today)</li>
-<li>List People by object state</li>
-<li>Support users authenticating via http BasicAUTH</li>
-<li>Roles support &quot;deposit&quot;, &quot;review&quot;, &quot;published&quot;, &quot;embargoed&quot; and &quot;deleted&quot; objects</li>
+<li>Create, Update, Delete People and Group records (rows in the GSheet today)</li>
+<li>List People and Groups</li>
+<li>Support users authenticating via a simple system via NginX or Apache</li>
+<li>Have roles for &quot;suggested&quot;, &quot;published&quot; and &quot;manage&quot; objects in each collection</li>
 </ol>
 
-<p>Currently we export the Google Spreadsheet for CaltechPEOPLE
-and create a people dataset collection. This proof of concept shows
-what it might be like to skip the spreadsheet and manage the
-JSON objects directly via <strong>And/Or</strong>.</p>
+<h2 id="oral-histories-as-proof-of-concept">Oral Histories as Proof of concept</h2>
+
+<p><a href="http://oralhistories.caltech.edu">Oral Histories</a> is one of our
+smaller EPrints installations. It will need migrating soon
+because it is running on one of our older blades that lacks https
+support. It is a good candidate for the proof of concept <strong>AndOr</strong>.
+The demo should demonstrate the following</p>
+
+<ol>
+<li>How to harvest the current EPrints based deployment</li>
+<li>Setup <strong>AndOr</strong> to host the harvested content</li>
+<li>Support user authenticating via a simple system</li>
+<li>Implement roles currently available in EPrints</li>
+</ol>
+
+<p>Migrating other EPrints repositories will involve validating
+harvested content and updating the HTML/JavaScript to meet
+the repositories' needs. It also should involve an assessment
+of if we want any additional micro services to improve role
+(e.g. integrate our DOI harvesting, external roles like ETD).
+After our first migration the time to migrate should decrease
+with each move instead of remaining constant.</p>
 
 </section>
 
