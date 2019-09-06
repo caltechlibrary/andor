@@ -19,6 +19,7 @@ concepts and rationale around **AndOr**.
     + [Users, Roles and States](Users-Roles-States.html)
 + Proof of concept demo
     + [People Demo](people-demo.html) 
++ Development [Schedule](Schedule.html)
 + Scheme and scheme use cases
     + [User Scheme](User-Scheme.html)
     + [Role Scheme](Role-Scheme.html)
