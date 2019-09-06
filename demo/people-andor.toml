@@ -1,5 +1,5 @@
 #
-# Example "demo-andor.toml" 
+# Example "people-andor.toml" 
 #
 # Lines starting with "#" are comments.
 # This file configuration the AndOr web service.
@@ -9,11 +9,11 @@ KeyPEM = ""
 scheme = "http"
 port = "8246"
 host = "localhost"
-htdocs = "demoroot"
-collections = [ "demo-collection-01.ds", "demo-collection-02.ds", "demo-people.ds" ]
-roles_file = "demo-roles.toml"
-users_file = "demo-users.toml"
-access_file = "demo-access.toml"
+htdocs = "htdocs"
+collections = [ "people.ds" ]
+roles_file = "people-roles.toml"
+users_file = "people-users.toml"
+access_file = "people-access.toml"
 
 
 # If running under TLS you need to include cert_pem and key_pem

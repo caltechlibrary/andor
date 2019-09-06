@@ -31,7 +31,7 @@ install:
 	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
-	cp -v scripts/andor.js demoroot/scripts/
+	cp -vR scripts demo/htdocs/
 	./mk_website.py $(baseurl)
 
 test: clean bin/andor$(EXT)

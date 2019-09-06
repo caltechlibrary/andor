@@ -6,7 +6,7 @@
 [curator]
 role_id = "curator"
 role_name = "Curator"
-states = ["review", "embargoed", "published"]
+states = ["review", "embargoed", "published", "deleted" ]
 create = false
 read = true
 update = true
@@ -21,7 +21,7 @@ create = true
 read = false
 update = false
 delete = false
-assign_to = ["review"]
+assign_to = ["review", "deleted" ]
 
 [public]
 role_id = "public"

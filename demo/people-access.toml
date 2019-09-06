@@ -1,5 +1,5 @@
 auth_type = "basic"
-auth_name = "Demo Collections"
+auth_name = "Demo People"
 encryption = "argon2id"
 
 [access]

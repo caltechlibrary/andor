@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="/demo-collection-01/">Demo Collection 01</a></li>
+<li><a href="/demo-collection-02/">Demo Collection 02</a></li>
+<li><a href="/demo-people/">Demo People</a></li>
+</ul>
+
+</nav>
+
+<section>
+<h1 id="welcome-to-and-or-https-github-com-caltechlibrary-andor-people-demo">Welcome to <a href="https://github.com/caltechlibrary/andor">And/Or</a> People Demo</h1>
+
+<p>This is a demo of And/Or a web base multi-user version of
+<a href="https://github.com/caltechlibrary/dataset">dataset</a>. It is a web
+service designed to build curation tools for metadata that doesn't
+currently fit in our existing repository and catalog systems.</p>
+
+<p>The demo shows basic curation operations like listing keys,
+and creating, reading, updating and deleting JSON documents
+in a collection based on the a Caltech Library's
+Identity project.</p>
+
+<dl>
+<dt><a href="/people/">people</a></dt>
+<dd>demonstrates a simple person object collection. People objects consist of a
+series of unique ids (e.g. orcid, snac, wikidata, viaf) and name forms.</dd>
+</dl>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>
