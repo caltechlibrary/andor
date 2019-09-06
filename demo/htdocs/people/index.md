@@ -10,10 +10,12 @@ demonstration shows a more traditional record oriented approach
 for curating CaltechPEOPLE.
 
 + [Who am I](whoami.html "Who am I logged in as? What permissions do I have?")
-+ [Create a People Object](edit.html)
-+ [Review](list.html?state=review) People Objects
-+ [Published](list.html?state=published) People Objects
-+ [Embargoed](list.html?state=embargoed) People Objects
-+ [Show All People Objects](list.html)
++ [Create/Read/Update a People Object](edit.html)
++ List
+    + [Review](list.html?state=review) People Objects
+    + [Published](list.html?state=published) People Objects
+    + [Embargoed](list.html?state=embargoed) People Objects
+    + [Deleted](list.html?state=deleted) People Objects 
+    + [All Objects](list.html)
 
 

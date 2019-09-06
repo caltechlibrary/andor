@@ -133,7 +133,7 @@
         CL.httpGet(u, 'application/json', function(data, err) {
             callbackFn(data, err);
             if (err) {
-                console.log('ERROR: post ' + url + ' - ' + err);
+                console.log('ERROR: post ' + u + ' - ' + err);
                 return;
             }
             console.log('DEBUG Success! ', data);

@@ -1,5 +1,5 @@
 
-# Create/Edit People Info
+# Create/Read/Update People Info
 
 
 <div id="example-output">
