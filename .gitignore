@@ -4,6 +4,7 @@
 *.bak
 *.exe
 *.ds
+*.zip
 bin/*
 testout/*
 dist/*

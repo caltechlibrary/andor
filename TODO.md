@@ -3,6 +3,7 @@
 
 ## Bugs
 
++ [ ] The tabindex values is interacting with the next field focus negatively, find a different solution
 + [ ] Editing the collection when And/Or is running to trigger a refresh of collection.json in memory
 + [ ] view methods should only be defined in a custom repository's JS, andor.js should only support retrieval methods specific to the And/Or JSON API.
 + [x] init should generate a roles.toml and users.toml for editing if they do not exist
