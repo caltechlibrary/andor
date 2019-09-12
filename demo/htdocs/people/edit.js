@@ -36,65 +36,6 @@
         },
         default_people = Object.assign({}, people),
         form_src = `
-<style>
-form.form-people {
-    width: auto;
-    height: auto;
-    margin: 1.24em;
-    padding: 1.24em;
-}
-form.form-people > div > div {
-    padding-bottom: 0.72em;
-}
-form.form-people > div > div > input {
-    min-width: 30em;
-}
-form.form-people > div > div > a {
-    display: block;
-}
-form.form-people > div > div > textarea {
-    min-width: 40em;
-}
-form.form-people > div > div > label {
-    display: block; 
-}
-form.form-people > div > div > label.inline {
-    display: inline-block; 
-    width: 4em;
-    padding-right:0;
-    margin-right: 0;
-}
-form.form-people > div > div > input[type=checkbox] {
-    min-width: 1em;
-    padding-left: 1em;
-    margin-left: 1em;
-}
-.errors, form.form-people > div > div.required > label {
-    color: red;
-    font-style: bold;
-}
-.controls {
-    width: 10%;
-    border: 0.024em solid green;
-    padding:1.24em;
-    margin: 1.24em;
-    display: inline;
-    float: left;
-}
-.controls > div > button {
-    width: 100%;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.fields {
-    padding: 0;
-    margin: 0;
-    display: inline;
-    float: left;
-}
-</style>
 <form class="form-people">
 <div class="controls">
     <div>

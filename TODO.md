@@ -5,9 +5,11 @@
 
 ## Next
 
-+ [ ] orcid, author_id, thesis_id and cl_people_id need to have a copy button so they can be easily copied to be pasted into EPrints
-+ [ ] Have create link take you to a create page, rename "create" button to save, save button should take you back to the list
-+ [ ] Rename "update" to save, the edit page should be separate from the save page, when save is pressed go back to the list
++ [ ] Change "lookup" to reflect `search for {{field_name}}` or `Go to {{field_value}}`
++ [ ] Consolidate Look up link and link to object's source
++ [ ] orcid, author_id, thesis_id and cl_people_id need to have a copy field button so they can be easily copied to be pasted into EPrints
++ [ ] Have create link take you to a create page, rename "create" button to save, save button should take you back to a read only view with link to edit item
++ [ ] Rename "update" to save, the edit page should be separate from the save page, when save is pressed go back to a read only view with link to edit item
 + [ ] Editing the collection when And/Or is running to trigger a refresh of collection.json in memory
     + add a file listener for collection.json to trigger refresh, it needs to pass through the mutex
 + [ ] Need a page to copy a record to a new record with a new cl_people_id
