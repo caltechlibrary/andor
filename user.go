@@ -58,7 +58,7 @@ func GenerateUsers(fName string) error {
 #
 [%q]
 display_name = %q
-member_of = [ "admin" ]
+roles = [ "admin" ]
 `, fName, userID, userID))
 	return ioutil.WriteFile(fName, src, 0666)
 }
