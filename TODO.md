@@ -5,6 +5,13 @@
 
 ## Next
 
++ [ ] Add configurable web hooks for create, update and delete actions
++ [ ] Expand And/Or command line verbs to either generate JSON configurations of a related andor system's collection
++ [ ] Dropping support form TOML and YAML to reduce external dependencies
++ [ ] File watch collection.json changes it needs to be reloaded into running AndOr instance, this will allow external processes to update frames or modify records
++ [ ] Remove basic auth support from And/Or service in favor of OAuth 2 tokens, demo using ORCID to identify curators
++ [ ] Migrate users.toml, roles.toml into JSON records for managing curation, the collection to use is defined in system json file used when calling `andor start`
++ [ ] User/roles to be defined as their own collection that is not publically visible but is used by And/Or for access
 + [ ] Change "lookup" to reflect `search for {{field_name}}` or `Go to {{field_value}}`
 + [ ] Consolidate Look up link and link to object's source
 + [ ] orcid, author_id, thesis_id and cl_people_id need to have a copy field button so they can be easily copied to be pasted into EPrints
