@@ -5,6 +5,10 @@
 
 ## Next
 
++ [ ] Evaluate impact of dropping explicit user/role model and implement andor as part of libdataset where Python provides the Web Service infrastructure rather than a stand alone services written in Go.
+
+## Someday, Maybe ideas
+
 + [ ] Add configurable web hooks for create, update and delete actions
 + [ ] Expand And/Or command line verbs to either generate JSON configurations of a related andor system's collection
 + [ ] Dropping support form TOML and YAML to reduce external dependencies

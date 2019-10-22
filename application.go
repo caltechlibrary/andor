@@ -117,6 +117,7 @@ func Application(appName, andorFile string, args []string, in io.Reader, out io.
 			fmt.Fprintf(eOut, "Problem with %s\n", err)
 			return 1
 		}
+		fmt.Printf("DEBUG s -> %+v\n", s)
 		if _, _, err := LoadRoles(s.RolesFile); err != nil {
 			fmt.Fprintf(eOut, "Problem with %s\n", err)
 			return 1

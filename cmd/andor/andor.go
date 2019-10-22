@@ -38,7 +38,7 @@ Actions:
   init
             will create a dataset collection(s)
             and configuration filesneeded to host 
-			AndOr. By default that is repository.ds,
+            AndOr. By default that is repository.ds,
             andor.toml, roles.toml and users.toml.
 
   check [FILENAME]
@@ -49,7 +49,7 @@ Actions:
             will run the AndOr web service, if
             a configuration file is not found
             it look for "andor.toml" in the 
-			current directory.
+            current directory.
 
 %s %s
 `
