@@ -36,173 +36,114 @@
         },
         default_people = Object.assign({}, people),
         form_src = `
-<style>
-form.form-people {
-    width: auto;
-    height: auto;
-    margin: 1.24em;
-    padding: 1.24em;
-}
-form.form-people > div > div {
-    padding-bottom: 0.72em;
-}
-form.form-people > div > div > input {
-    min-width: 30em;
-}
-form.form-people > div > div > a {
-    display: block;
-}
-form.form-people > div > div > textarea {
-    min-width: 40em;
-}
-form.form-people > div > div > label {
-    display: block; 
-}
-form.form-people > div > div > label.inline {
-    display: inline-block; 
-    width: 4em;
-    padding-right:0;
-    margin-right: 0;
-}
-form.form-people > div > div > input[type=checkbox] {
-    min-width: 1em;
-    padding-left: 1em;
-    margin-left: 1em;
-}
-.errors, form.form-people > div > div.required > label {
-    color: red;
-    font-style: bold;
-}
-.controls {
-    width: 10%;
-    border: 0.024em solid green;
-    padding:1.24em;
-    margin: 1.24em;
-    display: inline;
-    float: left;
-}
-.controls > div > button {
-    width: 100%;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.fields {
-    padding: 0;
-    margin: 0;
-    display: inline;
-    float: left;
-}
-</style>
 <form class="form-people">
 <div class="controls">
     <div>
         <div id="errors" class="errors"></div>
         <div id="status" class="status"></div>
         <hr>
-        <button tabindex="21" id="create" disabled="true" title="create a new people record">Create</button>
-        <button tabindex="22" id="read" title="retrieve a people record">Read</button>
-        <button tabindex="23" id="save" disabled="true" title="update an existing people record, including assigning to a new state">Update</button>
-        <button tabindex="24" id="reset" title="clear the current form and replace with an empty people record">Clear Form</button>
+        <button id="create" disabled="true" title="create a new people record">Create</button>
+        <button id="read" title="retrieve a people record">Read</button>
+        <button id="save" disabled="true" title="update an existing people record, including assigning to a new state">Update</button>
+        <button id="reset" title="clear the current form and replace with an empty people record">Clear Form</button>
     </div>
 </div><!-- END: .controls -->
 <div class="fields">
     <div class="required">
         <label for="cl_people_id"><span title="this is a required field">CL PEOPLE ID</span> (<a href="https://feeds.library.caltech.edu/people/" target="_lookup">lookup</a>):</label>
-        <input tabindex="1" type="text" id="cl_people_id" name="cl_people_id" value="{{cl_people_id}}" placeholder="e.g. Feynman-R-P" title="a Caltech People ID is required">
+        <input type="text" id="cl_people_id" name="cl_people_id" value="{{cl_people_id}}" title="e.g. Feynman-R-P" title="a Caltech People ID is required">
         <a id="cl_people_url" target="_lookup"></a>
     </div>
     <div>
         <label for="family_name">Family Name:</label>
-        <input tabindex="2" type="text" id="family_name" name="family_name" value="{{family_name}}" placeholder="e.g. Feyman">
+        <input type="text" id="family_name" name="family_name" value="{{family_name}}" title="e.g. Feyman">
     </div>
     <div>
         <label for="given_name">Given Name:</label>
-        <input tabindex="3" type="text" id="given_name" name="given_name" value="{{given_name}}" placeholder="e.g. Richard">
+        <input type="text" id="given_name" name="given_name" value="{{given_name}}" title="e.g. Richard">
     </div>
     <div>
         <label for="thesis_id">Thesis ID (<a href="https://thesis.library.caltech.edu/cgi/search/advanced" target="_lookup">lookup</a>):</label>
-        <input tabindex="4" type="text" id="thesis_id" name="thesis_id" value="{{thesis_id}}" placeholder="e.g. FEYNMAN-R-P">
+        <input type="text" id="thesis_id" name="thesis_id" value="{{thesis_id}}" title="e.g. FEYNMAN-R-P">
         <a id="thesis_url" target="_lookup"></a>
     </div>
     <div>
         <label for="authors_id">Authors ID (<a href="https://authors.library.caltech.edu/cgi/search/advanced" target="_lookup">lookup</a>):</label>
-        <input tabindex="5" type="text" id="authors_id" name="authors_id" value="{{authors_id}}" placeholder="e.g. FEYNMAN-R-P">
+        <input type="text" id="authors_id" name="authors_id" value="{{authors_id}}" title="e.g. FEYNMAN-R-P">
         <a id="authors_url" target="_lookup"></a>
     </div>
     <div>
         <label for="archivesspace_id">ArchivesSpace ID (<a href="https://collections.archives.caltech.edu/agents" target="_lookup">lookup</a>):</label>
-        <input tabindex="6" type="text" id="archivesspace_id" name="archivesspace_id" value="{{archivesspace_id}}" placeholder="e.g. 3426">
+        <input type="text" id="archivesspace_id" name="archivesspace_id" value="{{archivesspace_id}}" title="e.g. 3426">
         <a id="archivesspace_url" target="_lookup"></a>
     </div>
     <div>
-        <label tabindex="7" for="directory_id">Directory ID <a href="https://directory.caltech.edu" target="_lookup">(lookup):</a></label>
-        <input type="text" id="directory_id" name="directory_id" value="{{directory_id}}" placeholder="e.g. rpfeynman">
+        <label for="directory_id">Directory ID <a href="https://directory.caltech.edu" target="_lookup">(lookup):</a></label>
+        <input type="text" id="directory_id" name="directory_id" value="{{directory_id}}" title="e.g. rpfeynman">
         <a id="directory_url" target="_lookup"></a>
     </div>
     <div>
         <label for="viaf">VIAF ID (<a href="http://viaf.org/" target="_lookup">lookup</a>):</label>
-        <input tabindex="8" type="text" id="viaf" name="viaf" value="{{viaf}}" placeholder="e.g. 44298691">
+        <input type="text" id="viaf" name="viaf" value="{{viaf}}" title="e.g. 44298691">
         <a id="viaf_url" target="_lookup"></a>
     </div>
     <div>
         <label for="lcnaf">LCNAF (<a href="http://id.loc.gov/authorities/names.html" target="_lookup" title="Library of Congress Name Authority File">lookup</a>):</label>
-        <input tabindex="9" type="text" id="lcnaf" name="lcnaf" value="{{lcnaf}}" placeholder="n50002729">
+        <input type="text" id="lcnaf" name="lcnaf" value="{{lcnaf}}" title="n50002729">
         <a id="lcnaf_url" target="_lookup"></a>
     </div>
     <div>
         <label for="isni">ISNI (<a href="http://www.isni.org/search" target="_lookup">lookup</a>):</label>
-        <input tabindex="10" type="text" id="isni" name="isni" value="{{isni}}" placeholder="e.g. 0000 0001 2096 0218">
+        <input type="text" id="isni" name="isni" value="{{isni}}" title="e.g. 0000 0001 2096 0218">
         <a id="isni_url" target="_lookup"></a>
     </div>
     <div>
         <label for="wikidata">Wikidata (<a href="https://www.wikidata.org/w/index.php?search=&search=&title=Special:Search&go=Go" target="_lookup">lookup</a>):</label>
-        <input tabindex="11" type="text" id="wikidata" name="wikidata" value="{{wikidata}}" placeholder="Q39246">
+        <input type="text" id="wikidata" name="wikidata" value="{{wikidata}}" title="Q39246">
         <a id="wikidata_url" target="_lookup"></a>
     </div>
     <div>
         <label for="snac">SNAC (<a href="https://snaccooperative.org/" target="_lookup">lookup</a>):</label>
-        <input tabindex="12" type="text" id="snac" name="snac" value="{{snac}}" placeholder="e.g. ark:/99166/w6v69kzn">
+        <input type="text" id="snac" name="snac" value="{{snac}}" title="e.g. ark:/99166/w6v69kzn">
         <a id="snac_url" target="_lookup"></a>
     </div>
     <div>
         <label for="orcid">ORCID (<a href="https://orcid.org/orcid-search/search/" target="_lookup">lookup</a>):</label>
-        <input tabindex="13" type="text" id="orcid" name="orcid" value="{{orcid}}">
+        <input type="text" id="orcid" name="orcid" value="{{orcid}}">
         <a id="orcid_url" target="_lookup"></a>
     </div>
     <div> 
         <label for="image">Image:</label>
-        <input tabindex="14" type="url" id="image" name="image" value="{{image}}" placeholder="e.g. https://upload.wikimedia.org/wikipedia/en/4/42/Richard_Feynman_Nobel.jpg">
+        <input type="url" id="image" name="image" value="{{image}}" title="e.g. https://upload.wikimedia.org/wikipedia/en/4/42/Richard_Feynman_Nobel.jpg">
         <a id="image_url" target="_window"></a>
     </div>
     <div>
         <label for="educated_at">Educated At:</label>
-        <textarea id="educated_at" name="educated_at" placeholder="e.g. Massachusetts Institute of Technology (S.B. 1939); Princeton University (Ph.D. 1942)">{{educated_at}}</textarea>
+        <textarea id="educated_at" name="educated_at" title="e.g. Massachusetts Institute of Technology (S.B. 1939); Princeton University (Ph.D. 1942)">{{educated_at}}</textarea>
     </div>
     <div>
         <label class="inline" for="caltech">Caltech:</label>
-        <input tabindex="15" type="checkbox" id="caltech" name="caltech" {{caltech}} title="Check if affiliated with Caltech">
+        <input type="checkbox" id="caltech" name="caltech" {{caltech}} title="Check if affiliated with Caltech">
     </div>
     <div>
         <label class="inline" for="jpl">JPL:</label>
-        <input tabindex="16" type="checkbox" id="jpl" name="jpl" {{jpl}} title="check if affiliated with JPL">
+        <input type="checkbox" id="jpl" name="jpl" {{jpl}} title="check if affiliated with JPL">
     </div>
     <div>
         <label class="inline" for="faculty">Faculty:</label>
-        <input tabindex="17" type="checkbox" id="faculty" name="faculty" {{faculty}} title="check if Caltech Faculty">
+        <input type="checkbox" id="faculty" name="faculty" {{faculty}} title="check if Caltech Faculty">
     </div>
     <div>
         <label class="inline" for="alumn">Alumn:</label>
-        <input tabindex="18" type="checkbox" id="alumn" name="alumn" {{alumn}} title="check if Caltech Alumni">
+        <input type="checkbox" id="alumn" name="alumn" {{alumn}} title="check if Caltech Alumni">
     </div>
     <div>
         <label for="notes">Notes (internal use):</label>
-        <textarea tabindex="19" id="notes" name="notes">{{notes}}</textarea>
+        <textarea id="notes" name="notes">{{notes}}</textarea>
     </div>
     <div>
         <label for="_State">Status:</label>
-        <select tabindex="20" id="_State">
+        <select id="_State">
             <option value="{{_State}}" selected>{{_State}}</option>
             <option value="deposit">Deposit</option>
             <option value="review">Review</option>

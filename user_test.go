@@ -31,7 +31,7 @@ display_name = "Jane Doe"
 # By default objects are create in this queue
 create_queue = "deposit"
 # Jane is a member of the "deposit" workflow/queue
-member_of = ["deposit"]
+roles = ["deposit"]
 `)
 	err := ioutil.WriteFile(usersFile, usersFileSrc, 0666)
 	if err != nil {
