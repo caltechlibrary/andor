@@ -16,15 +16,8 @@ concepts and rationale around **AndOr**.
 
 + Concepts 
     + [Collections, Objects and Attachments](Collections-Objects-Attachments.html)
-    + [Users, Roles and States](Users-Roles-States.html)
-+ Proof of concept demo
-    + [People Demo](people-demo.html) 
-+ Development [Schedule](Schedule.html)
-+ Scheme and scheme use cases
-    + [User Scheme](User-Scheme.html)
-    + [Role Scheme](Role-Scheme.html)
-    + [Object Scheme](Object-Scheme.html)
-+ [Running And/Or](Running-AndOr.html)
++ User interface implemented as Python web service
+    + Web service provides the GUI[^1] for managing your JSON object collection
 + Misc [Reference Material](Reference.html)
 
 

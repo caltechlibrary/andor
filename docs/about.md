@@ -14,20 +14,25 @@ based GUI". It targets the ability to curate metadata objects
 outside the scope of our existing repository systems.  
 
 **And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset).
-It is a web JSON API plus static HTML, CSS and JavaScript 
-providing a web GUI interface for curating objects.  It 
-is intended to function as a microservice running behind
-a standard web server like Apache or NginX and
-assessible via a reverse proxy configuration.
-For the purposes of a proof of concept the minimum is 
-system is **And/Or** web server[^1] providing static
-web hosting, BasicAUTH authentication and supporting 
-multi-user interaction with dataset collections.  
-Part of the design concept is that additional functionality 
-would be provided by other microservices or systems[^2].
+It is a C Shared library made accessible via Python 3.7's ctypes
+package. The primary differences between **And/Or** and __libdataset__
+provided with __dataset__ tool is that the library implements 
+locking via a semifore for disc writes object creation and updates.
+It functions like a fedora-lite for a Python programming implementing
+web services. 
 
-**And/Or** is a extremely narrowly scoped web service. The focus 
-is __ONLY__ on currating JSON objects. 
+When a Go shared library runs under Python it runs in its child process.
+The process is managed from the Python program. In this way you can 
+efficiently act on a __dataset__ collection and with the use of 
+a semiphore Go support asynchonous operations on the collection without
+need to constantly open and close the dataset collections' conlection.json
+file. Your Python code focuses on providing URL end points, access control
+and presentation of static HTML, CSS and JavaScript while you the **And/Or**
+library handles the ansynchronous update of the collection(s) it is managing. **And/Or** is a C-Shared library for building __dataset__ driven
+web server[^1] written in Python.
+
+**And/Or** is a extremely narrowly scoped library. The focus 
+is __ONLY__ on currating JSON objects in an asynchronous manner. 
 
 Limiting **And/Or**'s scope leads to a simpler system. Code 
 is limited to **And/Or** web service plus the HTML, 
@@ -50,20 +55,19 @@ on hardware as small as a Rasbpberry Pi.
 + Use existing schema 
 + Support role based workflows
 + Support continuous migration
-+ Support alternative front ends (e.g. Drupal in front of And/Or)
++ Support alternative front ends
 
 
 ## Project Assumptions
 
 + [dataset](https://github.com/caltechlibrary/dataset) collections are sufficient to hold metadata
 + UI can be implemented using HTML 5 elements, minimal JavaScript and CSS
++ Web UI can easily be built using standard Python packages (e.g. flask, Django)
 + Small number of curatorial [users](docs/User-Scheme.html)
-+ Configurable [roles](docs/Roles-Scheme.html) are a requirement
-    + roles describes permissions for objects in given states
-    + roles describes states an object can be asigned to
 + Use existing object scheme (e.g. EPrints XML in Oral Histories)
 + Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)
-+ Other systems handle any additoinal service requirements (e.g. search, storage of uploaded objects)
+    + integrated via Python Web Service
++ Other systems handle any additoinal service requirements (e.g. search)
 
 
 ## Limiting features and complexity
@@ -72,35 +76,13 @@ Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage roles,
 manage permissions, enforcing storage scheme and presenting
 public can private views of respository content.  **And/Or**'s 
-simplification involves avoiding functionality provided
-by other systems and relocating requirements to an appropriate 
-external system while only focusing on the narrow problem
-of curating objects. 
-
-Examples--
-
-+ Authentication is handle externally. That means we don't need to create web UI to manage passwords and user profiles. Volatile and sensitive data is outside of **And/Or** so it can't be stolen from **And/Or**.
-+ **And/Or** itself is a simple web API that accepts URL requests 
-and hands back JSON. It supports a small number of URL end points that support specific actions with one HTTP method (e.g. GET or POST) per end point.
-+ Object sheme is determined at time of migrating into the dataset collection. **And/Or** itself provides no mechanism customization beyond the input forms retrieving and submitting objects.  If you want to change your data shapes you write a script to do that and you change your HTML form.
-+ If you need additional end points beyond what **And/Or** provides (e.g. a search engine service, a electronic thesis workflow) you create those as micro services either behind the same webserver or else where.
-
-A web browser can create the illusion of a unified software system
-or single process. A single application is not required to support all
-desire functionality (e.g. curration and public web consumption) because
-**And/Or** uses a composible model available to all web applications.
-Customization is limited to static HTML, CSS and JavaScript or deferred 
-to other micro services and external systems (e.g. looking up a record 
-on datacite.org or orcid.org)
-
-Some features are unavoidable in curation tool. Repositories run
-on the assumption of users and roles. Interestingly it 
-doesn't require users and roles be manage through the web. 
-Setting up users and roles can be managed through simple to implement
-command line tools and configuration files.  This is reasonable in 
-large part because **And/Or** off loads identify management 
-and can be restarted quickly (i.e. configuration files are easily
-parsed and reloaded).
+simplification involves focusing only on the storage and retrieve
+of JSON objects. While a dataset collection can easily be used
+to store information about users, roles, etc. it doesn't need to 
+provide that support directly or even provide a web service. **And/Or**'s
+assume is that other systems, e.g. Python Django, Python using Flask
+are better suited in providing a human friendly front end for 
+managing dataset collections.
 
 By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
