@@ -9,12 +9,9 @@ And/Or
 
 
 
-**And/Or** is a proof of concept for a simple object repository
+**And/Or** is a proof of concept for a simple object repository library
 based on Caltech Library's [dataset](https://caltechlibrary.github.io/dataset)
-tool.  It provides a web-based multi-user version of dataset suitable for
-JSON object curation by a small group of users. It implements a role/object
-state based permission scheme enabling support for simple workflows.
-
+tool.  It implements an asynchronous service for building multi-user repository using Python. __And/Or__ library takes care of creating a efficient interactive storage model for your Python based web service.
 
 
 Table of contents
@@ -34,29 +31,16 @@ Table of contents
 Introduction
 ------------
 
-**And/Or** is a multi-user web version of 
-[dataset](https://github.com/caltechlibrary/dataset). __dataset__ 
-has proven to be a useful tool for managing library metadata using 
-a data science approach.  It is built for continious migration dataflows. 
-It lacks multi-user curation support or the convienence of having 
-web browser based edit forms. **And/Or** is a prototype exploration
-of using dataset as a storage engine and extending it to support multiple
-users using a role/object state based permission scheme. It is a proof
-of concept for a extremely light weight JSON object repository that 
-supports simple workflows and continious migration.
-
-**And/Or** provides a web friendly JSON API mapping __dataset__ 
-functionality to URLs. It supports serving static HTML, CSS and 
-JavaScript for building suitable user interfaces that humans might 
-be inclined to use.  The JSON API supports creating, reading, 
-update and deleting objects in a collection. The API supports key 
-list retrieval and limitted filtering.  And/Or provides 
-BasicAUTH user authentication support for mapping users to 
-role/object state permission scheme. Ideally authentication would be 
-provided by another service (e.g. Apache/NginX setup for Shibboleth). 
-With these primitive facilities you can build a simple object 
-repository systems using the HTML, CSS and JavaScript to create a 
-web client interacting with the And/Or JSON API.
+**And/Or** is an asynchrous shared library based 
+[dataset](https://github.com/caltechlibrary/dataset) providing
+an asynchronous interface for working with dataset collections.  
+__dataset__ has proven to be a useful tool for managing library 
+metadata using a data science approach.  It is built for continious 
+migration dataflows.  It lacks multi-user curation support or the 
+convienence of having web browser based edit forms. **And/Or** is a 
+prototype library for extending libdataset.go with a Python managed
+service that can then be used to create extremely light weight repository
+systems using Python.
 
 
 Installation
@@ -65,31 +49,18 @@ Installation
 See [INSTALL.md](install.html). This software is experimental
 and pre-compiled binaries are NOT provided.  This software is written in 
 [Go](https://golang.org) programming language and needs a Go compiler
-to be compiled. Installation maybe as simple as the following
-go and git commands.
+to be compiled. It is intended to be used from Python 3.7 or better so
+that needs to be available too.
 
-```bash
-    go get -u github.com/caltechlibrary/andor/...
-```
-
-A "Makefile" has been provided for your convience if you wish to
-manually compile the program.
+A "Makefile" has been provided for your convience to compile the **And/Or**
+shared library.
 
 ```bash
     git clone https://github.com/caltechlibrary/andor 
     cd andor
-    go build -o bin/andor cmd/andor/andor.go
+    make
 ```
 
-After compiling **And/Or** you can run a localhost
-demo with the following command.
-
-```
-    cd demo && ../bin/andor start people-andor.toml
-```
-
-Then point your web broser at http://localhost:8246 
-and try the demo.
 
 
 Known issues and limitations
