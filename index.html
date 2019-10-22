@@ -30,11 +30,13 @@
 
 <!-- [![Latest release](https://img.shields.io/badge/Latest_release-0.0.1-b44e88.svg?style=flat-square)](http://shields.io) -->
 
-<p><strong>And/Or</strong> is a proof of concept for a simple object repository
+<p><strong>And/Or</strong> was a proof of concept for a simple object repository library
 based on Caltech Library&rsquo;s <a href="https://caltechlibrary.github.io/dataset">dataset</a>
-tool.  It provides a web-based multi-user version of dataset suitable for
-JSON object curation by a small group of users. It implements a role/object
-state based permission scheme enabling support for simple workflows.</p>
+tool.  It implements a asynchronous service for build a web-based multi-user repository using Python suitible for a small group of users curating JSON objects. <strong>And/Or</strong> takes care of creating a efficient storage model
+for your Python service, permissioning, access, control of those resources
+are then implemented as a Python web service. This leaves the storage system
+simple while allowing for easy construction of workflow oriented JSON
+object curation.</p>
 
 <h2>Table of contents</h2>
 
@@ -52,57 +54,31 @@ state based permission scheme enabling support for simple workflows.</p>
 
 <h2>Introduction</h2>
 
-<p><strong>And/Or</strong> is a multi-user web version of
+<p><strong>And/Or</strong> is an asynchrous shared library based
 <a href="https://github.com/caltechlibrary/dataset">dataset</a>. <strong>dataset</strong>
 has proven to be a useful tool for managing library metadata using
 a data science approach.  It is built for continious migration dataflows.
 It lacks multi-user curation support or the convienence of having
-web browser based edit forms. <strong>And/Or</strong> is a prototype exploration
-of using dataset as a storage engine and extending it to support multiple
-users using a role/object state based permission scheme. It is a proof
-of concept for a extremely light weight JSON object repository that
-supports simple workflows and continious migration.</p>
-
-<p><strong>And/Or</strong> provides a web friendly JSON API mapping <strong>dataset</strong>
-functionality to URLs. It supports serving static HTML, CSS and
-JavaScript for building suitable user interfaces that humans might
-be inclined to use.  The JSON API supports creating, reading,
-update and deleting objects in a collection. The API supports key
-list retrieval and limitted filtering.  And/Or provides
-BasicAUTH user authentication support for mapping users to
-role/object state permission scheme. Ideally authentication would be
-provided by another service (e.g. Apache/NginX setup for Shibboleth).
-With these primitive facilities you can build a simple object
-repository systems using the HTML, CSS and JavaScript to create a
-web client interacting with the And/Or JSON API.</p>
+web browser based edit forms. <strong>And/Or</strong> is a prototype of extended
+libdataset.go to allow easy creation of Python based web services that
+read/write to <em>dataset</em> collections.  <strong>And/Or</strong> leverages Python as its
+running environments for building multi-user extremely light weight JSON  bject repositories.</p>
 
 <h2>Installation</h2>
 
 <p>See <a href="install.html">INSTALL.md</a>. This software is experimental
 and pre-compiled binaries are NOT provided.  This software is written in
 <a href="https://golang.org">Go</a> programming language and needs a Go compiler
-to be compiled. Installation maybe as simple as the following
-go and git commands.</p>
-
-<pre><code class="language-bash">    go get -u github.com/caltechlibrary/andor/...
-</code></pre>
+to be compiled. It is intended to be used from Python 3.7 or better so
+that needs to be available too.</p>
 
 <p>A &ldquo;Makefile&rdquo; has been provided for your convience if you wish to
-manually compile the program.</p>
+manually compile andor library.</p>
 
 <pre><code class="language-bash">    git clone https://github.com/caltechlibrary/andor 
     cd andor
     go build -o bin/andor cmd/andor/andor.go
 </code></pre>
-
-<p>After compiling <strong>And/Or</strong> you can run a localhost
-demo with the following command.</p>
-
-<pre><code>    cd demo &amp;&amp; ../bin/andor start people-andor.toml
-</code></pre>
-
-<p>Then point your web broser at <a href="http://localhost:8246">http://localhost:8246</a>
-and try the demo.</p>
 
 <h2>Known issues and limitations</h2>
 
