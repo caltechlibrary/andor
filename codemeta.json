@@ -6,7 +6,7 @@
   "codeRepository": "https://github.com/caltechlibrary/andor",
   "issueTracker": "https://github.com/caltechlibrary/andor/issues",
   "license": "https://github.com/caltechlibrary/andor/blob/master/LICENSE",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": [
     {
       "@type": "Person",
@@ -16,7 +16,7 @@
       "email": "rsdoiel@library.caltech.edu",
       "@id": "https://orcid.org/0000-0003-0900-6903"
     }],
-  "developmentStatus": "active",
+  "developmentStatus": "concept",
   "downloadUrl": "https://github.com/caltechlibrary/andor/archive/0.0.1.zip",
   "keywords": [
     "software",

@@ -28,7 +28,7 @@ import (
 )
 
 const (
-	Version = `v0.0.0`
+	Version = `v0.0.2`
 )
 
 // AndOrService holds the operating parameters of the AndOr service

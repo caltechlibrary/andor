@@ -9,13 +9,9 @@ And/Or
 
 
 
-**And/Or** was a proof of concept for a simple object repository library
+**And/Or** is a proof of concept for a simple object repository library
 based on Caltech Library's [dataset](https://caltechlibrary.github.io/dataset)
-tool.  It implements a asynchronous service for build a web-based multi-user repository using Python suitible for a small group of users curating JSON objects. __And/Or__ takes care of creating a efficient storage model
-for your Python service, permissioning, access, control of those resources
-are then implemented as a Python web service. This leaves the storage system
-simple while allowing for easy construction of workflow oriented JSON
-object curation.
+tool.  It implements an asynchronous service for building multi-user repository using Python. __And/Or__ library takes care of creating a efficient interactive storage model for your Python based web service.
 
 
 Table of contents
@@ -36,14 +32,15 @@ Introduction
 ------------
 
 **And/Or** is an asynchrous shared library based 
-[dataset](https://github.com/caltechlibrary/dataset). __dataset__ 
-has proven to be a useful tool for managing library metadata using 
-a data science approach.  It is built for continious migration dataflows. 
-It lacks multi-user curation support or the convienence of having 
-web browser based edit forms. **And/Or** is a prototype of extended
-libdataset.go to allow easy creation of Python based web services that
-read/write to _dataset_ collections.  **And/Or** leverages Python as its
-running environments for building multi-user extremely light weight JSON  bject repositories. 
+[dataset](https://github.com/caltechlibrary/dataset) providing
+an asynchronous interface for working with dataset collections.  
+__dataset__ has proven to be a useful tool for managing library 
+metadata using a data science approach.  It is built for continious 
+migration dataflows.  It lacks multi-user curation support or the 
+convienence of having web browser based edit forms. **And/Or** is a 
+prototype library for extending libdataset.go with a Python managed
+service that can then be used to create extremely light weight repository
+systems using Python.
 
 
 Installation
@@ -55,13 +52,13 @@ and pre-compiled binaries are NOT provided.  This software is written in
 to be compiled. It is intended to be used from Python 3.7 or better so
 that needs to be available too.
 
-A "Makefile" has been provided for your convience if you wish to
-manually compile andor library.
+A "Makefile" has been provided for your convience to compile the **And/Or**
+shared library.
 
 ```bash
     git clone https://github.com/caltechlibrary/andor 
     cd andor
-    go build -o bin/andor cmd/andor/andor.go
+    make
 ```
 
 
