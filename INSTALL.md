@@ -1,11 +1,9 @@
 
 # Installation
 
-This software is a proof of concept. As such you need to have
-Go version 1.13 or better to compile it and then to manually
-install it.  You also need Python 3.7 or better. Typically the 
-following steps are done to install (example is POSIX 
-system based).
+This software is a proof of concept. Python v3.7 or better installed,
+Django 2.x, and `py_dataset` v0.1.x installed.  The following steps 
+are done to install (example is POSIX system based).
 
 ```bash
     git clone https://github.com/caltechlibrary/andor

@@ -14,3 +14,6 @@ andor.toml
 workflows.toml
 users.toml
 django_test
+__pycache__
+*.pyc
+*.sqlite3

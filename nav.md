@@ -4,6 +4,6 @@
 + [LICENSE](license.html)
 + [INSTALL](install.html)
 + [Documentation](./docs)
-+ [Github](https://github.com/caltechlibrary/AndOr)
-<!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) -->
++ [Github](https://github.com/caltechlibrary/andor)
+<!-- + [Releases](https://github.com/caltechlibrary/andor/releases/) -->
 
