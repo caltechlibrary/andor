@@ -33,24 +33,29 @@ based GUI&quot;. It targets the ability to curate metadata objects
 outside the scope of our existing repository systems.</p>
 
 <p><strong>And/Or</strong> is based on <a href="https://caltechlibrary.github.io/dataset">dataset</a>.
-It is a web JSON API plus static HTML, CSS and JavaScript
-providing a web GUI interface for curating objects.  It
-is intended to function as a microservice running behind
-a standard web server like Apache or NginX and
-assessible via a reverse proxy configuration.
-For the purposes of a proof of concept the minimum is
-system is <strong>And/Or</strong> web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> providing static
-web hosting, BasicAUTH authentication and supporting
-multi-user interaction with dataset collections.<br>
-Part of the design concept is that additional functionality
-would be provided by other microservices or systems<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>.</p>
+It is a C Shared library made accessible via Python 3.7's ctypes
+package. The primary differences between <strong>And/Or</strong> and <strong>libdataset</strong>
+provided with <strong>dataset</strong> tool is that the library implements
+locking via a semifore for disc writes object creation and updates.
+It functions like a fedora-lite for a Python programming implementing
+web services.</p>
 
-<p><strong>And/Or</strong> is a extremely narrowly scoped web service. The focus
-is <strong>ONLY</strong> on currating JSON objects.</p>
+<p>When a Go shared library runs under Python it runs in its child process.
+The process is managed from the Python program. In this way you can
+efficiently act on a <strong>dataset</strong> collection and with the use of
+a semiphore Go support asynchonous operations on the collection without
+need to constantly open and close the dataset collections' conlection.json
+file. Your Python code focuses on providing URL end points, access control
+and presentation of static HTML, CSS and JavaScript while you the <strong>And/Or</strong>
+library handles the ansynchronous update of the collection(s) it is managing. <strong>And/Or</strong> is a C-Shared library for building <strong>dataset</strong> driven
+web server<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> written in Python.</p>
+
+<p><strong>And/Or</strong> is a extremely narrowly scoped library. The focus
+is <strong>ONLY</strong> on currating JSON objects in an asynchronous manner.</p>
 
 <p>Limiting <strong>And/Or</strong>'s scope leads to a simpler system. Code
 is limited to <strong>And/Or</strong> web service plus the HTML,
-CSS and JavaScript needed for an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>.</p>
+CSS and JavaScript needed for an acceptable UI<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup>.</p>
 
 <p>This architecture aligns with small machine hosting
 and cloud hosting. Both keeping recurring costs to a minimum.
@@ -72,7 +77,7 @@ on hardware as small as a Rasbpberry Pi.</p>
 <li>Use existing schema</li>
 <li>Support role based workflows</li>
 <li>Support continuous migration</li>
-<li>Support alternative front ends (e.g. Drupal in front of And/Or)</li>
+<li>Support alternative front ends</li>
 </ul>
 
 <h2 id="project-assumptions">Project Assumptions</h2>
@@ -80,16 +85,15 @@ on hardware as small as a Rasbpberry Pi.</p>
 <ul>
 <li><a href="https://github.com/caltechlibrary/dataset">dataset</a> collections are sufficient to hold metadata</li>
 <li>UI can be implemented using HTML 5 elements, minimal JavaScript and CSS</li>
+<li>Web UI can easily be built using standard Python packages (e.g. flask, Django)</li>
 <li>Small number of curatorial <a href="docs/User-Scheme.html">users</a></li>
-<li>Configurable <a href="docs/Roles-Scheme.html">roles</a> are a requirement
+<li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
+<li>Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)
 
 <ul>
-<li>roles describes permissions for objects in given states</li>
-<li>roles describes states an object can be asigned to</li>
+<li>integrated via Python Web Service</li>
 </ul></li>
-<li>Use existing object scheme (e.g. EPrints XML in Oral Histories)</li>
-<li>Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)</li>
-<li>Other systems handle any additoinal service requirements (e.g. search, storage of uploaded objects)</li>
+<li>Other systems handle any additoinal service requirements (e.g. search)</li>
 </ul>
 
 <h2 id="limiting-features-and-complexity">Limiting features and complexity</h2>
@@ -98,37 +102,13 @@ on hardware as small as a Rasbpberry Pi.</p>
 are managing customization, managing users, manage roles,
 manage permissions, enforcing storage scheme and presenting
 public can private views of respository content.  <strong>And/Or</strong>'s
-simplification involves avoiding functionality provided
-by other systems and relocating requirements to an appropriate
-external system while only focusing on the narrow problem
-of curating objects.</p>
-
-<p>Examples--</p>
-
-<ul>
-<li>Authentication is handle externally. That means we don't need to create web UI to manage passwords and user profiles. Volatile and sensitive data is outside of <strong>And/Or</strong> so it can't be stolen from <strong>And/Or</strong>.</li>
-<li><strong>And/Or</strong> itself is a simple web API that accepts URL requests
-and hands back JSON. It supports a small number of URL end points that support specific actions with one HTTP method (e.g. GET or POST) per end point.</li>
-<li>Object sheme is determined at time of migrating into the dataset collection. <strong>And/Or</strong> itself provides no mechanism customization beyond the input forms retrieving and submitting objects.  If you want to change your data shapes you write a script to do that and you change your HTML form.</li>
-<li>If you need additional end points beyond what <strong>And/Or</strong> provides (e.g. a search engine service, a electronic thesis workflow) you create those as micro services either behind the same webserver or else where.</li>
-</ul>
-
-<p>A web browser can create the illusion of a unified software system
-or single process. A single application is not required to support all
-desire functionality (e.g. curration and public web consumption) because
-<strong>And/Or</strong> uses a composible model available to all web applications.
-Customization is limited to static HTML, CSS and JavaScript or deferred
-to other micro services and external systems (e.g. looking up a record
-on datacite.org or orcid.org)</p>
-
-<p>Some features are unavoidable in curation tool. Repositories run
-on the assumption of users and roles. Interestingly it
-doesn't require users and roles be manage through the web.
-Setting up users and roles can be managed through simple to implement
-command line tools and configuration files.  This is reasonable in
-large part because <strong>And/Or</strong> off loads identify management
-and can be restarted quickly (i.e. configuration files are easily
-parsed and reloaded).</p>
+simplification involves focusing only on the storage and retrieve
+of JSON objects. While a dataset collection can easily be used
+to store information about users, roles, etc. it doesn't need to
+provide that support directly or even provide a web service. <strong>And/Or</strong>'s
+assume is that other systems, e.g. Python Django, Python using Flask
+are better suited in providing a human friendly front end for
+managing dataset collections.</p>
 
 <p>By focusing on a minimal feature set and leveraging technical
 opportunities that already exist we can radically
@@ -161,7 +141,7 @@ dataset matures and gains the abilities useful in a multi-user
 context <strong>And/Or</strong> would be enhanced to support the additional
 dataset features by mapping them to an appropriate URL end point.
 Example, if adding versioning to JSON documents (e.g.
-stored diffs of JSON documents<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>) as added to dataset,
+stored diffs of JSON documents<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup>) as added to dataset,
 that functionality was available in dataset it could be included
 in <strong>And/Or</strong>.</p>
 
@@ -225,7 +205,7 @@ deleted objects as being in a trashcan and leave actual
 deletion for a garbage collection routine.  This  approach would
 make deletion work like a Mac's trashcan and fully deleting
 objects would be accomplished by a separte process performing
-emptying the trash<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>.</p>
+emptying the trash<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup>.</p>
 <h1 id="footnote-section">Footnotes</h1>
 
 <div class="footnotes">
@@ -234,8 +214,6 @@ emptying the trash<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></
 
 <ol>
 <li id="fn:1">NginX and Apache could provide authentication mechanisms such as Basic AUTH, Shibboleth and OAuth 2 and pass them back to a real And/Or implementation.</li>
-
-<li id="fn:2">Public websites can be generated feeds.library.caltech.edu, a search interface can be implemented with <a href="https://lunrjs.com">Lunr</a>.</li>
 
 <li id="fn:3">UI, user interface, the normal way a user interacts with a website</li>
 

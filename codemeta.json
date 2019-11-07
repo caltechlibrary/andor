@@ -1,12 +1,12 @@
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
-  "description": "A multi-user web version of datasdet",
+  "description": "A multi-user web version of dataset based libdataset v0.1.0",
   "name": "And/Or",
   "codeRepository": "https://github.com/caltechlibrary/andor",
   "issueTracker": "https://github.com/caltechlibrary/andor/issues",
   "license": "https://github.com/caltechlibrary/andor/blob/master/LICENSE",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": [
     {
       "@type": "Person",
@@ -17,7 +17,7 @@
       "@id": "https://orcid.org/0000-0003-0900-6903"
     }],
   "developmentStatus": "concept",
-  "downloadUrl": "https://github.com/caltechlibrary/andor/archive/0.0.1.zip",
+  "downloadUrl": "https://github.com/caltechlibrary/andor/archive/0.0.3.zip",
   "keywords": [
     "software",
     "javascript"

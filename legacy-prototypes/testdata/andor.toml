@@ -1,0 +1,11 @@
+#
+# This is an example andor.toml file for testing.
+#
+
+port = "8246"
+host = "localhost"
+scheme = "http"
+users_file = "testdata/users.toml"
+roles_file = "testdata/roles.toml"
+collections = [ "repository.ds" ]
+

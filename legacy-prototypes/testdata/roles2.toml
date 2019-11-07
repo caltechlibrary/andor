@@ -1,0 +1,29 @@
+[writer]
+role_id = "writer"
+role_name = "Writer"
+states = ["draft"]
+create = true
+read = true
+update = true
+delete = true
+assign_to = ["review"]
+
+[reviewer]
+role_id = "reviewer"
+role_name = "Reviewer"
+states = ["review"]
+create = false
+read = true
+update = false
+delete = true
+assign_to = ["draft", "published"]
+
+[public]
+role_id = "public"
+role_name = "Public"
+states = ["published"]
+create = false
+read = true
+update = false
+delete = false
+

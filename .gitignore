@@ -13,3 +13,4 @@ htdocs/*
 andor.toml
 workflows.toml
 users.toml
+django_test

@@ -1,0 +1,30 @@
+#
+# This is an example roles.toml. 
+# It defines three roles writer, editor, public
+# 
+# The roles describe objects in one of three
+# states - draft, review, published.
+# 
+[writer]
+role_id = "writer"
+role_name = "Writer"
+states = [ "draft" ]
+create = true
+read = true
+update = true
+delete = false
+assign_to = [ "review" ]
+
+[editor]
+role_name = "editor"
+states = [ "review" ]
+read = true
+update = true
+delete = true
+assign_to = [ "draft", "published" ]
+
+[public]
+role_name = "Public"
+states = [ "published" ]
+read = true
+

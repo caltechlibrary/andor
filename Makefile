@@ -3,7 +3,7 @@
 #
 PROJECT = andor
 
-VERSION = $(shell grep -m 1 'Version =' $(PROJECT).go | cut -d\`  -f 2)
+VERSION = $(shell grep -m 1 'Version =' $(PROJECT).py | cut -d\'  -f 2)
 
 BRANCH = $(shell git branch | grep '* ' | cut -d\  -f 2)
 
@@ -19,23 +19,23 @@ ifeq ($(OS), Windows)
 endif
 
 
-andor$(EXT): bin/andor$(EXT)
+#andor$(EXT): bin/andor$(EXT)
 
 
-bin/andor$(EXT): *.go cmd/andor/andor.go
-	go build -o bin/andor$(EXT) cmd/andor/andor.go
+#bin/andor$(EXT): *.go cmd/andor/andor.go
+#	go build -o bin/andor$(EXT) cmd/andor/andor.go
 
-build: $(PROJECT_LIST) libandor 
+#build: $(PROJECT_LIST) libandor 
 
-install: 
-	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
+#install: 
+#	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
-	cp -vR scripts demo/htdocs/
+	#cp -vR scripts demo/htdocs/
 	./mk_website.py $(baseurl)
 
-test: clean bin/andor$(EXT)
-	go test
+#test: clean bin/andor$(EXT)
+#	go test
 
 cleanweb:
 	if [ -f index.html ]; then rm *.html; fi
@@ -43,36 +43,10 @@ cleanweb:
 
 clean: 
 	if [ -d bin ]; then rm -fR bin; fi
-	if [ -d dist ]; then rm -fR dist; fi
-	if [ -d repository.ds ]; then rm -fR respository.ds; fi
-	if [ -d test_repo.ds ]; then rm -fR test_repo.ds; fi
-	if [ -f andor.toml ]; then rm andor.toml; fi
-	if [ -f workflows.toml ]; then rm workflows.toml; fi
-	if [ -f users.toml ]; then rm users.toml; fi
 
-dist/linux-amd64:
-	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=amd64 go build -o dist/bin/andor
-	cd dist && zip -r $(PROJECT)-$(VERSION)-linux-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/windows-amd64:
-	mkdir -p dist/bin
-	env  GOOS=windows GOARCH=amd64 go build -o dist/bin/andor.exe
-	cd dist && zip -r $(PROJECT)-$(VERSION)-windows-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/macosx-amd64:
-	mkdir -p dist/bin
-	env  GOOS=darwin GOARCH=amd64 go build -o dist/bin/andor
-	cd dist && zip -r $(PROJECT)-$(VERSION)-macosx-amd64.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
-
-dist/raspbian-arm7:
-	mkdir -p dist/bin
-	env  GOOS=linux GOARCH=arm GOARM=7 go build -o dist/bin/andor cmd/andor/andor.go
-	cd dist && zip -r $(PROJECT)-$(VERSION)-raspbian-arm7.zip README.md LICENSE INSTALL.md bin/*
-	rm -fR dist/bin
+py_code:
+	cp *.py dist/
+	cp -fR py_libdataset dist/
 
 distribute_docs:
 	if [ -d dist ]; then rm -fR dist; fi
@@ -80,13 +54,11 @@ distribute_docs:
 	cp -v README.md dist/
 	cp -v LICENSE dist/
 	cp -v INSTALL.md dist/
-	#FIXME: use go.mod instead
-	#bash package-versions.bash > dist/package-versions.txt
 
 update_version:
 	./update_version.py --yes
 
-release: clean andor.go distribute_docs dist/linux-amd64 dist/windows-amd64 dist/macosx-amd64 dist/raspbian-arm7
+release: clean distribute_docs py_code
 
 status:
 	git status
