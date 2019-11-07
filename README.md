@@ -11,7 +11,7 @@ And/Or
 
 **And/Or** is a proof of concept for a simple object repository library
 based on Caltech Library's [dataset](https://caltechlibrary.github.io/dataset)
-tool.  It implements an asynchronous service for building multi-user repository using Python. __And/Or__ using **libdataset** takes care of creating a efficient interactive storage model for your Python based web service.
+tool.  It implements an asynchronous service for building multi-user repository using Python and **libdataset**. takes care of creating a efficient interactive storage model for your Python based web service.
 
 
 Table of contents
