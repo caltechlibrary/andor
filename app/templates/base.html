@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }}</title>
+        {% else %}
+        <title>And/Or &mdash; the simple object repository</title>
+        {% endif %}
+        <style>
+body {
+    font-family: sans;
+}
+header {
+    border-bottom: black solid 0.24em;
+    padding-bottom: 2em;
+}
+nav {
+}
+section {
+    padding: 3em;
+    margin: 2em;
+}
+div {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+        </style>
+    </head>
+    <body>
+        <header>Hello, {{ user.username }}</header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+        </nav>
+        <section>
+            {% block content %}{% endblock %}
+        </section>
+    </body>
+</html>
