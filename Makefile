@@ -40,6 +40,14 @@ website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 reset:
 	python3 development_reset.py
 
+config:
+	python3 andor-setup.py Staff.ds Roles.ds People.ds
+	dataset create Roles.ds 'Admin' '{"users": {"create": true, "read": true, "update": true, "delete": true}, "roles": {"create": true, "read": true, "update": true, "delete": true}, "objects": {"create": true, "read": true, "update": true, "delete": true}}'
+	dataset create Roles.ds 'Editor' '{"users": {"create": false, "read": false, "update": false, "delete": false}, "roles": {"create": false, "read": false, "update": false, "delete": false}, "objects": {"create": true, "read": true, "update": true, "delete": true}}'
+	dataset create Roles.ds 'Depositor' '{"users": {"create": false, "read": false, "update": false, "delete": false}, "roles": {"create": false, "read": false, "update": false, "delete": false}, "objects": {"create": true, "read": true, "update": false, "delete": false}}'
+	python3 andor-admin.py add-user admin "$(USERNAME)@localhost" "Repository Admin"
+	python3 andor-admin.py assign-role admin Admin
+
 cleanweb:
 	if [ -f index.html ]; then rm *.html; fi
 	if [ -f docs/index.html ]; then rm docs/*.html; fi

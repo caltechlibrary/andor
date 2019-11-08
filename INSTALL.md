@@ -29,13 +29,13 @@ Create a ".flaskenv" file to hold your flask environment.
 
 ## Preparing the base repostiories
 
-The first program, `andor-repositories.py` will create the necessary dataset
+The first program, `andor-set.py` will create the necessary dataset
 collections as well as generate an appropriate `config.py` needed to run the
 application.
 
 ```bash
     # Create your repositories and config.py file.
-    python3 andor-repositories.py Users.ds Roles.ds People.ds
+    python3 andor-setup.py Users.ds Roles.ds People.ds
     # Add a user using andor-admin.py
     # add-user will prompt for a password.
     python3 andor-admin.py add-user admin 'jane.doe@example.edu' 'Jane Doe'
