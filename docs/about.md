@@ -62,7 +62,7 @@ on hardware as small as a Rasbpberry Pi.
 
 + [dataset](https://github.com/caltechlibrary/dataset) collections are sufficient to hold metadata
 + UI can be implemented using HTML 5 elements, minimal JavaScript and CSS
-+ Web UI can easily be built using standard Python packages (e.g. flask, Django)
++ Web UI can easily be built using standard Python packages (e.g. Flask)
 + Small number of curatorial [users](docs/User-Scheme.html)
 + Use existing object scheme (e.g. EPrints XML in Oral Histories)
 + Authentication is external (e.g. Basic Auth, JWT, Shibboleth, OAuth 2)
