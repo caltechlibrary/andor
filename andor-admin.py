@@ -98,27 +98,84 @@ def assign_role(argv):
     print(f'DEBUG assign_role() not implemented.')
     return False
 
+def usage_create_role():
+    print(f'''
+USAGE {cli_name} create-role ROLE_NAME
+
+Provides an interactive set of prompts to create a new role
+in Andor. Roles had a name and then a set of CRUD values 
+for access to the user, role and objects collections.
+
+E.g. {cli_name} create-role Publisher
+
+''')
+
+def create_role(argv):
+    if len(argv) != 1:
+        usage_create_role()
+        return False
+    print(f'DEBUG create_role() not implemented.')
+    return False
+
+def usage_edit_role():
+    print(f'''
+USAGE {cli_name} edit-role ROLE_NAME
+
+Provides an interactive prompt to edit an existing role.
+
+E.g. {cli_name} edit-role Publisher
+''')
+
+def edit_role(argv):
+    if len(argv) != 1:
+        usage_edit_role()
+        return False
+    print(f'DEBUG edit_role() not implemented.')
+    return False
+
+def usage_delete_role():
+    print(f'''
+USAGE {cli_name} delete-role ROLE_NAME
+
+Removes a role from the system.
+
+E.g. {cli_name} delete-role Publisher
+''')
+
+def delete_role(argv):
+    if len(argv) != 1:
+        usage_delete_role()
+        return False
+    print(f'DEBUG delete_role() not implemented.')
+    return False
+
+#
+# Main cli logic
+#
 verbs = {
     "help": display_help,
     "add-user": add_user,
     "password": set_password,
     "assign-role": assign_role,
-#    "create-role": create_role,
-#    "edit-role": edit_role,
-#    "delete-role": delete_role,
+    "create-role": create_role,
+    "edit-role": edit_role,
+    "delete-role": delete_role,
 }
-if len(sys.argv) < 2:
-    verb = "help"
-    display_help()
-    sys.exit(0)
-else:
-    verb = sys.argv[1]
 
-print(f"DEBUG verb {verb} len(sys.argv) -> {len(sys.argv)}")
-if verb in verbs:
-    ok = verbs[verb](sys.argv[2:])
-    if ok != True:
+if __name__ == __main__:
+    if len(sys.argv) < 2:
+        verb = "help"
+        display_help()
+        sys.exit(0)
+    else:
+        verb = sys.argv[1]
+    
+    if verb in verbs:
+        ok = verbs[verb](sys.argv[2:])
+        if ok != True:
+            sys.exit(1)
+    else:
+        display_help()
         sys.exit(1)
 else:
-    display_help()
-    sys.exit(1)
+    print(f'Run tests not implemented.')
