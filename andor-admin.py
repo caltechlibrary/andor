@@ -1,8 +1,12 @@
+import string
 import os
 import sys
 import shutil
+import getpass
+from py_dataset import dataset
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".flaskenv")
+from werkzeug.security import generate_password_hash
 
 if not os.path.exists('config.py'):
     print(f'Nothing to administor.')
@@ -12,12 +16,8 @@ from config import Config
 cli_name = os.path.basename(sys.argv[0])
 cfg = Config()
 flask_env = os.getenv('FLASK_ENV') or ''
-#print(f"cfg.USERS -> {cfg.USERS}")
-#print(f"cfg.ROLES -> {cfg.ROLES}")
-#print(f"cfg.OBJECTS -> {cfg.OBJECTS}")
-#print(f"FLASK_ENV -> {flask_env}")
 
-def display_help(params = {}):
+def display_help(argv = {}):
     print(f'''
 USAGE: {cli_name} VERB [VERB_OPTIONS]
 
@@ -50,14 +50,23 @@ E.g. {cli_name} add-ser jsteinbeck "jsteinbeck@localhost" "John Steinbeck"
 ''')
 
 def add_user(argv):
-    print(f'DEBUG in add_user({argv})')
+    c_name = cfg.USERS
     if len(argv) != 3:
         usage_add_user()
         return False
     username, email, display_name = argv[0], argv[1], argv[2]
-    print(f'DEBUG Adding user {username}, email {email}, display name {display_name}')
-    print(f'DEBUG add_user() not implemented.')
-    return False
+    err = dataset.create(c_name, username, {
+        "username": username,
+        "email": email,
+        "display_name": display_name,
+        "role": "",
+        "password": ""
+    })
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    print(f'NOTE: {username} will need to have a role and password set.')
+    return True
 
 
 def usage_password():
@@ -72,12 +81,32 @@ E.g. {cli_name} password admin
 ''')
 
 def set_password(argv):
-    if len(params) < 1:
+    c_name = cfg.USERS
+    if len(argv) < 1:
         return usage_password()
     username = argv[0]
-    print(f'DEBUG set password for username {username}')
-    print(f'DEBUG set_password() not implemented.')
-    return False
+    pw1, pw2 = '', ' '
+    i = 0
+    while pw1 != pw2:
+        pw1 = getpass.getpass(
+            prompt = f'Please enter a new password for {username}: ')
+        pw2 = getpass.getpass(
+            prompt = f'Please enter the password a second time: ')
+        if pw1 != pw2:
+            i += 1
+        if i > 3:
+            print(f'Passwords do not match, exiting')
+            return False
+    user, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    user['password'] = generate_password_hash(pw1)
+    err = dataset.update(c_name, username, user)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
 
 
 def usage_assign_role():
@@ -91,12 +120,20 @@ E.g. {cli_name} assign-role admin Admin
 ''')
 
 def assign_role(argv):
-    if len(params) != 2:
+    c_name = cfg.USERS
+    if len(argv) != 2:
         return usage_asign_role()
     username, role = argv[0], argv[1]
-    print(f'DEBUG assign-role {username} to {role}')
-    print(f'DEBUG assign_role() not implemented.')
-    return False
+    user, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    user['role'] = role
+    err = dataset.update(c_name, username, user)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
 
 def usage_create_role():
     print(f'''
@@ -111,11 +148,34 @@ E.g. {cli_name} create-role Publisher
 ''')
 
 def create_role(argv):
+    c_name = cfg.ROLES
     if len(argv) != 1:
         usage_create_role()
         return False
-    print(f'DEBUG create_role() not implemented.')
-    return False
+    role_name = argv[0]
+    if dataset.has_key(c_name, role_name):
+        print(f'{role_name} already exists in {c_name}')
+        return False
+    role = { 
+            f'{cfg.USERS}': { 'create': False, 'read': False, 'update': False, 'delete': False},
+            f'{cfg.ROLES}': { 'create': False, 'read': False, 'update': False, 'delete': False},
+            f'{cfg.OBJECTS}': { 'create': False, 'read': False, 'update': False, 'delete': False},
+            }
+    for c_name in role:
+        print(f'Collection {c_name}')
+        perms = role[c_name]
+        for perm in perms:
+            y_or_n = input(f'allow {perm}? [Y/n] ').lower()
+            if y_or_n in [ 'y', 'yes' ]:
+                role[c_name][perm] = True
+            else:
+                role[c_name][perm] = False
+    c_name = cfg.ROLES
+    err = dataset.create(c_name, role_name, role)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
 
 def usage_edit_role():
     print(f'''
@@ -127,11 +187,32 @@ E.g. {cli_name} edit-role Publisher
 ''')
 
 def edit_role(argv):
+    c_name = cfg.ROLES
     if len(argv) != 1:
-        usage_edit_role()
+        usage_create_role()
         return False
-    print(f'DEBUG edit_role() not implemented.')
-    return False
+    role_name = argv[0]
+    if not dataset.has_key(c_name, role_name):
+        print(f'{role_name} does not exists in {c_name}')
+        return False
+    role, err = dataset.read(c_name, role_name)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    for c_name in role:
+        print(f'Collection {c_name}')
+        perms = role[c_name]
+        for perm in perms:
+            val = role[c_name][perm]
+            y_or_n = input(f'{perm} is {val}, change? [y/N] ').lower()
+            if y_or_n in [ 'y', 'yes' ]:
+                role[c_name][perm] = (not val)
+    c_name = cfg.ROLES
+    err = dataset.update(c_name, role_name, role)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
 
 def usage_delete_role():
     print(f'''
@@ -143,6 +224,7 @@ E.g. {cli_name} delete-role Publisher
 ''')
 
 def delete_role(argv):
+    c_name = cfg.ROLES
     if len(argv) != 1:
         usage_delete_role()
         return False
@@ -162,7 +244,7 @@ verbs = {
     "delete-role": delete_role,
 }
 
-if __name__ == __main__:
+if __name__ == '__main__':
     if len(sys.argv) < 2:
         verb = "help"
         display_help()

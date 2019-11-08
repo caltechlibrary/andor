@@ -11,8 +11,8 @@ And/Or
 
 **And/Or** is a proof of concept for a simple object repository based on 
 Caltech Library's [dataset](https://caltechlibrary.github.io/dataset "And/Or requires v0.1.x")
-tool.  It implements an asynchronous service for building multi-user 
-repository using Python and the `py_dataset` pacakge.
+tool.  It implements an web service for curating a simple object
+repository using Python and the `py_dataset` package.
 
 
 Table of contents
@@ -35,27 +35,27 @@ Introduction
 **And/Or** is an extremely light weight object repository. 
 It builds on [dataset](https://github.com/caltechlibrary/dataset).
 It uses Python's Flask package for hosting a web service providing
-an asynchronous interface for working with dataset collections.  
+an asynchronous interface for curating a dataset collection.  
 __dataset__ has proven to be a useful tool for managing library 
 metadata using a data science approach.  It is built for continious 
 migration dataflows.  It lacks multi-user curation support or the 
 convienence of having web browser based edit forms. **And/Or** is a 
 prototype for extending libdataset.go with a Python managed
 service that can then be used to create extremely light weight 
-repository system using Python.
+object repository system using Python.
 
 
 Installation
 ------------
 
 See [INSTALL.md](install.html). This software is experimental.
-There are no pre-compiled binaries provided. Some of this software 
-This software is largely written in Python 3.7 and packages such
+There are no pre-compiled binaries provided. This software 
+is largely written in Python 3.7 and packages such
 as Flask, FlaskWTF, and py\_dataset. The prototype was developed using
 [Miniconda]() based Python distribution.
 
-See [INSTALL.md](install.html) for details on installing and configing
-the application.
+[INSTALL.md](install.html) provides details on installing and configing
+the prototype.
 
 
 Known issues and limitations

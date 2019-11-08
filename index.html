@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="install.html">INSTALL</a></li>
+<li><a href="./docs">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/andor">Github</a>
+<!-- + [Releases](https://github.com/caltechlibrary/andor/releases/) --></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>And/Or</h1>
+
+<blockquote>
+<p><span class="red">An</span>other <span class="red">d</span>igital / <span class="red">O</span>bject <span class="red">r</span>epository</p>
+</blockquote>
+
+<p><a href="https://choosealicense.com/licenses/bsd-3-clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square" alt="License" /></a></p>
+
+<!-- [![Latest release](https://img.shields.io/badge/Latest_release-0.0.1-b44e88.svg?style=flat-square)](http://shields.io) -->
+
+<p><strong>And/Or</strong> is a proof of concept for a simple object repository based on
+Caltech Library&rsquo;s <a href="https://caltechlibrary.github.io/dataset" title="And/Or requires v0.1.x">dataset</a>
+tool.  It implements an web service for curating a simple object
+repository using Python and the <code>py_dataset</code> package.</p>
+
+<h2>Table of contents</h2>
+
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="install.html">Installation</a></li>
+<li><a href="docs/">Documentation</a></li>
+<li><a href="#known-issues-and-limitations">Known issues and limitations</a></li>
+<li><a href="#getting-help">Getting help</a></li>
+<li><a href="contributing.html">Contributing</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#authors-and-history">Authors and history</a></li>
+<li><a href="#authors-and-acknowledgments">Acknowledgments</a></li>
+</ul>
+
+<h2>Introduction</h2>
+
+<p><strong>And/Or</strong> is an extremely light weight object repository.
+It builds on <a href="https://github.com/caltechlibrary/dataset">dataset</a>.
+It uses Python&rsquo;s Flask package for hosting a web service providing
+an asynchronous interface for curating a dataset collection.<br>
+<strong>dataset</strong> has proven to be a useful tool for managing library
+metadata using a data science approach.  It is built for continious
+migration dataflows.  It lacks multi-user curation support or the
+convienence of having web browser based edit forms. <strong>And/Or</strong> is a
+prototype for extending libdataset.go with a Python managed
+service that can then be used to create extremely light weight
+object repository system using Python.</p>
+
+<h2>Installation</h2>
+
+<p>See <a href="install.html">INSTALL.md</a>. This software is experimental.
+There are no pre-compiled binaries provided. This software
+is largely written in Python 3.7 and packages such
+as Flask, FlaskWTF, and py_dataset. The prototype was developed using
+[Miniconda]() based Python distribution.</p>
+
+<p><a href="install.html">INSTALL.md</a> provides details on installing and configing
+the prototype.</p>
+
+<h2>Known issues and limitations</h2>
+
+<p>This is a proof-of-concept project. It SHOULD NOT be used
+in any production setting.  It is ONLY suitable for demonstrating
+an approach to building light weight object repositories.</p>
+
+<h2>Getting help</h2>
+
+<p>You can contact us via GitHub <a href="https://github.com/caltechlibrary/andor/issues">issue tracker</a>.</p>
+
+<h2>Contributing</h2>
+
+<p>See <a href="contributing.html">CONTRIBUTING.md</a></p>
+
+<h2>License</h2>
+
+<p>Software produced by the Caltech Library is Copyright &copy; 2019, Caltech.<br>
+This software is freely distributed under a BSD/MIT type license.<br>
+Please see the <a href="LICENSE">LICENSE</a> file for more information.</p>
+
+<h2>Authors and history</h2>
+
+<p><a href="https://rsdoiel.github.io">Robert</a> is the culprit responsible
+for this proof of concept</p>
+
+<h2>Acknowledgments</h2>
+
+<p>This work was funded by the California Institute of Technology Library.</p>
+
+<div align="center">
+  <br>
+  <a href="https://www.caltech.edu">
+    <img width="100" height="100" src="assets/caltech-round.svg">
+  </a>
+</div>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>

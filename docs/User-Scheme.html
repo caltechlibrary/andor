@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">GitHub</a>
+<!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>User Scheme</h1>
+
+<p>While <strong>AndOr</strong> manages users outside the web UI it still
+needs to keep track of basic user information such as the
+roles they have access to.</p>
+
+<p>Below is an example JSON document describing the user Jane Doe.</p>
+
+<pre><code class="language-json">    {
+        &quot;user_id&quot;: &quot;jane.doe@example.edu&quot;,
+        &quot;display_name&quot;: &quot;Jane Doe&quot;,
+        &quot;roles&quot;: [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+    }
+</code></pre>
+
+<p>The JSON documents hold four pieces of information</p>
+
+<dl>
+<dt>user_id</dt>
+<dd>(string, required) in this case an email address is a unique string used to map a user to their assigned roles</dd>
+<dt>display_name</dt>
+<dd>(string, optional) a display name, a convenience field for us Humans when IDs like an ORCID are less obvious</dd>
+<dt>roles</dt>
+<dd>(list of strings, defaults to empty list) this lists the roles available to this user. If role specified is &ldquo;*&rdquo; it means the user is a member of all roles, this is useful for repository administrators</dd>
+</dl>
+
+<p>Here&rsquo;s an example of expressing that user in TOML.</p>
+
+<pre><code class="language-toml">    # User id
+    [&quot;jane.doe@example.edu&quot;]
+    # Display Name
+    display_name = &quot;Jane Doe&quot;
+    # The roles this user can assume.
+    roles = [ &quot;publisher&quot;, &quot;editor&quot;, &quot;writer&quot; ]
+</code></pre>
+
+<h2>How the user object is used</h2>
+
+<p>When Jane authenticates with the system she goes from being
+&ldquo;anonymous&rdquo; to &ldquo;jane@example.edu&rdquo; user.  This means she now has the
+permissions associated with &ldquo;publisher&rdquo;, &ldquo;editor&rdquo; and &ldquo;writer&rdquo; roles.
+If the &ldquo;writer&rdquo; role allows object creation Jane can create
+objects as a &ldquo;writer&rdquo;.
+Note if Jane doesn&rsquo;t have an have any roles defined she would
+have zero permissions to access any objects. Each role list in
+&ldquo;roles&rdquo; establishes her capabilities to interact with
+objects in the collection(s) of the <strong>AndOr</strong> running.</p>
+
+<h2>anonymous, the default user</h2>
+
+<p>There is always a &ldquo;anonymous&rdquo; user defined. It is used for anyone who
+has not authenticated.  While the &ldquo;anonymous&rdquo; user is assumed to always
+exist it is not provided with any roles. If you want to allow
+anonymous access to a collection (e.g. the general public can see
+&ldquo;published&rdquo; objects) then you should create a JSON record for the
+&ldquo;anonymous&rdquo; user and explicitly put them in a single role that
+only has read permissions for &ldquo;published&rdquo; objects. See <a href="Role-Use-Cases.html">Role Use Cases</a> for example.</p>
+
+<h2>Picking IDs</h2>
+
+<p>You can avoid the toxic storage of secrets by using an external
+authentication mechanism (e.g. OAuth 2, Shibboleth) as well as
+limiting the value of your Unique id.  If you create users using
+an email address you do have some value but probably minimal value
+if that same email address is publicly known (e.g. published in
+the institute directory).  This would be similar if you were using
+an ORCID as an identifier. ORCID is a nice choice because while
+the number is listable at <a href="https://orcid.org">orcid.org</a> the
+ORCID owner controls directly how much information is exposed.
+<strong>AndOr</strong> only needs to assert a users&rsquo; claim they control
+the ID it doesn&rsquo;t harvest any data from the ID provider aside
+from the ID verified.</p>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>

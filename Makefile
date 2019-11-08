@@ -25,17 +25,16 @@ endif
 #bin/andor$(EXT): *.go cmd/andor/andor.go
 #	go build -o bin/andor$(EXT) cmd/andor/andor.go
 
-#build: $(PROJECT_LIST) libandor 
-
-#install: 
-#	env GOBIN=$(GOPATH)/bin go install cmd/andor/andor.go
+build: config
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
-	#cp -vR scripts demo/htdocs/
-	./mk_website.py $(baseurl)
+	python3 mk_website.py $(baseurl)
 
 #test: clean bin/andor$(EXT)
 #	go test
+
+run:
+	flask run
 
 reset:
 	python3 development_reset.py

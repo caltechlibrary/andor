@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">README</a></li>
+<li><a href="license.html">LICENSE</a></li>
+<li><a href="install.html">INSTALL</a></li>
+<li><a href="./docs">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/andor">Github</a>
+<!-- + [Releases](https://github.com/caltechlibrary/andor/releases/) --></li>
+</ul>
+
+</nav>
+
+<section>
+<h1>Installation</h1>
+
+<p>This software is a proof of concept.</p>
+
+<h2>Prequisites</h2>
+
+<p>Python v3.7 or better installed, Flask 1.1.x, and <code>py_dataset</code> v0.1.x
+installed.  The example installation steps use
+<a href="https://docs.conda.io/en/latest/miniconda.html" title="Miniconda installation page">Miniconda</a> version of Python 3.  It also assumes a POSIX like
+system supported by Miniconda.</p>
+
+<pre><code class="language-bash">    pip install python-dotenv
+    pip install flask
+    pip install flask_wtf
+</code></pre>
+
+<h2>Installing And/Or</h2>
+
+<p>Use git to clone the And/Or repository. Checkout the pythonic-flask branch.
+Create a &ldquo;.flaskenv&rdquo; file to hold your flask environment.</p>
+
+<pre><code class="language-bash">    git clone https://github.com/caltechlibrary/andor
+    cd andor
+    git checkout pythonic-flask
+    vi .flaskenv # Add FLASK_APP=andor.py  
+                 # Add FLASK_ENV=development
+</code></pre>
+
+<h2>Preparing the base repostiories</h2>
+
+<p>The first program, <code>andor-setup.py</code> will create the necessary dataset
+collections as well as generate an appropriate <code>config.py</code> needed to run the
+application.</p>
+
+<pre><code class="language-bash">    # Create your repositories and config.py file.
+    python3 andor-setup.py Users.ds Roles.ds People.ds
+    # Create an &quot;Admin&quot; role, answer y to all the questions.
+    python3 andor-admin.py create-role 'Admin'
+    # Add a user using andor-admin.py
+    # add-user will prompt for a password.
+    python3 andor-admin.py add-user 'admin' 'jane.doe@example.edu' 'Jane Doe'
+    # Assign admin to the Admin role
+    python3 andor-amdin.py assign-role 'admin' 'Admin'
+    # Set the admin password
+    python3 andor-admin.py password 'admin'
+</code></pre>
+
+<p>Now you should be ready to start your And/Or repository service and start
+adding and currating your objects.</p>
+
+<h2>Running the And/Or service</h2>
+
+<pre><code class="language-bash">    flask run
+</code></pre>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>

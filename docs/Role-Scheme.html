@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caltech Library's Digital Library Development Sandbox</title><link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header><a href="https://library.caltech.edu"><img src="/assets/liblogo.gif" alt="Caltech Library logo"></a>
+</header>
+<nav>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="../">README</a></li>
+<li><a href="../license.html">LICENSE</a></li>
+<li><a href="../install.html">INSTALL</a></li>
+<li><a href="./">Documentation</a></li>
+<li><a href="https://github.com/caltechlibrary/AndOr">GitHub</a>
+<!-- + [Releases](https://github.com/caltechlibrary/AndOr/releases/) --></li>
+</ul>
+
+</nav>
+
+<section>
+<h1 id="role-scheme">Role Scheme</h1>
+
+<p>A role encapsulates three things. Permissions,
+object states<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> and state assignments. A user
+has one or more roles the roles give them permissions
+to act on objecets in the states assocaited with the role.
+It also defines what states objects can be assigned into.
+This is what gives us workflows.  Objects state assignment
+is independent of the permissions.  In this way a role
+might define creation of an object but also the assignment
+to a new state that is not covered by the role. E.g. A
+writer might create an object in draft state, then when ready
+assign it to &quot;review&quot; state where an editor continues working
+on it.</p>
+
+<p>Each role specifies the operations that can be
+performed on a list of states. These include basic
+CRUD<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> operations on all objects in the state.
+It also specifies the assignment (handing off) of
+objects to other states.</p>
+
+<p>An addition state exists without definition. That queue
+is &quot;deleted&quot;. Like EPrints<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup> <strong>And/Or</strong> doesn't delete
+objects from disc. They continue to exist in a trashbin
+like state.  They could be truely deleted by writing
+a garbage collection script using dataset.</p>
+
+<p>Here's an example object  defining a &quot;depositor&quot; role
+associated with a &quot;review&quot; state. A user working in
+the &quot;depositor&quot; role can create an objects but can
+not read them.  When an object created it s assigned
+the <code>._State</code> value &quot;review&quot;. So our depository user can
+create objects in the &quot;review&quot; state but they have no
+other rights beyond that.</p>
+
+<pre><code class="language-json">    {
+        &quot;role_name&quot;: &quot;Depositor&quot;,
+        &quot;role_id&quot;: &quot;deposit&quot;,
+        &quot;states&quot;: [ &quot;review&quot; ],
+        &quot;create&quot;: true,
+        &quot;read&quot;: false,
+        &quot;update&quot;: false,
+        &quot;delete&quot;: false,
+        &quot;assign_to&quot;: [ ]
+    }
+
+</code></pre>
+
+<p>Next is an example of a &quot;reviewer&quot; role. A
+reviewer can read, update, and delete objects
+but not create them. They can also move the
+objects into review, published, and embargoed
+states. Once an object is &quot;published&quot; they would
+not be able to update or re-assign the object.</p>
+
+<pre><code class="language-json">    {
+        &quot;role_name&quot;: &quot;Reviewer&quot;,
+        &quot;role_id&quot;: &quot;reviewer&quot;
+        &quot;states&quot;: [ &quot;review&quot;, &quot;embargoed&quot; ],
+        &quot;create&quot;: false,
+        &quot;read&quot; : true,
+        &quot;update&quot;: true,
+        &quot;delete&quot;: true,
+        &quot;assign_to&quot;: [ &quot;review&quot;, &quot;embargoed&quot;, &quot;published&quot; ]
+    }
+</code></pre>
+
+<p>Finally our &quot;publisher&quot; role would have the ability
+to perform all operations on all states.  Note how
+we specifify &quot;states&quot; and &quot;assign_to&quot; values using
+the name &quot;<em>&quot;. &quot;</em>&quot; is a wild card meaning all states.</p>
+
+<pre><code class="language-json">    {
+        &quot;role_name&quot;: &quot;Publisher&quot;,
+        &quot;role_id&quot;: &quot;publisher&quot;
+        &quot;states&quot;: [ &quot;*&quot; ],
+        &quot;create&quot;: true,
+        &quot;read&quot; : true,
+        &quot;update&quot;: true,
+        &quot;delete&quot;: true,
+        &quot;assign_to&quot;: [ &quot;*&quot; ]
+    }
+</code></pre>
+
+<p>What if we want to pull an object back from published state?
+The publisher has the right to assign the object to any state
+such as &quot;embargoed&quot; and &quot;review&quot;.</p>
+
+<p>The fields</p>
+
+<dl>
+<dt>role_name</dt>
+<dd>(string, optional) the human readable name for the role</dd>
+<dt>role_id</dt>
+<dd>(string, required, must be unique) the id for this role</dd>
+<dt>states</dt>
+<dd>(a list of string, required, may be empty list) the associated state where the CRUD permissions apply</dd>
+<dt>create</dt>
+<dd>(bool, defaults to false if not defined) the ability to create an object in the state(s)</dd>
+<dt>read</dt>
+<dd>(bool, defaults to false if not defined) the ability to read objects in the state(s)</dd>
+<dt>update</dt>
+<dd>(bool, defaults to false if not defined) the ability to update (edit) objects in the state(s)</dd>
+<dt>delete</dt>
+<dd>(bool, defaults to false if not defined) the ability to &quot;delete&quot; objects
+(really move to a trashbin state) in the state(s)</dd>
+<dt>assign_to</dt>
+<dd>(list of string, may be empty) the list of states this role may assign objects into</dd>
+</dl>
+<h1 id="footnote-section">Footnotes</h1>
+
+<div class="footnotes">
+
+<hr>
+
+<ol>
+<li id="fn:1">objects have a field called &quot;._State&quot; that holds the name of the role queue they are currently associated with</li>
+
+<li id="fn:2">CRUD, refer to &quot;create&quot;, &quot;read&quot;, &quot;update&quot;, &quot;delete&quot; operations on a object</li>
+
+<li id="fn:3">EPrints is an excellent Open Source Repository system from South Hampton University</li>
+</ol>
+
+</div>
+
+</section>
+
+<footer>
+<span><h1><A href="https://caltech.edu">Caltech</a></h1></span>
+<span>&copy; 2019 <a href="https://www.library.caltech.edu/copyright">Caltech library</a></span>
+<address>1200 E California Blvd, Mail Code 1-32, Pasadena, CA 91125-3200</address> 
+<span>Phone: <a href="tel:+1-626-395-3405">(626)395-3405</a></span>
+<span><a href="mailto:library@caltech.edu">Email Us</a></span>
+<a class="cl-hide" href="sitemap.xml">Site Map</a>
+</footer>
+<!-- START: PrettyFi from https://github.com/google/code-prettify -->
+<script>
+/* We want to add the class "prettyprint" to all the pre elements */
+var pre_list = document.querySelectorAll("pre");
+
+pre_list.forEach(function(elem) {
+    elem.classList.add("prettyprint");
+    elem.classList.add("linenums");/**/
+    elem.classList.add("json"); /**/
+});
+</script>
+<style>
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+    color: #555;
+    list-style-type: decimal;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/css/prettify.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+<!--  END: PrettyFi from https://github.com/google/code-prettify -->
+</body>
+</html>
