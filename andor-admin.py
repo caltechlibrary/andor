@@ -161,10 +161,10 @@ def create_role(argv):
             f'{cfg.ROLES}': { 'create': False, 'read': False, 'update': False, 'delete': False},
             f'{cfg.OBJECTS}': { 'create': False, 'read': False, 'update': False, 'delete': False},
             }
-    for c_name in role:
+    for c_name in [ cfg.USERS, cfg.ROLES, cfg.OBJECTS ]:
         print(f'Collection {c_name}')
         perms = role[c_name]
-        for perm in perms:
+        for perm in [ 'create', 'read', 'update', 'delete' ]:
             y_or_n = input(f'allow {perm}? [Y/n] ').lower()
             if y_or_n in [ 'y', 'yes' ]:
                 role[c_name][perm] = True
@@ -199,14 +199,16 @@ def edit_role(argv):
     if err != '':
         print(f'ERROR: {err}')
         return False
-    for c_name in role:
+    for c_name in [ cfg.USERS, cfg.ROLES, cfg.OBJECTS ]:
         print(f'Collection {c_name}')
         perms = role[c_name]
-        for perm in perms:
+        for perm in [ 'create', 'read', 'update', 'delete' ]:
             val = role[c_name][perm]
-            y_or_n = input(f'{perm} is {val}, change? [y/N] ').lower()
-            if y_or_n in [ 'y', 'yes' ]:
-                role[c_name][perm] = (not val)
+            t_or_f = input(f'{perm} is {val}, T(rue)/F(alse)/K(eep)? ').lower()
+            if t_or_f in [ 't', 'true' ]:
+                role[c_name][perm] = True
+            if t_or_f in [ 'f', 'false' ]:
+                role[c_name][perm] = False
     c_name = cfg.ROLES
     err = dataset.update(c_name, role_name, role)
     if err != '':
