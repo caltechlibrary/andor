@@ -37,6 +37,9 @@ website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 #test: clean bin/andor$(EXT)
 #	go test
 
+reset:
+	python3 development_reset.py
+
 cleanweb:
 	if [ -f index.html ]; then rm *.html; fi
 	if [ -f docs/index.html ]; then rm docs/*.html; fi
