@@ -27,13 +27,15 @@ reset passwords, etc.
 
 Verbs:
 
-    help        display this help message
-    add-user    add a new users to the system
-    password    set a users password
-    assign-role assign or update a roles role
-    create-role defines a role
-    edit-role   changes a role's permissions
-    delete-role deletes a role
+    help         display this help message
+    add-user     add a new users to the system
+    email        set a user's email address
+    display-name set a user's display name
+    password     set a user's password
+    assign-role  assign or update a user's role
+    create-role  defines a role
+    edit-role    changes a role's permissions
+    delete-role  deletes a role
 
 Verbs except for help require one or more parameters.
 Envoking the verb without a parameter will display a
@@ -102,6 +104,58 @@ def set_password(argv):
         print(f'ERROR: {err}')
         return False
     user['password'] = generate_password_hash(pw1)
+    err = dataset.update(c_name, username, user)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
+
+def usage_set_email():
+    print(f'''
+USAGE: {cli_name} email USERNAME EMAIL_ADDRESS
+
+This will set a user's email address.
+
+E.g. {cli_name} email 'admin' 'root@localhost'
+
+''')
+
+def set_email(argv):
+    c_name = cfg.USERS
+    if len(argv) != 2:
+        return usage_set_email()
+    username, email = argv[0], argv[1]
+    user, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    user['email'] = email
+    err = dataset.update(c_name, username, user)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    return True
+
+def usage_set_display_name():
+    print(f'''
+USAGE: {cli_name} display-name USERNAME DISPLAY_NAME
+
+This will set a user's display name.
+
+E.g. {cli_name} display-name 'admin' 'Repository Administrator'
+
+''')
+
+def set_display_name(argv):
+    c_name = cfg.USERS
+    if len(argv) != 2:
+        return usage_display_name()
+    username, display_name = argv[0], argv[1]
+    user, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'ERROR: {err}')
+        return False
+    user['display_name'] = display_name
     err = dataset.update(c_name, username, user)
     if err != '':
         print(f'ERROR: {err}')
@@ -239,6 +293,8 @@ def delete_role(argv):
 verbs = {
     "help": display_help,
     "add-user": add_user,
+    "email": set_email,
+    "display-name": set_display_name,
     "password": set_password,
     "assign-role": assign_role,
     "create-role": create_role,
