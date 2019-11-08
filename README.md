@@ -9,9 +9,10 @@ And/Or
 
 
 
-**And/Or** is a proof of concept for a simple object repository library
-based on Caltech Library's [dataset](https://caltechlibrary.github.io/dataset)
-tool.  It implements an asynchronous service for building multi-user repository using Python and **libdataset**. takes care of creating a efficient interactive storage model for your Python based web service.
+**And/Or** is a proof of concept for a simple object repository based on 
+Caltech Library's [dataset](https://caltechlibrary.github.io/dataset "And/Or requires v0.1.x")
+tool.  It implements an asynchronous service for building multi-user 
+repository using Python and the `py_dataset` pacakge.
 
 
 Table of contents
@@ -31,36 +32,30 @@ Table of contents
 Introduction
 ------------
 
-**And/Or** is an asynchrous shared library based 
-[dataset](https://github.com/caltechlibrary/dataset) providing
+**And/Or** is an extremely light weight object repository. 
+It builds on [dataset](https://github.com/caltechlibrary/dataset).
+It uses Python's Flask package for hosting a web service providing
 an asynchronous interface for working with dataset collections.  
 __dataset__ has proven to be a useful tool for managing library 
 metadata using a data science approach.  It is built for continious 
 migration dataflows.  It lacks multi-user curation support or the 
 convienence of having web browser based edit forms. **And/Or** is a 
-prototype library for extending libdataset.go with a Python managed
-service that can then be used to create extremely light weight repository
-systems using Python.
+prototype for extending libdataset.go with a Python managed
+service that can then be used to create extremely light weight 
+repository system using Python.
 
 
 Installation
 ------------
 
-See [INSTALL.md](install.html). This software is experimental
-and pre-compiled binaries are NOT provided.  This software is written in 
-[Go](https://golang.org) programming language and needs a Go compiler
-to be compiled. It is intended to be used from Python 3.7 or better so
-that needs to be available too.
+See [INSTALL.md](install.html). This software is experimental.
+There are no pre-compiled binaries provided. Some of this software 
+This software is largely written in Python 3.7 and packages such
+as Flask, FlaskWTF, and py\_dataset. The prototype was developed using
+[Miniconda]() based Python distribution.
 
-A "Makefile" has been provided for your convience to compile the **And/Or**
-shared library.
-
-```bash
-    git clone https://github.com/caltechlibrary/andor 
-    cd andor
-    make
-```
-
+See [INSTALL.md](install.html) for details on installing and configing
+the application.
 
 
 Known issues and limitations

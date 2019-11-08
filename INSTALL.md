@@ -34,12 +34,19 @@ collections as well as generate an appropriate `config.py` needed to run the
 application.
 
 ```bash
+    # Create your repositories and config.py file.
     python3 andor-repositories.py Users.ds Roles.ds People.ds
-    python3 andor-add-user.py Users.ds Admin # Add an admin user
-    python3 andor-assign-role.py Roles.ds Admin # Assign an admin role to the Admin user.
+    # Add a user using andor-admin.py
+    # add-user will prompt for a password.
+    python3 andor-admin.py add-user admin 'jane.doe@example.edu' 'Jane Doe'
+    # Assign a role to the user 
+    python3 andor-amdin.py assign-role admin Admin 
 ```
 
-## Running the web app
+Now you should be ready to start your And/Or repository service and start
+adding and currating your objects.
+
+## Running the And/Or service
 
 ```bash
     flask run
