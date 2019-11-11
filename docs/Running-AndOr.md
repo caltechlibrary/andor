@@ -2,6 +2,7 @@
 markup = "mmark"
 +++
 
+
 ## (Example) Running **AndOr**
 
 The following are actions available from
@@ -11,19 +12,9 @@ packages and tools developed at Caltech Library
 **AndOr** itself is a self contained command
 line program.
 
-+ [Setting up AndOr](Setting-Up-AndOr.html)
++ [Setting up AndOr](../install.html)
 
-Basic **AndOr** actions available on the command line
-
-+ [init](init.html) - initialize dataset collections for use by **AndOr** and create example "users.toml", "roles.toml" and "andor.toml" if needed
-+ [check](check.html) - validates "users.toml", "roles.toml", and "andor.toml"
-+ [start](start.html) - start **AndOr** web service using "users.toml", "roles.toml" and "andor.toml" for configuration
-
-## (Example) What is ...
-
-+ [What's a TOML file?](toml-basics.html)
-+ [andor.toml](andor-toml.html)
-+ [users.toml](users-toml.html)
-+ [roles.toml](roles-toml.html)
-
+```
+    flask run
+```
 

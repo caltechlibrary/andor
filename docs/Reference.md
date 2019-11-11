@@ -5,6 +5,7 @@ markup = "mmark"
 
 # Reference material
 
++ [The flask mega turotial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
 + Established Authentication options[^1]
     + [NginX and Basic AUTH](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/)
     + [NginX Shibboleth Module](https://github.com/nginx-shib/nginx-http-shibboleth)

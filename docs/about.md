@@ -13,35 +13,35 @@ repository implemented as "a multi-user version of
 based GUI". It targets the ability to curate metadata objects 
 outside the scope of our existing repository systems.  
 
-**And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset).
-It is a C Shared library made accessible via Python 3.7's ctypes
-package. The primary differences between **And/Or** and __libdataset__
-provided with __dataset__ tool is that the library implements 
-locking via a semifore for disc writes object creation and updates.
-It functions like a fedora-lite for a Python programming implementing
-web services. 
+**And/Or** is based on [dataset](https://caltechlibrary.github.io/dataset)
+and `libdataset`.  __libdataset__ is a C Shared library made accessible 
+via Python 3.7's ctypes package. The primary differences between 
+**And/Or** built-on  __libdataset__ and __dataset__ tool is that 
+the library implements locking via a semifore for disc writes on object 
+creation and updates.  It functions like a fedora-lite for a Python 
+programming implementing web services. 
 
 When a Go shared library runs under Python it runs in its child process.
 The process is managed from the Python program. In this way you can 
 efficiently act on a __dataset__ collection and with the use of 
-a semiphore Go support asynchonous operations on the collection without
-need to constantly open and close the dataset collections' conlection.json
-file. Your Python code focuses on providing URL end points, access control
-and presentation of static HTML, CSS and JavaScript while you the **And/Or**
-library handles the ansynchronous update of the collection(s) it is managing. **And/Or** is a C-Shared library for building __dataset__ driven
-web server[^1] written in Python.
+a semiphore dataset can support asynchonous operations on the collection 
+without needing to constantly open and close the dataset collection. 
+The Python code focuses on providing URL end points, access control
+and presentation of static HTML, CSS and JavaScript while you the 
+__libdataset__ library handles the ansynchronous update of the 
+collection(s) it is managing. 
 
-**And/Or** is a extremely narrowly scoped library. The focus 
-is __ONLY__ on currating JSON objects in an asynchronous manner. 
+**And/Or** is a extremely narrowly scoped. The focus is __ONLY__ on 
+currating JSON objects in an asynchronous manner. 
 
 Limiting **And/Or**'s scope leads to a simpler system. Code 
 is limited to **And/Or** web service plus the HTML, 
-CSS and JavaScript needed for an acceptable UI[^3].
+CSS and JavaScript needed for an acceptable UI[^2].
 
-This architecture aligns with small machine hosting
-and cloud hosting. Both keeping recurring costs to a minimum. 
-**And/Or** could be run on a tiny to small EC2 instance or
-on hardware as small as a Rasbpberry Pi.
+This architecture aligns with small machine hosting and cloud 
+hosting. Both keeping recurring costs to a minimum.  **And/Or** could 
+be run on a tiny to small EC2 instance or on hardware as small as 
+a Rasbpberry Pi.
 
 
 ## Goals
@@ -75,18 +75,18 @@ on hardware as small as a Rasbpberry Pi.
 Some of the most complicated parts of digital object repositories
 are managing customization, managing users, manage roles,
 manage permissions, enforcing storage scheme and presenting
-public can private views of respository content.  **And/Or**'s 
+public and private views of respository content.  **And/Or**'s 
 simplification involves focusing only on the storage and retrieve
 of JSON objects. While a dataset collection can easily be used
 to store information about users, roles, etc. it doesn't need to 
-provide that support directly or even provide a web service. **And/Or**'s
-assume is that other systems, e.g. Python Django, Python using Flask
-are better suited in providing a human friendly front end for 
-managing dataset collections.
+provide that support directly or even provide a web service for those
+aspects of operation. **And/Or**'s assume is that other systems, 
+e.g. cli written in Python. 
 
-By focusing on a minimal feature set and leveraging technical
-opportunities that already exist we can radically
-reduce the lines of code written and maintained. 
+By focusing on a minimal feature set and leveraging technical 
+opportunities that already exist we can radically reduce the lines 
+of code written and maintained for a simple object repository. 
+
 
 ## Under the hood
 
@@ -95,8 +95,10 @@ reduce the lines of code written and maintained.
 > End points map directly to existing dataset operations
 
 dataset operations supported in **And/Or** are "keys", "create", 
-"read", "update", "delete".  These map to URL paths each supporting 
-a single HTTP Method (either GET or POST).
+"read", "update", "delete", "frame-create", "frame-read", 
+"frame-update", "frame-delete", "frame-keys", "frame-refresh" and 
+"frame-reframe".  These map to URL paths each supporting a single 
+HTTP Method (either GET or POST).
 
 + `/COLLECTION_NAME/keys/` (GET) all object keys
 + `/COLLECTION_NAME/create/OBJECT_ID` (GET) to creates an Object, an OBJECT_ID must be unique to succeed
@@ -105,15 +107,11 @@ a single HTTP Method (either GET or POST).
 + `/COLLECTION_NAME/delete/OBJECT_ID` (POST) to delete an object
 
 **And/Or** is a thin layer on top of existing dataset functionality.
-E.g. dataset supplies attachment versioning **And/Or** does not.
-That functionality but could easily be added. The idea is that as 
-dataset matures and gains the abilities useful in a multi-user
-context **And/Or** would be enhanced to support the additional
-dataset features by mapping them to an appropriate URL end point.
-Example, if adding versioning to JSON documents (e.g. 
-stored diffs of JSON documents[^4]) as added to dataset, 
-that functionality was available in dataset it could be included 
-in **And/Or**.
+The idea is that as dataset matures and gains the abilities useful in a 
+multi-user context they can be exposed in __libdataset__ and then made
+accessible in **And/Or**. **And/Or**'s role is to map dataset features 
+to an appropriate URL end point.  
+
 
 ### Web UI
 
@@ -125,6 +123,7 @@ implemented in HTML, CSS and JavaScript for our proof of concept.
 3. An edit page that supports CRUD operations
 4. Page to display the logged in user roles
 
+
 ### Limited functionality is intentional
 
 **And/Or** is NOT for public facing content system
@@ -132,6 +131,7 @@ implemented in HTML, CSS and JavaScript for our proof of concept.
 Machanisms for public facing content should be deployed 
 separately by processes similar to how feeds.library.caltech.edu 
 works. This keeps **And/Or** simple with fewer requirements.
+
 
 ### Examples of composibility
 
@@ -165,6 +165,7 @@ can be handle with simple HTTP handlers that perform a simple
 task mapping to an existing dataset function (e.g. keys, 
 create, read, update, delete).
 
+
 ### A special case of deleting objects 
 
 While **And/Or** service can delete objects it's more
@@ -174,15 +175,11 @@ deleted objects as being in a trashcan and leave actual
 deletion for a garbage collection routine.  This  approach would 
 make deletion work like a Mac's trashcan and fully deleting 
 objects would be accomplished by a separte process performing 
-emptying the trash[^5].
+emptying the trash[^3].
 
 
 [^1]: NginX and Apache could provide authentication mechanisms such as Basic AUTH, Shibboleth and OAuth 2 and pass them back to a real And/Or implementation.
 
-[^2]: Public websites can be generated feeds.library.caltech.edu, a search interface can be implemented with [Lunr](https://lunrjs.com).
+[^2]: UI, user interface, the normal way a user interacts with a website
 
-[^3]: UI, user interface, the normal way a user interacts with a website
-
-[^4]: This could be done in the manner of EPrints which can show a diff of the EPrint XML document
-
-[^5]: Empting the trash boils down to traversing all collecting the keys of objects that are in the `._State` == "deleted" and then removing the content from disc.
+[^3]: Empting the trash boils down to traversing all collecting the keys of objects that are in the `._State` == "deleted" and then removing the content from disc.

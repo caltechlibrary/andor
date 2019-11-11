@@ -4,14 +4,15 @@ markup = "mmark"
 
 # Proposed Development schedule
 
-| Week No. | Proposed start date | Activity |
-|:--------- |:-------- | :-------- |
-| 1 | 2019-07-22 | Model users and roles |
-| 2 | 2019-07-29 | Write **AndOr** web service and testing |
-| 3 | 2019-08-05 | Implement Basic UI in HTML and JavaScript plus more testing |
-| 4 | 2019-08-12 | Implement demo UIs for demo collections |
-| 5 | 2019-08-19 | Ready to demo **AndOr** |
+| Week No. | Activity |
+|:--------- |:-------- |
+| 1 | Model users and roles |
+| 2 | Write **AndOr** web service and testing |
+| 3 | Implement Basic UI in HTML and JavaScript plus more testing |
+| 4 | Implement demo UIs for demo collections |
+| 5 | Ready to demo **AndOr** |
 Table: Proposed schedule assumes full time effort, dates subject to change
+
 
 ## People and Groups as Proof of concept
 
@@ -25,6 +26,7 @@ capabilities
 2. List People and Groups
 2. Support users authenticating via a simple system via NginX or Apache
 3. Have roles for "suggested", "published" and "manage" objects in each collection
+
 
 ## Oral Histories as Proof of concept
 
