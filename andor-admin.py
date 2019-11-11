@@ -47,7 +47,7 @@ def usage_add_user():
     print(f'''
 USAGE: {cli_name} add-user USERNAME EMAIL DISPLAY_NAME
 
-E.g. {cli_name} add-ser jsteinbeck "jsteinbeck@localhost" "John Steinbeck"
+E.g. {cli_name} add-user jsteinbeck "jsteinbeck@localhost" "John Steinbeck"
 
 ''')
 

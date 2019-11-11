@@ -46,6 +46,7 @@ config:
 	dataset create Roles.ds 'Depositor' '{"users": {"create": false, "read": false, "update": false, "delete": false}, "roles": {"create": false, "read": false, "update": false, "delete": false}, "objects": {"create": true, "read": true, "update": false, "delete": false}}'
 	python3 andor-admin.py add-user admin "$(USERNAME)@localhost" "Repository Admin"
 	python3 andor-admin.py assign-role admin Admin
+	python3 andor-admin.py password admin
 
 cleanweb:
 	if [ -f index.html ]; then rm *.html; fi
