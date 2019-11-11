@@ -1,17 +1,29 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 from py_dataset import dataset
+from app import cfg, login
+
 
 #
 # User model holds the elements that the app needs to interact with
 # user information such as display name, email, password and role.
 #
-class User:
+class User(UserMixin):
     c_name = ''
     username = ''
     display_name = ''
     email = ''
     password = ''
     role = ''
+    # Flask-login elements
+    is_active = False
+    is_authenticated = False
+    is_anonymous = False
+
+    def get_id(self):
+        if self.username != '':
+            return self.username
+        return None
 
     def __init__(self, c_name):
         self.c_name = c_name
@@ -27,6 +39,7 @@ class User:
         self.email = user['email']
         self.role = user['role']
         self.password = user['password']
+        self.is_active = user['is_active']
         return True
 
     def save(self):
@@ -38,6 +51,7 @@ class User:
             "email": self.email,
             "role": self.role,
             "password": self.password,
+            "is_active": self.is_active
         }
         if dataset.has_key(c_name, key):
             err = dataset.update(c_name, key, user)

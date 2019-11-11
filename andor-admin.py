@@ -30,6 +30,7 @@ Verbs:
 
     help         display this help message
     add-user     add a new users to the system
+    disable-user disable a user account
     email        set a user's email address
     display-name set a user's display name
     password     set a user's password
@@ -67,8 +68,36 @@ def add_user(argv):
     u.display_name = display_name
     u.role = ''
     u.password = ''
+    u.is_active = True
     print(f'NOTE: {username} will need to have a role and password set.')
     return u.save()
+
+
+def usage_disable_user():
+    print(f'''
+USAGE: {cli_name} disable-user USERNAME
+
+E.g. {cli_name} disable-user jsteinbeck
+
+''')
+
+def disable_user(argv):
+    c_name = cfg.USERS
+    if len(argv) != 1:
+        usage_disable_user()
+        return False
+    username = argv[0]
+    if dataset.has_key(c_name, username) == False:
+        print(f'{username} not found in {c_name}')
+        return False
+    u = models.User(c_name)
+    if u.get(username) == False:
+        print(f'{username} not found in {c_name}')
+        return False
+    u.is_active = False
+    return u.save()
+
+
 
 
 def usage_password():
@@ -291,6 +320,7 @@ def delete_role(argv):
 verbs = {
     "help": display_help,
     "add-user": add_user,
+    "disable-user": disable_user,
     "email": set_email,
     "display-name": set_display_name,
     "password": set_password,

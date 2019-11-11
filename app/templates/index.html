@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ user.username }}!</h1>
+    <h1>Hi, {{ user.display_name }}!</h1>
     {% for post in posts %}
     <div class="posts">{{ post.author.username }} says: <b>{{ post.title }}</b><p></div>
     {% endfor %}
