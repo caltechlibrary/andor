@@ -13,11 +13,11 @@ class User:
     password = ''
     role = ''
 
-    def __init__(c_name):
+    def __init__(self, c_name):
         self.c_name = c_name
 
-    def get(username):
-        if dataset.key_exists(self.c_name, username):
+    def get(self, username):
+        if dataset.has_key(self.c_name, username) == False:
             return False
         user, err = dataset.read(self.c_name, username)
         if err != '':
@@ -29,7 +29,7 @@ class User:
         self.password = user['password']
         return True
 
-    def save():
+    def save(self):
         c_name = self.c_name
         key = self.username
         user = {
@@ -39,14 +39,18 @@ class User:
             "role": self.role,
             "password": self.password,
         }
-        err = dataset.update(c_name, key, user)
-        if err != '':
-            return False
+        if dataset.has_key(c_name, key):
+            err = dataset.update(c_name, key, user)
+            if err != '':
+                return False
+        else:
+            err = dataset.create(c_name, key, user)
+            if err != '':
+                return False
         return True
 
     def set_password(self, username, password):
-        ok = self.get(username)
-        if ok == False:
+        if self.get(username) == False:
             return False
         self.password = generate_password_hash(password)
         return self.save()
@@ -54,7 +58,7 @@ class User:
     def check_password(self, password):
         c_name = self.c_name
         key = self.username
-        if dataset.key_exists(c_name, key) == False:
+        if dataset.has_key(c_name, key) == False:
             return False
         ok = self.get(key)
         if ok == False:
@@ -67,6 +71,11 @@ class User:
     #FIXME: check permissions
 
 
+#
+# Role describes a set of permissions on objects, roles and 
+# users collections. A role has a name and that is used to persist
+# the role in the cfg.ROLES collection.
+# 
 class Role:
     c_name = ''
     role_name = ''
@@ -90,11 +99,11 @@ class Role:
         }
 
 
-    def __init__(c_name):
+    def __init__(self, c_name):
         self.c_name = c_name
 
-    def get(role_name):
-        if dataset.key_exists(self.c_name, role_name):
+    def get(self, role_name):
+        if dataset.has_key(self.c_name, role_name) == False:
             return False
         role, err = dataset.read(self.c_name, role_name)
         if err != '':
@@ -105,7 +114,7 @@ class Role:
         self.users = roles['users']
         return True
 
-    def save():
+    def save(self):
         c_name = self.c_name
         key = self.role_name
         role = {
