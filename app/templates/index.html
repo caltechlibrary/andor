@@ -2,11 +2,15 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-    <h1>Hello {{ user.display_name }}!</h1>
+    <h1>Welcome {{ user.display_name }}!</h1>
+    <ul>
+        <li><a href="{{ url_for('people') }}">People</a></li>
+        <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+    </ul>
+    <p>
     {% else %}
-    <h1>Hi, </h1>
+    <h1>Hello,</h1>
+    <p>
+    Why don't you try a soda? <a href="{{ url_for('login') }}">Login?</a>
     {% endif %}
-    {% for post in posts %}
-    <div class="posts">{{ post.author.username }} says: <b>{{ post.title }}</b><p></div>
-    {% endfor %}
 {% endblock %}

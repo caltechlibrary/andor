@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from py_dataset import dataset
 from app import cfg, login_manager
+from dataclasses import dataclass, field
 
 
 
@@ -137,4 +138,51 @@ class Role:
 
     def __str__(self):
         return self.role_name
+
+class People:
+    cl_people_id = ''
+    family_name = ''
+    given_name = ''
+    thesis_id = ''
+    authors_id = ''
+    archivesspace_id = ''
+    directory_id = ''
+    viaf = ''
+    lcnaf = ''
+    isni = ''
+    wikidata = ''
+    snac = ''
+    orcid = ''
+    image = ''
+    educated_at = ''
+    caltech = False
+    jpl = False
+    faculty = False
+    alumn = False
+    notes = ''
+
+    def to_dict(self):
+        o = {}
+        o['cl_people_id'] = self.cl_people_id
+        o['family_name'] = self.family_name
+        o['given_name'] = self.given_name
+        o['thesis_id'] = self.thesis_id
+        o['authors_id'] = self.authors_id
+        o['archivesspace_id'] = self.archivesspace_id
+        o['directory_id'] = self.directory_id
+        o['viaf'] = self.viaf
+        o['lcnaf'] = self.lcnaf
+        o['isni'] = self.isni
+        o['wikidata'] = self.wikidata
+        o['snac'] = self.snac
+        o['orcid'] = self.orcid
+        o['image'] = self.image
+        o['educated_at'] = self.educated_at
+        o['caltech'] = self.caltech
+        o['jpl'] = self.jpl
+        o['faculty'] = self.faculty
+        o['alumn'] = self.alumn
+        o['notes'] = self.notes
+        return o
+
 
