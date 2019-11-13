@@ -1,7 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from py_dataset import dataset
-from app import cfg, login
+from app import cfg, login_manager
 
 
 #
@@ -16,67 +16,49 @@ class User(UserMixin):
     password = ''
     role = ''
     # Flask-login elements
-    is_active = False
-    is_authenticated = False
-    is_anonymous = False
+    #is_active = False
+    #is_authenticated = False
+    #is_anonymous = False
 
-    def get_id(self):
-        if self.username != '':
-            return self.username
-        return None
-
-    def __init__(self, c_name):
-        self.c_name = c_name
-
-    def get(self, username):
-        if dataset.has_key(self.c_name, username) == False:
-            return False
+    def __init__(self, username):
+        self.c_name = cfg.USERS
         user, err = dataset.read(self.c_name, username)
         if err != '':
-            return False
-        self.username = user['username']
-        self.display_name = user['display_name']
-        self.email = user['email']
-        self.role = user['role']
-        self.password = user['password']
-        self.is_active = user['is_active']
-        return True
+            print(f'error reading {username} in {cfg.USERS}, {err}')
+        else:
+            self.id = username
+            self.username = user['username'] if 'username' in user else ''
+            self.display_name = user['display_name'] if 'display_name' in user else ''
+            self.email = user['email'] if 'email' in user else ''
+            self.role = user['role'] if 'role' in user else ''
+            self.password = user['password'] if 'password' in user else ''
+            #self.is_active = user['is_active'] if 'is_active' in user else False
+            #self.is_authenticated = user['is_authenticated'] if 'is_authenticated' in user else False
+            #self.is_anonymous = user['is_anonymous'] if  'is_anonymous' in user else True
+
+    #def get_id(self):
+    #    if self.username != '':
+    #        return self.username
+    #    return None
 
     def save(self):
         c_name = self.c_name
         key = self.username
-        user = {
-            "username": self.username,
-            "display_name": self.display_name,
-            "email": self.email,
-            "role": self.role,
-            "password": self.password,
-            "is_active": self.is_active
-        }
         if dataset.has_key(c_name, key):
-            err = dataset.update(c_name, key, user)
+            err = dataset.update(c_name, key, self)
             if err != '':
                 return False
         else:
-            err = dataset.create(c_name, key, user)
+            err = dataset.create(c_name, key, self)
             if err != '':
                 return False
         return True
 
-    def set_password(self, username, password):
-        if self.get(username) == False:
-            return False
+    def set_password(self, password):
         self.password = generate_password_hash(password)
         return self.save()
 
     def check_password(self, password):
-        c_name = self.c_name
-        key = self.username
-        if dataset.has_key(c_name, key) == False:
-            return False
-        ok = self.get(key)
-        if ok == False:
-            return False
         return check_password_hash(self.password, password)
 
     def __str__(self):

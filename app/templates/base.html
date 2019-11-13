@@ -27,12 +27,26 @@ div {
         </style>
     </head>
     <body>
-        <header>Hello, {{ user.username }}</header>
+        <header>And/Or Demo</header>
         <nav>
-            <a href="/">Home</a>
-            <a href="/login">Login</a>
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
         </nav>
         <section>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+
             {% block content %}{% endblock %}
         </section>
     </body>

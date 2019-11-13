@@ -10,8 +10,8 @@ app.secret_key = cfg.SECRET_KEY
 
 from flask_login import LoginManager
 
-login = LoginManager(app)
+login_manager = LoginManager(app)
 # Iniatialize the Flask login manager.
-login.init_app(app)
+login_manager.init_app(app)
 
 from app import routes
