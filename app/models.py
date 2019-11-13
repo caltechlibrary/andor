@@ -4,42 +4,53 @@ from py_dataset import dataset
 from app import cfg, login_manager
 
 
+
+def NewUser(username, email, display_name):
+    '''NewUser create a new user in cfg.USERS, then returns a new User().'''
+    c_name = cfg.USERS
+    user = {
+        'c_name': c_name,
+        'id': username,
+        'username': username,
+        'display_name': display_name,
+        'email': email,
+        'role': '',
+        'password': ''
+    }
+    if dataset.has_key(c_name, username): 
+        return None
+    err = dataset.create(c_name, username, user)
+    if err != '':
+        return None
+    u = User(username)
+    return u
+
 #
 # User model holds the elements that the app needs to interact with
 # user information such as display name, email, password and role.
 #
 class User(UserMixin):
-    c_name = ''
+    '''User is the model of users who can use the And/Or web service'''
+    id = ''
     username = ''
     display_name = ''
     email = ''
-    password = ''
     role = ''
-    # Flask-login elements
-    #is_active = False
-    #is_authenticated = False
-    #is_anonymous = False
+    password = ''
 
-    def __init__(self, username):
+    def __init__(self, username = ''):
         self.c_name = cfg.USERS
-        user, err = dataset.read(self.c_name, username)
-        if err != '':
-            print(f'error reading {username} in {cfg.USERS}, {err}')
-        else:
-            self.id = username
-            self.username = user['username'] if 'username' in user else ''
-            self.display_name = user['display_name'] if 'display_name' in user else ''
-            self.email = user['email'] if 'email' in user else ''
-            self.role = user['role'] if 'role' in user else ''
-            self.password = user['password'] if 'password' in user else ''
-            #self.is_active = user['is_active'] if 'is_active' in user else False
-            #self.is_authenticated = user['is_authenticated'] if 'is_authenticated' in user else False
-            #self.is_anonymous = user['is_anonymous'] if  'is_anonymous' in user else True
-
-    #def get_id(self):
-    #    if self.username != '':
-    #        return self.username
-    #    return None
+        user = {}
+        if username != '':
+            user, err = dataset.read(self.c_name, username)
+            if err != '':
+                print(f'error reading {username} in {cfg.USERS}, {err}')
+        self.id = username
+        self.username = user['username'] if 'username' in user else ''
+        self.display_name = user['display_name'] if 'display_name' in user else ''
+        self.email = user['email'] if 'email' in user else ''
+        self.role = user['role'] if 'role' in user else ''
+        self.password = user['password'] if 'password' in user else ''
 
     def save(self):
         c_name = self.c_name

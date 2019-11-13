@@ -62,15 +62,17 @@ def add_user(argv):
     if dataset.has_key(c_name, username) == True:
         print(f'{username} already exists in {c_name}')
         return False
-    u = models.User(c_name)
-    u.username = username
-    u.email = email
-    u.display_name = display_name
-    u.role = ''
-    u.password = ''
-    u.is_active = True
+    user = {
+        'id': username,
+        'username': username,
+        'email': email,
+        'display_name': display_name,
+    }
+    err = dataset.create(c_name, username, user)
+    if err != '':
+        return False
     print(f'NOTE: {username} will need to have a role and password set.')
-    return u.save()
+    return True
 
 
 def usage_disable_user():
@@ -128,11 +130,16 @@ def set_password(argv):
         if i > 3:
             print(f'Passwords do not match, exiting')
             return False
-    u = models.User(c_name)
-    if u.get(username):
-        return u.set_password(username, pw1)
-    print(f'{username} not found in {c_name}')
-    return False
+    u, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'{username} not found in {c_name}, {err}')
+        return False
+    u['password'] = generate_password_hash(pw1)
+    err = dataset.update(c_name, username, u)
+    if err != '':
+        print(f'{username} in {c_name}, {err}')
+        return False
+    return True
 
 def usage_set_email():
     print(f'''
@@ -200,12 +207,14 @@ def assign_role(argv):
         return usage_asign_role()
     username, role = argv[0], argv[1]
     if dataset.has_key(c_name, username) == True:
-        u = models.User(c_name)
-        print(f'DEBUG getting {username} from {c_name}')
-        if u.get(username):
-            print(f'DEBUG save {role} to user {username}')
-            u.role = role
-            return u.save()
+        u, err = dataset.read(c_name, username)
+        if u['username'] == username:
+            u['role'] = role
+            err = dataset.update(c_name, username, u)
+            if err != '':
+                print(f'DEBUG failed to write {username} to {c_name}, {err}')
+                return False
+            return True
     print(f'{username} does not exist in {c_name}')
     return False
 
