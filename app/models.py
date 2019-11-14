@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from py_dataset import dataset
+from libdataset import dataset
 from app import cfg, login_manager
 from dataclasses import dataclass, field
 
@@ -18,7 +18,7 @@ def NewUser(username, email, display_name):
         'role': '',
         'password': ''
     }
-    if dataset.has_key(c_name, username): 
+    if dataset.key_exists(c_name, username): 
         return None
     err = dataset.create(c_name, username, user)
     if err != '':
@@ -56,7 +56,7 @@ class User(UserMixin):
     def save(self):
         c_name = self.c_name
         key = self.username
-        if dataset.has_key(c_name, key):
+        if dataset.key_exists(c_name, key):
             err = dataset.update(c_name, key, self)
             if err != '':
                 return False
@@ -111,7 +111,7 @@ class Role:
         self.c_name = c_name
 
     def get(self, role_name):
-        if dataset.has_key(self.c_name, role_name) == False:
+        if dataset.key_exists(self.c_name, role_name) == False:
             return False
         role, err = dataset.read(self.c_name, role_name)
         if err != '':

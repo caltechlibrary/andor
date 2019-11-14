@@ -19,25 +19,22 @@ ifeq ($(OS), Windows)
 endif
 
 
-#andor$(EXT): bin/andor$(EXT)
-
-
-#bin/andor$(EXT): *.go cmd/andor/andor.go
-#	go build -o bin/andor$(EXT) cmd/andor/andor.go
-
-build: config
+build: config libdataset
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 	python3 mk_website.py $(baseurl)
 
-#test: clean bin/andor$(EXT)
-#	go test
+test: clean
+	python3 test_libdataset.py
 
 run:
 	flask run
 
 reset:
 	python3 development_reset.py
+
+libdataset:
+	cd libdataset && $(MAKE)
 
 config:
 	python3 andor-setup.py Staff.ds Roles.ds People.ds
@@ -55,21 +52,8 @@ cleanweb:
 clean: 
 	if [ -d bin ]; then rm -fR bin; fi
 
-py_code:
-	cp *.py dist/
-	cp -fR py_libdataset dist/
-
-distribute_docs:
-	if [ -d dist ]; then rm -fR dist; fi
-	mkdir -p dist
-	cp -v README.md dist/
-	cp -v LICENSE dist/
-	cp -v INSTALL.md dist/
-
 update_version:
 	./update_version.py --yes
-
-release: clean distribute_docs py_code
 
 status:
 	git status

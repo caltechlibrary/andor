@@ -3,12 +3,12 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import app, cfg, login_manager
 from app.forms import LoginForm, PeopleForm
 from app.models import User, People
-from py_dataset import dataset
+from libdataset import dataset
 
 @login_manager.user_loader
 def load_user(user_id):
     c_name = cfg.USERS
-    if dataset.has_key(c_name, user_id) == False:
+    if dataset.key_exists(c_name, user_id) == False:
         flash(f'DEBUG load_user({user_id}), failed, {user_id} not in {c_name}')
         return None
     u = User(user_id)
@@ -18,23 +18,23 @@ def load_user(user_id):
 @app.route('/')
 @app.route('/index')
 def index():
-#    if current_user.is_authenticated:
-#        user = {'username': current_user.username, 'display_name': current_user.display_name, 'is_authenticated' : True}
-#    elif current_user.is_anonymous:
-#        user = {'username': 'anonymous', 'display_name': 'Anonymous', 'is_authenticated': False}
-#    else:
-#        user = {'username': current_user.username, 'display_name': current_user.display_name, 'is_authenticated': False}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'title': "John's And/Or repository item",
-        },
-        {
-            'author': {'username': 'Sarah'},
-            'title': 'Strange moons of Jupiter item',
-        }
-    ]
-    return render_template('index.html', title='Home', user = current_user, posts = posts)
+    objects = []
+    if current_user.is_authenticated == True:
+        pg = request.args.get('pg', 1, type=int)
+        c_name = cfg.OBJECTS
+        keys = dataset.keys(c_name)
+        if pg > 1:
+            pg -= 1
+        else:
+            pg = 0
+        offset = pg * 10 
+        if len(keys) > 10:
+            keys = keys[offset:offset+10] 
+        objects, err = dataset.list(c_name, keys)
+        if err != '':
+            flash(f"Can't read {c_name}, page {pg}, {err}")
+            objects = []
+    return render_template('index.html', title='Home', user = current_user, objects = objects)
 
 @app.route('/people', methods = [ "GET", "POST" ])
 def people():
@@ -66,7 +66,7 @@ def people():
         people.notes = form.notes.data
         c_name = cfg.OBJECTS
         key = people.cl_people_id
-        if dataset.has_key(c_name, key):
+        if dataset.key_exists(c_name, key):
             err = dataset.update(c_name, key, people.to_dict())
             if err != '':
                 flash('WARNING: failed to update {key} in {c_name}, {err}')

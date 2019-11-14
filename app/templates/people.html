@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>People Object</h1>
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.cl_people_id.label }}<br>
+            {{ form.cl_people_id(size=64) }}
+            {% for error in form.cl_people_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.family_name.label }}<br>
+            {{ form.family_name(size=64) }}
+            {% for error in form.family_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.given_name.label }}<br>
+            {{ form.given_name(size=64) }}
+            {% for error in form.given_name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.thesis_id.label }}<br>
+            {{ form.thesis_id(size=64) }}
+            {% for error in form.thesis_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.authors_id.label }}<br>
+            {{ form.authors_id(size=64) }}
+            {% for error in form.authors_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.archivesspace_id.label }}<br>
+            {{ form.archivesspace_id(size=64) }}
+            {% for error in form.archivesspace_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.directory_id.label }}<br>
+            {{ form.directory_id(size=64) }}
+            {% for error in form.directory_id.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.viaf.label }}<br>
+            {{ form.viaf(size=64) }}
+            {% for error in form.viaf.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.lcnaf.label }}<br>
+            {{ form.lcnaf(size=64) }}
+            {% for error in form.lcnaf.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.isni.label }}<br>
+            {{ form.isni(size=64) }}
+            {% for error in form.isni.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.wikidata.label }}<br>
+            {{ form.wikidata(size=64) }}
+            {% for error in form.wikidata.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.snac.label }}<br>
+            {{ form.snac(size=64) }}
+            {% for error in form.snac.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.orcid.label }}<br>
+            {{ form.orcid(size=64) }}
+            {% for error in form.orcid.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.image.label }}<br>
+            {{ form.image(size=64) }}
+            {% for error in form.image.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.educated_at.label }}<br>
+            {{ form.educated_at(cols="80", rows="10") }}
+            {% for error in form.educated_at.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.caltech.label }}
+            {{ form.caltech(size=256) }}
+            {% for error in form.caltech.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.jpl.label }}
+            {{ form.jpl() }}
+            {% for error in form.jpl.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.faculty.label }}
+            {{ form.faculty() }}
+            {% for error in form.faculty.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.alumn.label }}
+            {{ form.alumn() }}
+            {% for error in form.alumn.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        <p>
+            {{ form.notes.label }}<br>
+            {{ form.notes(cols="80", rows="5") }}
+            {% for error in form.notes.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+            <p> {{ form.submit() }} <input type="reset" value="Cancel"> </p>
+    </form>
+{% endblock %}

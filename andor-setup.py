@@ -3,7 +3,7 @@ import sys
 import os
 import string
 import secrets
-from py_dataset import dataset
+from libdataset import dataset
 
 def generate_development_secret(size = 1024):
     return ''.join(secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits + '.!@#$%^&*()-_+=') for _ in range(size))

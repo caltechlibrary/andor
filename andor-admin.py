@@ -3,7 +3,7 @@ import os
 import sys
 import shutil
 import getpass
-from py_dataset import dataset
+from libdataset import dataset
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".flaskenv")
 from werkzeug.security import generate_password_hash
@@ -59,7 +59,7 @@ def add_user(argv):
         usage_add_user()
         return False
     username, email, display_name = argv[0], argv[1], argv[2]
-    if dataset.has_key(c_name, username) == True:
+    if dataset.key_exists(c_name, username) == True:
         print(f'{username} already exists in {c_name}')
         return False
     user = {
@@ -89,7 +89,7 @@ def disable_user(argv):
         usage_disable_user()
         return False
     username = argv[0]
-    if dataset.has_key(c_name, username) == False:
+    if dataset.key_exists(c_name, username) == False:
         print(f'{username} not found in {c_name}')
         return False
     u = models.User(c_name)
@@ -156,7 +156,7 @@ def set_email(argv):
     if len(argv) != 2:
         return usage_set_email()
     username, email = argv[0], argv[1]
-    if dataset.has_key(c_name, username):
+    if dataset.key_exists(c_name, username) == True:
         u = models.User(c_name)
         if u.get(username):
             u.email = email
@@ -181,7 +181,7 @@ def set_display_name(argv):
     if len(argv) != 2:
         return usage_set_email()
     username, display_name = argv[0], argv[1]
-    if dataset.has_key(c_name, username):
+    if dataset.key_exists(c_name, username) == True:
         u = models.User(c_name)
         if u.get(username):
             u.display_name = display_name
@@ -206,17 +206,19 @@ def assign_role(argv):
     if len(argv) != 2:
         return usage_asign_role()
     username, role = argv[0], argv[1]
-    if dataset.has_key(c_name, username) == True:
-        u, err = dataset.read(c_name, username)
-        if u['username'] == username:
-            u['role'] = role
-            err = dataset.update(c_name, username, u)
-            if err != '':
-                print(f'DEBUG failed to write {username} to {c_name}, {err}')
-                return False
-            return True
-    print(f'{username} does not exist in {c_name}')
-    return False
+    if dataset.key_exists(c_name, username) == False:
+        print(f'{username} does not exist in {c_name}')
+        return False
+    u, err = dataset.read(c_name, username)
+    if err != '':
+        print(f'Failed to read {username} from {c_name}, {err}')
+        return False
+    u['role'] = role
+    err = dataset.update(c_name, username, u)
+    if err != '':
+        print(f'Failed to write {username} to {c_name}, {err}')
+        return False
+    return True
 
 
 def usage_create_role():
@@ -237,7 +239,7 @@ def create_role(argv):
         usage_create_role()
         return False
     role_name = argv[0]
-    if dataset.has_key(c_name, role_name):
+    if dataset.key_exists(c_name, role_name):
         print(f'{role_name} already exists in {c_name}')
         return False
     role = { 
@@ -276,8 +278,8 @@ def edit_role(argv):
         usage_create_role()
         return False
     role_name = argv[0]
-    if not dataset.has_key(c_name, role_name):
-        print(f'{role_name} does not exists in {c_name}')
+    if not dataset.key_exists(c_name, role_name):
+        print(f'{role_name} does not exist in {c_name}')
         return False
     role, err = dataset.read(c_name, role_name)
     if err != '':
@@ -315,7 +317,7 @@ def delete_role(argv):
         usage_delete_role()
         return False
     role_name = argv[0]
-    if dataset.has_key(c_name, role_name):
+    if dataset.key_exists(c_name, role_name):
         err = dataset.delete(c_name, role_name)
         if err != '':
             return False
