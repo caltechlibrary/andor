@@ -1,10 +1,10 @@
 
 from flask import Flask
-from config import Config
+from app import config
 
 app = Flask(__name__)
-app.config.from_object(Config)
-cfg = Config()
+app.config.from_object(config.Config)
+cfg = config.Config()
 # Flask-login expects app.secret_key instead of config object
 app.secret_key = cfg.SECRET_KEY
 

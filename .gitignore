@@ -18,4 +18,5 @@ __pycache__
 *.pyc
 *.sqlite3
 .flaskenv
-config.py
+app/config.py
+libdataset/lib/*

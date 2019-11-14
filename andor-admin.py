@@ -7,15 +7,14 @@ from libdataset import dataset
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".flaskenv")
 from werkzeug.security import generate_password_hash
-from app import models
+from app import models, config
 
-if not os.path.exists('config.py'):
+if not os.path.exists(os.path.join('app', 'config.py')):
     print(f'Nothing to administor.')
     sys.exit(1)
 
-from config import Config
 cli_name = os.path.basename(sys.argv[0])
-cfg = Config()
+cfg = config.Config()
 flask_env = os.getenv('FLASK_ENV') or ''
 
 def display_help(argv = {}):

@@ -34,14 +34,21 @@ class Config(object):
 
 '''
 
-if os.path.exists("config.py"):
+if os.path.exists("app/config.py"):
     print(f'''
-Update config.py setting USERS, ROLES, and OBJECTS.
-E.g. config.py
-
-{config_py}
+Updating app/config.py setting USERS, ROLES, and OBJECTS.
+    SECRET_KEY = " ... "
+    USERS = "{sys.argv[1]}"
+    ROLES = "{sys.argv[2]}"
+    OBJECTS = "{sys.argv[3]}"
 ''')
-
 else:
-    with open("config.py", "w") as fp:
-        fp.write(f'''{config_py}''')
+    print(f'''
+Creating app/config.py setting USERS, ROLES, and OBJECTS.
+    SECRET_KEY = " ... "
+    USERS = "{sys.argv[1]}"
+    ROLES = "{sys.argv[2]}"
+    OBJECTS = "{sys.argv[3]}"
+''')
+with open("app/config.py", "w") as fp:
+    fp.write(f'''{config_py}''')

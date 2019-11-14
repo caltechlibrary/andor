@@ -30,7 +30,7 @@ def index():
         offset = pg * 10 
         if len(keys) > 10:
             keys = keys[offset:offset+10] 
-        objects, err = dataset.list(c_name, keys)
+        objects, err = dataset.read_list(c_name, keys)
         if err != '':
             flash(f"Can't read {c_name}, page {pg}, {err}")
             objects = []

@@ -4,12 +4,12 @@ import shutil
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".flaskenv")
 
-if not os.path.exists('config.py'):
+if not os.path.exists(os.path.join('app', 'config.py')):
     print(f'Nothing to reset.')
     sys.exit(1)
 
-from config import Config
-cfg = Config()
+from app import config
+cfg = config.Config()
 flask_env = os.getenv('FLASK_ENV') or ''
 print(f"cfg.USERS -> {cfg.USERS}")
 print(f"cfg.ROLES -> {cfg.ROLES}")
