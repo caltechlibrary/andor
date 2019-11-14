@@ -161,6 +161,34 @@ class People:
     alumn = False
     notes = ''
 
+    def load(self, cl_people_id):
+        c_name = cfg.OBJECTS
+        if dataset.key_exists(c_name, cl_people_id):
+            u, err = dataset.read(c_name, cl_people_id)
+            if err != '':
+                return err
+            self.cl_people_id = u['cl_people_id'] if 'cl_people_id' in u else ''
+            self.family_name = u['family_name'] if 'family_name' in u else ''
+            self.given_name = u['given_name'] if 'given_name' in u else ''
+            self.thesis_id = u['thesis_id'] if 'thesis_id' in u else ''
+            self.authors_id = u['authors_id'] if 'authors_id' in u else ''
+            self.archivesspace_id = u['archivesspace_id'] if 'archivesspace_id' in u else ''
+            self.directory_id = u['directory_id'] if 'directory_id' in u else ''
+            self.viaf = u['viaf'] if 'viaf' in u else ''
+            self.lcnaf = u['lcnaf'] if 'lcnaf' in u else ''
+            self.isni = u['isni'] if 'isni' in u else ''
+            self.wikidata = u['wikidata'] if 'wikidata' in u else ''
+            self.snac = u['snac'] if 'snac' in u else ''
+            self.orcid = u['orcid'] if 'orcid' in u else ''
+            self.image = u['image'] if 'image' in u else ''
+            self.educated_at = u['educated_at'] if 'educated_at' in u else ''
+            self.caltech = u['caltech'] if 'caltech' in u else False
+            self.jpl = u['jpl'] if 'jpl' in u else False
+            self.faculty = u['faculty'] if 'faculty' in u else False
+            self.alumn = u['alumn'] if 'alumn' in u else False
+            self.notes = u['notes'] if 'notes' in u else ''
+        return ''
+
     def to_dict(self):
         o = {}
         o['cl_people_id'] = self.cl_people_id

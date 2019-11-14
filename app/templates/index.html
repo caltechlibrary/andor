@@ -4,10 +4,10 @@
     {% if user.is_authenticated %}
     <h1>Welcome {{ user.display_name }}!</h1>
     <ul>
-        <li><a href="{{ url_for('people') }}">People</a></li>
+        <li><a href="{{ url_for('people') }}">New Record</a></li>
+        <li><a href="{{ url_for('list') }}">List Records</a></li>
         <li><a href="{{ url_for('logout') }}">Log Out</a></li>
     </ul>
-    <p>List People records here...
     <p>
     {% else %}
     <h1>Hello,</h1>
