@@ -33,7 +33,9 @@ run:
 reset:
 	python3 development_reset.py
 
-libdataset:
+libdataset: libdataset/lib/libdataset.h
+
+libdataset/lib/libdataset.h:
 	cd libdataset && $(MAKE)
 
 config:
@@ -50,7 +52,7 @@ cleanweb:
 	if [ -f docs/index.html ]; then rm docs/*.html; fi
 
 clean: 
-	if [ -d libdataset/lib/libdataset.h ]; then rm -fR libdataset/lib/*; fi
+	if [ -f libdataset/lib/libdataset.h ]; then rm -fR libdataset/lib/*; fi
 	if [ -d libdataset/__pycache__ ]; then rm -fR libdataset/__pycache__; fi
 
 update_version:
