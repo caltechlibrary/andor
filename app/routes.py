@@ -7,6 +7,7 @@ from lunr import lunr
 from libdataset import dataset
 import time
 from datetime import datetime
+import sys
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -31,6 +32,7 @@ def people_list():
     pg = request.args.get('pg', 1, type=int)
     c_name = cfg.OBJECTS
     keys = dataset.keys(c_name)
+    keys.sort()
 #    if pg > 1:
 #        pg -= 1
 #    else:
@@ -51,6 +53,7 @@ def people_search():
     if current_user.is_authenticated == False:
         flash(f'Must be logged in to curate people')
         return redirect(url_for('index'))
+    objects = []
     form = SearchForm()
     if form.validate_on_submit():
         #FIXME: do search here ...
@@ -86,9 +89,11 @@ def people_search():
                         'alumn', 'notes',
                     ],
                     documents = objects)
-            results = idx.search(form.query.data)
-            # FIXME: this is not efficient, objects were just read
-            # and now we're reading them again!!!
+            results = []
+            try:
+                results = idx.search(form.query.data)
+            except Exception as err:
+                flash(f'Search error: {err}')
             objects = []
             for result in results:
                 key = result['ref']
@@ -106,6 +111,7 @@ def people_new():
         return redirect(url_for('index'))
     form = PeopleForm()
     if form.validate_on_submit():
+        people = People()
         people.cl_people_id = form.cl_people_id.data
         people.family_name = form.family_name.data
         people.given_name = form.given_name.data
@@ -141,7 +147,7 @@ def people_new():
                 flash(f'WARNING: failed to create {key} in {c_name}, {err}')
             else:
                 flash(f'{people.cl_people_id} created {now}')
-        return redirect(url_for('people/edit/{people.cl_people_id}'))
+        return redirect(url_for('people_edit', cl_people_id = people.cl_people_id))
     return render_template('people_edit.html', title="New People", user = current_user, form=form)
 
 
