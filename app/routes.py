@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import app, cfg, login_manager
 from app.forms import LoginForm, PeopleForm, SearchForm
 from app.models import User, People
+from lunr import lunr
 from libdataset import dataset
 import time
 from datetime import datetime
@@ -30,16 +31,16 @@ def people_list():
     pg = request.args.get('pg', 1, type=int)
     c_name = cfg.OBJECTS
     keys = dataset.keys(c_name)
-    if pg > 1:
-        pg -= 1
-    else:
-        pg = 0
-    offset = pg * 10 
-    if len(keys) > 10:
-        keys = keys[offset:offset+10] 
+#    if pg > 1:
+#        pg -= 1
+#    else:
+#        pg = 0
+#    offset = pg * 10 
+#    if len(keys) > 10:
+#        keys = keys[offset:offset+10] 
     objects, err = dataset.read_list(c_name, keys)
     if err != '':
-        flash(f"Can't read {c_name}, page {pg}, {err}")
+        flash(f"Can't read {c_name}, {err}")
         objects = []
     return render_template('people_list.html', title='List People', user = current_user, objects = objects)
 
@@ -50,24 +51,49 @@ def people_search():
     if current_user.is_authenticated == False:
         flash(f'Must be logged in to curate people')
         return redirect(url_for('index'))
-    objects = []
     form = SearchForm()
     if form.validate_on_submit():
         #FIXME: do search here ...
-        pg = request.args.get('pg', 1, type=int)
         c_name = cfg.OBJECTS
         keys = dataset.keys(c_name)
-        if pg > 1:
-            pg -= 1
-        else:
-            pg = 0
-        offset = pg * 10 
-        if len(keys) > 10:
-            keys = keys[offset:offset+10] 
+#        if pg > 1:
+#            pg -= 1
+#        else:
+#            pg = 0
+#        offset = pg * 10 
+#        if len(keys) > 10:
+#            keys = keys[offset:offset+10] 
         objects, err = dataset.read_list(c_name, keys)
         if err != '':
-            flash(f"Can't read {c_name}, page {pg}, {err}")
+            flash(f"Can't read {c_name}, {err}")
             objects = []
+        else:
+            # NOTE: we want to save a dict of keys to object
+            # for when we want to assemble our results list.
+            oMap = dict(zip(keys, objects))
+            idx = lunr(
+                    ref = "_Key",
+                    fields= [ 
+                        'cl_people_id', 'family_name',
+                        'given_name', 'thesis_id',
+                        'authors_id', 'archivesspace_id',
+                        'directory_id', 'viaf',
+                        'lcnaf', 'isni',
+                        'wikidata', 'snac',
+                        'orcid', 'image',
+                        'educated_at', 'caltech',
+                        'jpl', 'faculty',
+                        'alumn', 'notes',
+                    ],
+                    documents = objects)
+            results = idx.search(form.query.data)
+            # FIXME: this is not efficient, objects were just read
+            # and now we're reading them again!!!
+            objects = []
+            for result in results:
+                key = result['ref']
+                if key in oMap:
+                    objects.append(oMap[key])
     return render_template('people_search.html', title='People Search', user = current_user, objects = objects, form = form)
 
 

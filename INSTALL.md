@@ -15,6 +15,7 @@ system supported by Miniconda.
     pip install flask
     pip install flask_wtf
     pip install flask-login
+    pip install pip install lunr
 ```
 
 ## Installing And/Or
