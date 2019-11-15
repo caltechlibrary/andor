@@ -19,7 +19,7 @@ ifeq ($(OS), Windows)
 endif
 
 
-build: config libdataset
+build: libdataset config
 
 website: page.tmpl README.md nav.md INSTALL.md LICENSE css/site.css
 	python3 mk_website.py $(baseurl)
@@ -50,7 +50,8 @@ cleanweb:
 	if [ -f docs/index.html ]; then rm docs/*.html; fi
 
 clean: 
-	if [ -d bin ]; then rm -fR bin; fi
+	if [ -d libdataset/lib/libdataset.h ]; then rm -fR libdataset/lib/*; fi
+	if [ -d libdataset/__pycache__ ]; then rm -fR libdataset/__pycache__; fi
 
 update_version:
 	./update_version.py --yes

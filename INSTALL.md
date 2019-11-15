@@ -5,9 +5,10 @@ This software is a proof of concept.
 
 ## Prequisites
 
-Python v3.7 or better installed, Flask 1.1.x, and `py_dataset` v0.1.x 
-installed.  The example installation steps use 
-[Miniconda](https://docs.conda.io/en/latest/miniconda.html "Miniconda installation page") version of Python 3.  It also assumes a POSIX like
+Go 1.13 to compile `libdataset`, Python v3.7 or better installed, 
+Flask 1.1.x, Flask\_WTF, Flash-Login, and [Lunr.py](https://lunr.readthedocs.io/en/latest/).
+The example installation steps use 
+[Miniconda](https://docs.conda.io/en/latest/miniconda.html "Miniconda installation page") version of Python 3.x.  It also assumes a POSIX like
 system supported by Miniconda.
 
 ```bash
@@ -29,6 +30,10 @@ Create a ".flaskenv" file to hold your flask environment.
     git checkout pythonic-flask
     vi .flaskenv # Add FLASK_APP=andor.py  
                  # Add FLASK_ENV=development
+    cd libdataset
+    make build
+    cd ..
+    make
 ```
 
 ## Preparing the base repostiories
