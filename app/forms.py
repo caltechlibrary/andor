@@ -2,6 +2,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, URL, Optional, Length
 
+class SearchForm(FlaskForm):
+    query = StringField('Search', validators = [ DataRequired() ])
+    submit = SubmitField('Go')
+
 class LoginForm(FlaskForm):
     username = StringField('Username', validators = [ DataRequired() ])
     password = PasswordField('Password', validators = [ DataRequired() ])

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user.is_authenticated %}
+    <h1>List People</h1>
+    <ul>
+        {% for object in objects %}
+        <li> {{ object.family_name }}, {{ object.given_name }} 
+            <a href="{{ url_for('people_edit', cl_people_id = object.cl_people_id) }}">Edit</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <p>
+    {% else %}
+    <a href="{{ url_for('login') }}">login</a>
+    {% endif %}
+{% endblock %}

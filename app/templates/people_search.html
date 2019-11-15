@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if user.is_authenticated %}
+    <h1>Search</h1>
+    <p> 
+    <form action="" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.query(size=60) }}
+        {{ form.submit() }}
+    </form>
+    <p> 
+    <ul>
+        {% for object in objects %}
+        <li> {{ object.family_name }}, {{ object.given_name }} 
+            <a href="{{ url_for('people_edit', cl_people_id = object.cl_people_id) }}">Edit</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <p>
+    {% endif %}
+{% endblock %}

@@ -1,17 +1,24 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} 
+{% block content %} 
     {% if user.is_authenticated %}
-    <h1>Welcome {{ user.display_name }}!</h1>
-    <ul>
-        <li><a href="{{ url_for('people') }}">New Record</a></li>
-        <li><a href="{{ url_for('list') }}">List Records</a></li>
-        <li><a href="{{ url_for('logout') }}">Log Out</a></li>
-    </ul>
-    <p>
+<h1>Welcome {{ user.display_name }}!</h1>
+<p>
+And/Or is a proof of concept simple object repository for People data
+</p>
+<ul>
+    <li><a href="{{ url_for('people_new') }}">Add Person</a></li>
+    <li><a href="{{ url_for('people_list') }}">List People</a></li>
+    <li><a href="{{ url_for('people_search') }}">Search</a></li>
+    <li><a href="{{ url_for('logout') }}">Log Out</a></li>
+</ul>
+<p>
     {% else %}
-    <h1>Hello,</h1>
-    <p>
-    Why don't you try a soda? <a href="{{ url_for('login') }}">Login?</a>
-    {% endif %}
+<h1>Welcome to And/Or</h1>
+<p>
+A proof of concept simple object repository for People data
+</p>
+<p>
+Please <a href="{{ url_for('login') }}">login</a>.
+</p>
+    {% endif %} 
 {% endblock %}

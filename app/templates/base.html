@@ -27,12 +27,13 @@ div {
         </style>
     </head>
     <body>
-        <header>And/Or Demo</header>
+        <header>And/Or</header>
         <nav>
             <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('people') }}">New Record<a/>
-            <a href="{{ url_for('list') }}">List People<a/>
             {% if user.is_authenticated %}
+            <a href="{{ url_for('people_new') }}">Add Person<a/>
+            <a href="{{ url_for('people_list') }}">List People<a/>
+            <a href="{{ url_for('people_search') }}">Search</a>
             <a href="{{ url_for('logout') }}">Logout</a>
             {% else %}
             <a href="{{ url_for('login') }}">Login</a>
