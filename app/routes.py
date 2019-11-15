@@ -32,6 +32,9 @@ def people_list():
     pg = request.args.get('pg', 1, type=int)
     c_name = cfg.OBJECTS
     keys = dataset.keys(c_name)
+    if len(keys) == 0:
+        flash(f'No people in {c_name} repository, add some.')
+        return redirect(url_for('people_new'))
     keys.sort()
 #    if pg > 1:
 #        pg -= 1
@@ -59,6 +62,9 @@ def people_search():
         #FIXME: do search here ...
         c_name = cfg.OBJECTS
         keys = dataset.keys(c_name)
+        if len(keys) == 0:
+            flash(f'No people in {c_name} repository, add some.')
+            return redirect(url_for('people_new'))
 #        if pg > 1:
 #            pg -= 1
 #        else:
