@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, DateTimeField
 from wtforms.validators import DataRequired, URL, Optional, Length
 
 class SearchForm(FlaskForm):
@@ -33,5 +33,6 @@ class PeopleForm(FlaskForm):
     faculty = BooleanField('Faculty?')
     alumn = BooleanField('Alumni?')
     notes = TextAreaField('Notes (internal)', validators = [Optional()])
+    updated = DateTimeField('updated', format='%Y-%m-%d %H:%M:%S')
     submit = SubmitField('Save')
 
