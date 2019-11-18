@@ -166,6 +166,7 @@ def read_list(collection_name, keys, clean_object = False):
         l.append(key)
     # Generate our JSON version of they key list
     keys_as_json = json.dumps(l)
+    print(f"DEBUG keys as json -> {keys_as_json}")
     value = go_read_object_list(ctypes.c_char_p(collection_name.encode('utf-8')), ctypes.c_char_p(keys_as_json.encode('utf-8')), clean_object_int)
     if not isinstance(value, bytes):
         value = value.encode('utf-8')
@@ -173,6 +174,7 @@ def read_list(collection_name, keys, clean_object = False):
     if isinstance(rval, str):
         if rval == "":
             return [], error_message()
+        print(f'DEBUG rval -> {rval}')
         return json.loads(rval), error_message()
     return [], f"Can't read {keys} from {collection_name}, {error_message()}"
 
