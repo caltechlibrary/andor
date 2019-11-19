@@ -77,6 +77,8 @@ def people_search():
             flash(f"Can't read {c_name}, {err}")
             objects = []
         else:
+            #FIXME: need to add stemmer for for name fields (e.g.
+            # O'Brian should stem to brian, von Karman to karman).
             # NOTE: we want to save a dict of keys to object
             # for when we want to assemble our results list.
             oMap = dict(zip(keys, objects))
