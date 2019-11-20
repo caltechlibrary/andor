@@ -39,7 +39,7 @@ libdataset/lib/libdataset.h:
 	cd libdataset && $(MAKE)
 
 config:
-	python3 andor-setup.py Staff.ds Roles.ds PeopleCrosswalk.ds
+	python3 andor-setup.py Staff.ds Roles.ds People.ds
 	dataset create Roles.ds 'Admin' '{"users": {"create": true, "read": true, "update": true, "delete": true}, "roles": {"create": true, "read": true, "update": true, "delete": true}, "objects": {"create": true, "read": true, "update": true, "delete": true}}'
 	dataset create Roles.ds 'Editor' '{"users": {"create": false, "read": false, "update": false, "delete": false}, "roles": {"create": false, "read": false, "update": false, "delete": false}, "objects": {"create": true, "read": true, "update": true, "delete": true}}'
 	dataset create Roles.ds 'Depositor' '{"users": {"create": false, "read": false, "update": false, "delete": false}, "roles": {"create": false, "read": false, "update": false, "delete": false}, "objects": {"create": true, "read": true, "update": false, "delete": false}}'
